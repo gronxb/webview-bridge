@@ -2,12 +2,13 @@
 
 [![NPM](https://img.shields.io/npm/v/@rnbridge/native)](https://www.npmjs.com/package/@rnbridge/native)
 
-`rnbridge` is a `react-native-webview` interface that acts as a bridge between React Native and web applications. It provides seamless communication between these platforms and provides a type-safe.
+`rnbridge` is a powerful interface that acts as a bridge between React Native and web applications using `react-native-webview`. It providing seamless interaction and ensuring type safety.
 
-Inspired by the functionality of `tRPC`, rnbridge simplifies the communication process between `react-native-webview` and web applications.
+Inspired by the functionality of `tRPC`, `rnbridge` simplifies the communication process between `react-native-webview` and web applications.
 
-* **Zero-dependency**
-* **Type-Safe**
+**Key Features:**
+- Zero Dependencies
+- Type-Safety
 
 ![rnbridge](https://github.com/gronxb/rnbridge/assets/41789633/02cd8d69-6d93-4cac-8b2b-75b637c54bc7)
 
@@ -15,14 +16,26 @@ Inspired by the functionality of `tRPC`, rnbridge simplifies the communication p
 ## Installation
 
 ### React Native Project
-
 ```sh
+# Using npm:
+$ npm install @rnbridge/native react-native-webview
+
+# Using yarn:
+$ yarn add @rnbridge/native react-native-webview
+
+# Using pnpm:
 $ pnpm add @rnbridge/native react-native-webview
 ```
-
 ### Web Project
 
 ```sh
+# Using npm:
+$ npm install @rnbridge/web
+
+# Using yarn:
+$ yarn add @rnbridge/web
+
+# Using pnpm:
 $ pnpm add @rnbridge/web
 ```
 
@@ -78,16 +91,13 @@ bridge.getMessage().then((message) => console.log(message)); // Expecting "Hello
 bridge.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 ```
 
-## Type Export Guide
+## Exporting Type Declarations
+To enhance your experience with rnbridge, it's recommended to export the type declaration of the native bridge object to the web application. Here are a few ways to achieve this:
 
-For a better experience with rnbridge, it is recommended to export the type declaration of the native `bridge` object to the web application.
+1. Monorepo Setup (Recommended): Use a monorepo setup to export the type of the native bridge.
+2. Private npm Registry: Utilize a private npm registry to export the type of the native bridge.
+3. Custom Declaration File (WIP): Build a bridge declaration file using tsc and move the file as needed.
 
-There are a few ways to achieve this:
-
-1. Use a monorepo setup to export the type of the native `bridge`. **(recommended)**
-2. Utilize a private npm registry to export the type of the native `bridge`.
-3. Build a bridge declaration file using tsc and move the file as needed.
-   (Note: WIP)
 
 ## Contributor Guide
 
