@@ -6,7 +6,8 @@ rnbridge is a developer-friendly webview interface that acts as a bridge between
 
 Inspired by the functionality of `tRPC`, rnbridge simplifies the communication process between `react-native-webview` and web applications.
 
-![rnbridge](https://github.com/brandazine/rnbridge/assets/41789633/a96ecd6a-eb6b-4dd8-9805-421ff6dca26c)
+![rnbridge](https://github.com/gronxb/rnbridge/assets/41789633/02cd8d69-6d93-4cac-8b2b-75b637c54bc7)
+
 
 ## Installation
 
