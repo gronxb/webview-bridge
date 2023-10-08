@@ -83,7 +83,7 @@ There are a few ways to achieve this:
 1. Use a monorepo setup to export the type of the native `bridge`. **(recommended)**
 2. Utilize a private npm registry to export the type of the native `bridge`.
 3. Build a bridge declaration file using tsc and move the file as needed.
-   (Note: See [tsconfig.bridge.json](https://github.com/brandazine/rnbridge/blob/main/example/native/tsconfig.bridge.json) in the rnbridge repository for an example)
+   (Note: WIP)
 
 ## Contributor Guide
 
