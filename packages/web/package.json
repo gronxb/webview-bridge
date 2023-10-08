@@ -1,0 +1,18 @@
+{
+  "name": "@rnbridge/web",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "build": "node esbuild.config.js"
+  }
+}
