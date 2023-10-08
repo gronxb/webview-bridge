@@ -1,10 +1,13 @@
-# rnbridge
+# rnbridge (WIP)
 
 [![NPM](https://img.shields.io/npm/v/@rnbridge/native)](https://www.npmjs.com/package/@rnbridge/native)
 
-rnbridge is a developer-friendly webview interface that acts as a bridge between React Native and web applications. It offers seamless communication between these platforms and provides a type-safe environment.
+`rnbridge` is a `react-native-webview` interface that acts as a bridge between React Native and web applications. It provides seamless communication between these platforms and provides a type-safe.
 
 Inspired by the functionality of `tRPC`, rnbridge simplifies the communication process between `react-native-webview` and web applications.
+
+* **Zero-dependency**
+* **Type-Safe**
 
 ![rnbridge](https://github.com/gronxb/rnbridge/assets/41789633/02cd8d69-6d93-4cac-8b2b-75b637c54bc7)
 
@@ -20,7 +23,7 @@ $ pnpm add @rnbridge/native react-native-webview
 ### Web Project
 
 ```sh
-$ pnpm add @rnbridge/browser
+$ pnpm add @rnbridge/web
 ```
 
 ## Getting Started
