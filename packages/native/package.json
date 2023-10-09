@@ -1,6 +1,6 @@
 {
   "name": "@rnbridge/native",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Integration React Native Webview and Web",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
