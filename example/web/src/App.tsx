@@ -3,13 +3,13 @@ import "./App.css";
 import { createNativeMethod } from "@rnbridge/web";
 import type { AppBridge } from "@rnbridge/example-native";
 
-const bridge = createNativeMethod<AppBridge>();
+const nativeMethod = createNativeMethod<AppBridge>();
 
 function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    bridge.getMessage().then((message) => {
+    nativeMethod.getMessage().then((message) => {
       setMessage(message);
     });
   }, []);
@@ -20,7 +20,7 @@ function App() {
 
       <button
         onClick={() =>
-          bridge.openInAppBrowser("https://github.com/gronxb/rnbridge")
+          nativeMethod.openInAppBrowser("https://github.com/gronxb/rnbridge")
         }
       >
         open InAppBrowser

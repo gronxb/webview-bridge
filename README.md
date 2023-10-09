@@ -90,10 +90,10 @@ export default App;
 import { createNativeMethod } from "@rnbridge/web";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
-const bridge = createNativeMethod<AppBridge>();
+const nativeMethod = createNativeMethod<AppBridge>();
 
-bridge.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
-bridge.sum(1, 2).then((num) => console.log(num)); // Expecting 3
+nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
+nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 ```
 
 ## Exporting Type Declarations
