@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { createNativeMethod } from "@rnbridge/web";
+import { createNativeMethod, createWebMethod } from "@rnbridge/web";
 import type { AppBridge } from "@rnbridge/example-native";
+
+export const webBridge = createWebMethod({
+  alert: (message: string) => {
+    window.alert(message);
+  },
+  sum: (a: number, b: number) => {
+    return a + b;
+  },
+});
 
 const nativeMethod = createNativeMethod<AppBridge>();
 

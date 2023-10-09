@@ -5,11 +5,17 @@
  * @format
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native";
-import { WebView } from "./src/bridge";
+import { WebView, WebMethod } from "./src/bridge";
 
 function App(): JSX.Element {
+  useEffect(() => {
+    setTimeout(() => {
+      WebMethod.current.alert("Hello World");
+    }, 1000);
+  }, []);
+
   return (
     <SafeAreaView style={{ height: "100%" }}>
       <WebView
