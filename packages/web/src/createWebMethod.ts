@@ -28,6 +28,7 @@ export const createWebMethod: Bridge = (bridge) => {
 
   if (!window.ReactNativeWebView) {
     window.addEventListener("DOMContentLoaded", register);
+    return bridge;
   }
 
   register();
