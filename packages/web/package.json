@@ -15,6 +15,9 @@
     "dist",
     "package.json"
   ],
+  "main": "/dist/commonjs/index.cjs",
+  "module": "/dist/module/index.mjs",
+  "types": "/dist/typescript/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/module/index.mjs",
@@ -22,10 +25,10 @@
       "types": "./dist/typescript/index.d.ts"
     }
   },
-  "types": "/dist/typescript/index.d.ts",
   "scripts": {
     "tsc": "tsc --emitDeclarationOnly",
-    "build": "node esbuild.config.js"
+    "build": "node esbuild.config.js",
+    "test:type": "tsc --noEmit"
   },
   "devDependencies": {
     "esbuild": "^0.19.4"

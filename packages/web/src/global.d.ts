@@ -5,7 +5,8 @@ export {};
 declare global {
   interface Window {
     __bridgeMethods__?: string[];
-    bridgeEmitter?: Emitter<DefaultEvents>;
+    nativeEmitter?: Emitter<DefaultEvents>;
+    webEmitter?: Emitter<DefaultEvents>;
     ReactNativeWebView: {
       postMessage: (data: string) => void;
     };
