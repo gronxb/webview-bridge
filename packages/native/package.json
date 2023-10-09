@@ -5,6 +5,10 @@
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
   "types": "dist/typescript/index.d.ts",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "scripts": {
     "build": "bob build"
   },
