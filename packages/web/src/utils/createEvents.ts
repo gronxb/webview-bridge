@@ -8,11 +8,7 @@ interface DefaultEvents extends EventsMap {
   [event: string]: (...args: any) => void;
 }
 
-export interface Unsubscribe {
-  (): void;
-}
-
-export interface Emitter<Events extends EventsMap = DefaultEvents> {
+export interface EventEmitter<Events extends EventsMap = DefaultEvents> {
   emit<K extends keyof Events>(
     this: this,
     event: K,
@@ -20,12 +16,12 @@ export interface Emitter<Events extends EventsMap = DefaultEvents> {
   ): void;
 
   events: Partial<{ [E in keyof Events]: Events[E][] }>;
-  on<K extends keyof Events>(this: this, event: K, cb: Events[K]): Unsubscribe;
+  on<K extends keyof Events>(this: this, event: K, cb: Events[K]): () => void;
 }
 
 export const createEvents = <
   Events extends EventsMap = DefaultEvents,
->(): Emitter<Events> => ({
+>(): EventEmitter<Events> => ({
   events: {},
   emit(event, ...args) {
     const callbacks = this.events[event] || [];
@@ -40,3 +36,18 @@ export const createEvents = <
     };
   },
 });
+
+export const createResolver = (
+  emitter: EventEmitter<DefaultEvents>,
+  method: string,
+  eventId: string,
+  evaluate: () => void,
+) => {
+  return new Promise((resolve) => {
+    const unbind = emitter.on(`${method}-${eventId}`, (data) => {
+      unbind();
+      resolve(data);
+    });
+    evaluate();
+  });
+};

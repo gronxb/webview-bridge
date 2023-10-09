@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { createBridge } from "@rnbridge/web";
+import { createNativeMethod } from "@rnbridge/web";
 import type { AppBridge } from "@rnbridge/example-native";
 
-const bridge = createBridge<AppBridge>();
+const bridge = createNativeMethod<AppBridge>();
 
 function App() {
   const [message, setMessage] = useState("");

@@ -5,14 +5,14 @@
   "description": "",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/module/index.mjs",
+      "require": "./dist/commonjs/index.cjs",
+      "types": "./dist/typescript/index.d.ts"
     }
   },
-  "types": "./dist/index.d.ts",
+  "types": "/dist/typescript/index.d.ts",
   "scripts": {
-    "tsc": "tsc",
+    "tsc": "tsc --emitDeclarationOnly",
     "build": "node esbuild.config.js"
   }
 }

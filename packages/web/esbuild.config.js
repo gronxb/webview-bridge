@@ -4,14 +4,14 @@ Promise.all(
   build({
     entryPoints: ["src/index.ts"],
     bundle: true,
-    outfile: "dist/index.cjs",
+    outfile: "dist/commonjs/index.cjs",
     platform: "node",
     format: "cjs",
   }),
   build({
     entryPoints: ["src/index.ts"],
     bundle: true,
-    outfile: "dist/index.mjs",
+    outfile: "dist/module/index.mjs",
     platform: "browser",
     format: "esm",
   }),

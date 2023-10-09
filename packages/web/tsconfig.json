@@ -10,7 +10,7 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "outDir": "dist",
+    "outDir": "dist/typescript",
 
     /* Linting */
     "strict": true,
