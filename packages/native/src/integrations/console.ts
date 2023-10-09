@@ -30,15 +30,15 @@ export const handleLog = (
 ) => {
   switch (logType) {
     case "log": {
-      console.log("(Webview)", message);
+      console.log("(WebView)", message);
       break;
     }
     case "error": {
-      console.error("(Webview)", message);
+      console.error("(WebView)", message);
       break;
     }
     case "warn": {
-      console.warn("(Webview)", message);
+      console.warn("(WebView)", message);
       break;
     }
   }
