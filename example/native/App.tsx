@@ -7,12 +7,12 @@
 
 import React from "react";
 import { SafeAreaView } from "react-native";
-import { Webview } from "./src/bridge";
+import { WebView } from "./src/bridge";
 
 function App(): JSX.Element {
   return (
     <SafeAreaView style={{ height: "100%" }}>
-      <Webview
+      <WebView
         source={{
           uri: "http://localhost:5173",
         }}

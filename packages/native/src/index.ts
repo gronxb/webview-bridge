@@ -1,2 +1,2 @@
-export * from "./createWebview";
+export * from "./createWebView";
 export * from "./integrations/bridge";

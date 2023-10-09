@@ -44,7 +44,7 @@ $ pnpm add @rnbridge/web
 ### React Native
 
 ```tsx
-import { createWebview } from "@rnbridge/native";
+import { createWebView } from "@rnbridge/native";
 import { bridge } from "@rnbridge/native";
 
 // Register functions in the bridge object in your React Native code
@@ -61,7 +61,7 @@ export const appBridge = bridge({
 // Export the bridge type to be used in the web application
 export type AppBridge = typeof appBridge;
 
-export const { Webview } = createWebview({
+export const { Webview } = createWebView({
   bridge: appBridge,
   debug: true, // Enable console.log visibility in the native webview
 });

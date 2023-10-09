@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import React from "react";
 import type { WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
@@ -11,14 +11,14 @@ import {
   INTEGRATIONS_SCRIPTS_CONSOLE,
 } from "./integrations";
 
-type CreateWebviewArgs = {
+type CreateWebViewArgs = {
   bridge: ProceduresObject<Record<string, Procedure>>;
   debug?: boolean;
 };
 
-export const createWebview = ({ bridge, debug }: CreateWebviewArgs) => {
+export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
   return {
-    Webview: (props: WebViewProps) => {
+    WebView: forwardRef<WebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
 
       const bridgeNames = useMemo(
@@ -28,6 +28,8 @@ export const createWebview = ({ bridge, debug }: CreateWebviewArgs) => {
           }),
         [],
       );
+
+      useImperativeHandle(ref, () => webviewRef.current!, []);
 
       return (
         <WebView
@@ -72,6 +74,6 @@ export const createWebview = ({ bridge, debug }: CreateWebviewArgs) => {
           {...props}
         />
       );
-    },
+    }),
   };
 };

@@ -1,4 +1,4 @@
-import { bridge, createWebview } from "@rnbridge/native";
+import { bridge, createWebView } from "@rnbridge/native";
 import { InAppBrowser } from "react-native-inappbrowser-reborn";
 
 export const appBridge = bridge({
@@ -14,7 +14,7 @@ export const appBridge = bridge({
 
 export type AppBridge = typeof appBridge;
 
-export const { Webview } = createWebview({
+export const { WebView } = createWebView({
   bridge: appBridge,
   debug: true,
 });
