@@ -2,7 +2,15 @@
   "name": "@rnbridge/web",
   "type": "module",
   "version": "0.0.1",
-  "description": "",
+  "description": "Integration React Native Webview and Web",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gronxb/rnbridge.git"
+  },
+  "license": "MIT",
   "files": [
     "dist",
     "package.json"

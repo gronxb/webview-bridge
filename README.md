@@ -1,6 +1,7 @@
 # rnbridge (WIP)
 
-[![NPM](https://img.shields.io/npm/v/@rnbridge/native)](https://www.npmjs.com/package/@rnbridge/native)
+[![NPM](https://img.shields.io/npm/v/%40rnbridge%2Fnative/latest?label=%40rnbridge%2Fnative)](https://www.npmjs.com/package/@rnbridge/native)
+[![NPM](https://img.shields.io/npm/v/%40rnbridge%2Fweb/latest?label=%40rnbridge%2Fweb)](https://www.npmjs.com/package/@rnbridge/web)
 
 `rnbridge` is a powerful interface that acts as a bridge between React Native and web applications using `react-native-webview`. It providing seamless interaction and ensuring type safety.
 
