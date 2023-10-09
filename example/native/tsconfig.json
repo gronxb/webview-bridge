@@ -1,3 +1,14 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json"
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@rnbridge/example-native": ["../native/src/bridge.ts"],
+      "@rnbridge/example-web": ["../web/src/bridge.ts"]
+    },
+    "lib": ["DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src", "App.tsx"]
 }

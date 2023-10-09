@@ -8,6 +8,9 @@
       "dependsOn": ["^build", "@rnbridge/web#tsc"],
       "outputs": ["dist/**"]
     },
-    "lint": {}
+    "lint": { "cache": false },
+    "test:type": {
+      "cache": false
+    }
   }
 }

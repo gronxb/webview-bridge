@@ -12,8 +12,8 @@ export const createNativeMethod = <T = unknown>(
     throw new Error("Bridge methods not found");
   }
 
-  if (!window.bridgeEmitter) {
-    window.bridgeEmitter = emitter;
+  if (!window.nativeEmitter) {
+    window.nativeEmitter = emitter;
   }
 
   return bridgeMethods.reduce((acc, method) => {
@@ -26,9 +26,11 @@ export const createNativeMethod = <T = unknown>(
             window.ReactNativeWebView.postMessage(
               JSON.stringify({
                 type: "bridge",
-                method,
-                eventId,
-                args,
+                body: {
+                  method,
+                  eventId,
+                  args,
+                },
               }),
             );
           }),

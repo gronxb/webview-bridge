@@ -6,8 +6,6 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "outDir": "dist/typescript",

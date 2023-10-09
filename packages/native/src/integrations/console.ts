@@ -6,29 +6,34 @@ export const INTEGRATIONS_SCRIPTS_CONSOLE = `
 
   console.log = function() {
     var message = Array.from(arguments).join(' ');
-    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'log', method: 'log',args: message }));
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({ type: "log", body: { method: "log", args: message } }),
+    );
     originalConsoleLog.apply(console, arguments);
   };
 
   console.error = function() {
     var message = Array.from(arguments).join(' ');
-    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'log', method: 'error', args: message }));
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({ type: "log", body: { method: "error", args: message } }),
+    );
     originalConsoleError.apply(console, arguments);
   };
 
   console.warn = function() {
     var message = Array.from(arguments).join(' ');
-    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'log', method: 'warn', args: message }));
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({ type: "log", body: { method: "warn", args: message } }),
+    );
     originalConsoleWarn.apply(console, arguments);
   };
 };
 `;
 
-export const handleLog = (
-  logType: "log" | "error" | "warn",
-  message?: unknown,
-) => {
-  switch (logType) {
+export type LogType = "log" | "error" | "warn";
+
+export const handleLog = (type: LogType, message?: unknown) => {
+  switch (type) {
     case "log": {
       console.log("(WebView)", message);
       break;

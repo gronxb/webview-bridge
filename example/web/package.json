@@ -1,12 +1,13 @@
 {
-  "name": "web",
+  "name": "@rnbridge/example-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:type": "tsc --noEmit"
   },
   "dependencies": {
     "@rnbridge/web": "workspace:^",
@@ -14,7 +15,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@rnbridge/example-native": "workspace:^",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
