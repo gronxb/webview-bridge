@@ -63,7 +63,6 @@ export type AppBridge = typeof appBridge;
 
 export const { Webview } = createWebview({
   bridge: appBridge,
-  host: "http://localhost:5173", // webview host
   debug: true, // Enable console.log visibility in the native webview
 });
 
@@ -71,7 +70,12 @@ export const { Webview } = createWebview({
 function App(): JSX.Element {
   return (
     <SafeAreaView style={{ height: "100%" }}>
-      <Webview style={{ height: "100%", width: "100%" }} />
+      <Webview
+        source={{
+          uri: "http://localhost:5173",
+        }}
+        style={{ height: "100%", flex: 1, width: "100%" }}
+      />
     </SafeAreaView>
   );
 }

@@ -16,6 +16,5 @@ export type AppBridge = typeof appBridge;
 
 export const { Webview } = createWebview({
   bridge: appBridge,
-  host: "http://localhost:5173",
   debug: true,
 });

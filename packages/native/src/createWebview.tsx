@@ -13,13 +13,12 @@ import {
 
 type CreateWebviewArgs = {
   bridge: ProceduresObject<Record<string, Procedure>>;
-  host: string;
   debug?: boolean;
 };
 
-export const createWebview = ({ bridge, host, debug }: CreateWebviewArgs) => {
+export const createWebview = ({ bridge, debug }: CreateWebviewArgs) => {
   return {
-    Webview: (props: Omit<WebViewProps, "source">) => {
+    Webview: (props: WebViewProps) => {
       const webviewRef = useRef<WebView>(null);
 
       const bridgeNames = useMemo(
@@ -33,7 +32,6 @@ export const createWebview = ({ bridge, host, debug }: CreateWebviewArgs) => {
       return (
         <WebView
           ref={webviewRef}
-          source={{ uri: host }}
           onMessage={async (event) => {
             props.onMessage?.(event);
 
