@@ -12,10 +12,12 @@ import {
 } from "./integrations";
 import { handleCreateWebMethod } from "./integrations/createWebMethod";
 import type { Procedure, ProceduresObject, RNBridgeWebView } from "./types";
+import { createEvents } from "./utils";
 
 export type CreateWebViewArgs = {
   bridge: ProceduresObject<Record<string, Procedure>>;
   debug?: boolean;
+  responseTimeout?: number;
 };
 
 export type Method<T> = T & {
@@ -25,6 +27,7 @@ export type Method<T> = T & {
 export const createWebView = <T extends object>({
   bridge,
   debug,
+  responseTimeout = 2000,
 }: CreateWebViewArgs) => {
   const WebMethod = {
     current: {
@@ -32,6 +35,7 @@ export const createWebView = <T extends object>({
     } as Method<T>,
   };
 
+  const emitter = createEvents();
   return {
     WebView: forwardRef<RNBridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
@@ -87,9 +91,24 @@ export const createWebView = <T extends object>({
                   bridgeNames: string[];
                 };
                 WebMethod.current = {
-                  ...handleCreateWebMethod(webviewRef.current, bridgeNames),
+                  ...handleCreateWebMethod(
+                    emitter,
+                    webviewRef.current,
+                    bridgeNames,
+                    responseTimeout,
+                  ),
                   isReady: true,
                 } as Method<T>;
+                return;
+              }
+              case "webMethodResponse": {
+                const { eventId, funcName, value } = body as {
+                  eventId: string;
+                  funcName: string;
+                  value: unknown;
+                };
+
+                emitter.emit(`${funcName}-${eventId}`, value);
                 return;
               }
             }

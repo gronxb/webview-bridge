@@ -9,8 +9,14 @@ export const createWebMethod: Bridge = (bridge) => {
   window.webEmitter = emitter;
 
   for (const [funcName, func] of bridgeEntries) {
-    const $func = async (args: unknown[]) => {
-      func(...args);
+    const $func = async (eventId: string, args: unknown[]) => {
+      const value = await func(...args);
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: "webMethodResponse",
+          body: { funcName, eventId, value },
+        }),
+      );
     };
 
     emitter.on(funcName, $func);

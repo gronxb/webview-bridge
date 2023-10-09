@@ -5,8 +5,8 @@
  * @format
  */
 
-import React from "react";
-import { Button, SafeAreaView } from "react-native";
+import React, { useState } from "react";
+import { Button, Text, SafeAreaView } from "react-native";
 import { bridge, createWebView, type RNBridgeWebView } from "@rnbridge/native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@rnbridge/example-web";
@@ -28,11 +28,19 @@ export const { WebView, WebMethod } = createWebView<WebBridge>({
 });
 
 function App(): JSX.Element {
+  const [value, setValue] = useState(0);
+
   const webviewRef = React.useRef<RNBridgeWebView>(null);
 
   const handleWebAlert = () => {
     if (WebMethod.current.isReady) {
       WebMethod.current.alert("This called from webview");
+    }
+  };
+
+  const handleSum = () => {
+    if (WebMethod.current.isReady) {
+      WebMethod.current.sum(1, 2).then((result) => setValue(result));
     }
   };
 
@@ -46,6 +54,12 @@ function App(): JSX.Element {
         style={{ height: "100%", flex: 1, width: "100%" }}
       />
       <Button onPress={handleWebAlert} title="Web Alert" />
+      {value > 0 && (
+        <Text style={{ alignSelf: "center" }}>
+          This value called from webview 1 + 2 = {value}
+        </Text>
+      )}
+      <Button onPress={handleSum} title="Web Sum" />
     </SafeAreaView>
   );
 }
