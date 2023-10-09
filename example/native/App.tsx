@@ -8,15 +8,14 @@
 import React from "react";
 import { Button, SafeAreaView } from "react-native";
 import type { RNBridgeWebView } from "@rnbridge/native";
-import { WebView } from "./src/bridge";
-import { WebBridge } from "@rnbridge/example-web";
+import { WebView, WebMethod } from "./src/bridge";
 
 function App(): JSX.Element {
-  const webviewRef = React.useRef<RNBridgeWebView<WebBridge>>(null);
+  const webviewRef = React.useRef<RNBridgeWebView>(null);
 
   const handleWebAlert = () => {
-    if (webviewRef.current?.isReady) {
-      webviewRef.current.alert("Hello from React Native!");
+    if (WebMethod.current.isReady) {
+      WebMethod.current.alert("This called from webview");
     }
   };
 

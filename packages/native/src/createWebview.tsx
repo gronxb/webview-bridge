@@ -18,12 +18,23 @@ export type CreateWebViewArgs = {
   debug?: boolean;
 };
 
-export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
+export type Method<T> = T & {
+  isReady: boolean;
+};
+
+export const createWebView = <T extends object>({
+  bridge,
+  debug,
+}: CreateWebViewArgs) => {
+  const WebMethod = {
+    current: {
+      isReady: false,
+    } as Method<T>,
+  };
+
   return {
     WebView: forwardRef<RNBridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
-      const methodRef = useRef({});
-      const [isWebMethodLoaded, setIsWebMethodLoaded] = React.useState(false);
 
       const bridgeNames = useMemo(
         () =>
@@ -33,16 +44,7 @@ export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
         [],
       );
 
-      useImperativeHandle(
-        ref,
-        () =>
-          ({
-            ...webviewRef.current,
-            ...methodRef.current,
-            isReady: isWebMethodLoaded,
-          }) as RNBridgeWebView,
-        [isWebMethodLoaded],
-      );
+      useImperativeHandle(ref, () => webviewRef.current as RNBridgeWebView, []);
 
       return (
         <WebView
@@ -84,13 +86,10 @@ export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
                 const { bridgeNames } = body as {
                   bridgeNames: string[];
                 };
-
-                methodRef.current = handleCreateWebMethod(
-                  webviewRef.current,
-                  bridgeNames,
-                );
-                setIsWebMethodLoaded(true);
-
+                WebMethod.current = {
+                  ...handleCreateWebMethod(webviewRef.current, bridgeNames),
+                  isReady: true,
+                } as Method<T>;
                 return;
               }
             }
@@ -113,5 +112,6 @@ export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
         />
       );
     }),
+    WebMethod,
   };
 };
