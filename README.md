@@ -61,16 +61,16 @@ export const appBridge = bridge({
 // Export the bridge type to be used in the web application
 export type AppBridge = typeof appBridge;
 
-export const { Webview } = createWebView({
+export const { WebView } = createWebView({
   bridge: appBridge,
-  debug: true, // Enable console.log visibility in the native webview
+  debug: true, // Enable console.log visibility in the native WebView
 });
 
-// Use the Webview component in your app
+// Use the WebView component in your app
 function App(): JSX.Element {
   return (
     <SafeAreaView style={{ height: "100%" }}>
-      <Webview
+      <WebView
         source={{
           uri: "http://localhost:5173",
         }}
