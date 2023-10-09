@@ -1,22 +1,3 @@
-import { bridge, createWebView } from "@rnbridge/native";
-import { InAppBrowser } from "react-native-inappbrowser-reborn";
-
-import { WebBridge } from "@rnbridge/example-web";
-
-export const appBridge = bridge({
-  getMessage: () => {
-    return "I'm from native" as const;
-  },
-  openInAppBrowser: async (url: string) => {
-    if (await InAppBrowser.isAvailable()) {
-      await InAppBrowser.open(url);
-    }
-  },
-});
+import { appBridge } from "../App";
 
 export type AppBridge = typeof appBridge;
-
-export const { WebView, WebMethod } = createWebView<WebBridge>({
-  bridge: appBridge,
-  debug: true,
-});
