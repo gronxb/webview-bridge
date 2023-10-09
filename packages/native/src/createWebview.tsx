@@ -11,22 +11,19 @@ import {
   LogType,
 } from "./integrations";
 import { handleCreateWebMethod } from "./integrations/createWebMethod";
-import type { Procedure, ProceduresObject } from "./types";
+import type { Procedure, ProceduresObject, RNBridgeWebView } from "./types";
 
 export type CreateWebViewArgs = {
   bridge: ProceduresObject<Record<string, Procedure>>;
   debug?: boolean;
 };
 
-export const createWebView = <T extends object>({
-  bridge,
-  debug,
-}: CreateWebViewArgs) => {
-  const WebMethod = { current: {} } as { current: T };
-
+export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
   return {
-    WebView: forwardRef<WebView, WebViewProps>((props, ref) => {
+    WebView: forwardRef<RNBridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
+      const methodRef = useRef({});
+      const [isWebMethodLoaded, setIsWebMethodLoaded] = React.useState(false);
 
       const bridgeNames = useMemo(
         () =>
@@ -36,7 +33,16 @@ export const createWebView = <T extends object>({
         [],
       );
 
-      useImperativeHandle(ref, () => webviewRef.current!, []);
+      useImperativeHandle(
+        ref,
+        () =>
+          ({
+            ...webviewRef.current,
+            ...methodRef.current,
+            isReady: isWebMethodLoaded,
+          }) as RNBridgeWebView,
+        [isWebMethodLoaded],
+      );
 
       return (
         <WebView
@@ -79,9 +85,11 @@ export const createWebView = <T extends object>({
                   bridgeNames: string[];
                 };
 
-                WebMethod.current = {
-                  ...handleCreateWebMethod(webviewRef.current, bridgeNames),
-                } as T;
+                methodRef.current = handleCreateWebMethod(
+                  webviewRef.current,
+                  bridgeNames,
+                );
+                setIsWebMethodLoaded(true);
 
                 return;
               }
@@ -105,6 +113,5 @@ export const createWebView = <T extends object>({
         />
       );
     }),
-    WebMethod,
   };
 };
