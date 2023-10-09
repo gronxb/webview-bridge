@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - develop
   pull_request:
 
 name: Integration
@@ -23,5 +22,7 @@ jobs:
             node-version: ${{ matrix.node-version }}
             cache: 'pnpm'
         - run: pnpm install
+        - name: Build
+          run: pnpm build
         - name: TypeScript type check
           run: pnpm test:type
