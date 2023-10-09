@@ -18,7 +18,8 @@
     "package.json"
   ],
   "scripts": {
-    "build": "bob build"
+    "build": "bob build",
+    "test:type": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/react": "^18.2.25",

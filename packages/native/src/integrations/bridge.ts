@@ -1,17 +1,6 @@
 import WebView from "react-native-webview";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Procedure = (...args: any[]) => any;
-
-export type ProceduresObject<T extends Record<string, Procedure>> = {
-  [K in keyof T]: (
-    ...args: Parameters<T[K]>
-  ) => Promise<Awaited<ReturnType<T[K]>>>;
-};
-
-export type Bridge = <T extends Record<string, Procedure>>(
-  procedures: T,
-) => ProceduresObject<T>;
+import type { Bridge, Procedure, ProceduresObject } from "../types";
 
 export const bridge: Bridge = (procedures) => {
   return procedures;
@@ -35,7 +24,7 @@ export const handleBridge = async ({
   const response = await bridge[method]?.(...(args ?? []));
 
   webview.injectJavaScript(`
-    window.bridgeEmitter.emit('${method}-${eventId}',${JSON.stringify(
+    window.nativeEmitter.emit('${method}-${eventId}',${JSON.stringify(
       response,
     )});
   

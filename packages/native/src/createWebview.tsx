@@ -3,20 +3,27 @@ import React from "react";
 import type { WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
 
-import type { Procedure, ProceduresObject } from "./integrations";
 import {
   handleBridge,
   handleLog,
   INTEGRATIONS_SCRIPTS_BRIDGE,
   INTEGRATIONS_SCRIPTS_CONSOLE,
+  LogType,
 } from "./integrations";
+import { handleCreateWebMethod } from "./integrations/createWebMethod";
+import type { Procedure, ProceduresObject } from "./types";
 
-type CreateWebViewArgs = {
+export type CreateWebViewArgs = {
   bridge: ProceduresObject<Record<string, Procedure>>;
   debug?: boolean;
 };
 
-export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
+export const createWebView = <T extends object>({
+  bridge,
+  debug,
+}: CreateWebViewArgs) => {
+  const WebMethod = { current: {} } as { current: T };
+
   return {
     WebView: forwardRef<WebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
@@ -37,24 +44,47 @@ export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
           onMessage={async (event) => {
             props.onMessage?.(event);
 
-            const { method, args, type, eventId } = JSON.parse(
-              event.nativeEvent.data,
-            );
+            if (!webviewRef.current) {
+              return;
+            }
+            const { type, body } = JSON.parse(event.nativeEvent.data);
 
             switch (type) {
-              case "log":
+              case "log": {
+                const { method, args } = body as {
+                  method: LogType;
+                  args: unknown[];
+                };
                 debug && handleLog(method, args);
                 return;
-              case "bridge":
-                webviewRef.current &&
-                  handleBridge({
-                    bridge,
-                    method,
-                    args,
-                    eventId,
-                    webview: webviewRef.current,
-                  });
+              }
+              case "bridge": {
+                const { method, args, eventId } = body as {
+                  method: string;
+                  args: unknown[];
+                  eventId: string;
+                };
+
+                handleBridge({
+                  bridge,
+                  method,
+                  args,
+                  eventId,
+                  webview: webviewRef.current,
+                });
                 return;
+              }
+              case "createWebMethod": {
+                const { bridgeNames } = body as {
+                  bridgeNames: string[];
+                };
+
+                WebMethod.current = {
+                  ...handleCreateWebMethod(webviewRef.current, bridgeNames),
+                } as T;
+
+                return;
+              }
             }
           }}
           injectedJavaScriptBeforeContentLoaded={[
@@ -75,5 +105,6 @@ export const createWebView = ({ bridge, debug }: CreateWebViewArgs) => {
         />
       );
     }),
+    WebMethod,
   };
 };
