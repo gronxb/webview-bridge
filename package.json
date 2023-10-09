@@ -5,7 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "turbo build --filter='./packages/*'"
+    "build": "turbo build --filter='./packages/*'",
+    "test:type": "turbo test:type"
   },
   "keywords": [],
   "author": "",
