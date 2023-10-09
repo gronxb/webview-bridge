@@ -2,11 +2,11 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "@rnbridge/web#tsc": {
-      "outputs": ["dist"]
+      "outputs": ["dist/**"]
     },
     "build": {
       "dependsOn": ["^build", "@rnbridge/web#tsc"],
-      "outputs": ["dist"]
+      "outputs": ["dist/**"]
     },
     "lint": {}
   }

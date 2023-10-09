@@ -26,5 +26,8 @@
   "scripts": {
     "tsc": "tsc --emitDeclarationOnly",
     "build": "node esbuild.config.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.4"
   }
 }

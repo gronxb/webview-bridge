@@ -1,6 +1,6 @@
 import { build } from "esbuild";
 
-Promise.all(
+await Promise.all([
   build({
     entryPoints: ["src/index.ts"],
     bundle: true,
@@ -15,4 +15,7 @@ Promise.all(
     platform: "browser",
     format: "esm",
   }),
-).catch(() => process.exit(0));
+]).catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

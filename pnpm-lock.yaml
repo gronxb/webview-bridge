@@ -17,9 +17,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.7.4
         version: 6.7.4(eslint@8.51.0)(typescript@5.2.2)
-      esbuild:
-        specifier: ^0.19.4
-        version: 0.19.4
       eslint:
         specifier: ^8.51.0
         version: 8.51.0
@@ -164,7 +161,11 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  packages/web: {}
+  packages/web:
+    devDependencies:
+      esbuild:
+        specifier: ^0.19.4
+        version: 0.19.4
 
 packages:
 
