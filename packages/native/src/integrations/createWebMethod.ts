@@ -1,12 +1,12 @@
-import WebView from "react-native-webview";
-
-import { Procedure } from "../types";
 import {
   createRandomId,
   createResolver,
   EventEmitter,
   timeout,
-} from "../utils";
+} from "@rnbridge/util";
+import WebView from "react-native-webview";
+
+import { Procedure } from "../types";
 
 export const handleCreateWebMethod = (
   emitter: EventEmitter,

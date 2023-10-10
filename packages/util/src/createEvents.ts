@@ -3,7 +3,7 @@ interface EventsMap {
   [event: string]: any;
 }
 
-interface DefaultEvents extends EventsMap {
+export interface DefaultEvents extends EventsMap {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [event: string]: (...args: any) => void;
 }

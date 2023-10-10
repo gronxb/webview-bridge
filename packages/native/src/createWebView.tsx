@@ -1,3 +1,4 @@
+import { createEvents } from "@rnbridge/util";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import React from "react";
 import type { WebViewProps } from "react-native-webview";
@@ -12,7 +13,6 @@ import {
 } from "./integrations";
 import { handleCreateWebMethod } from "./integrations/createWebMethod";
 import type { Procedure, ProceduresObject, RNBridgeWebView } from "./types";
-import { createEvents } from "./utils";
 
 export type CreateWebViewArgs = {
   bridge: ProceduresObject<Record<string, Procedure>>;

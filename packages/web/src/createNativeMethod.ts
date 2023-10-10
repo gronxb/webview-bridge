@@ -1,4 +1,9 @@
-import { createEvents, createRandomId, createResolver, timeout } from "./utils";
+import {
+  createEvents,
+  createRandomId,
+  createResolver,
+  timeout,
+} from "@rnbridge/util";
 
 const emitter = createEvents();
 

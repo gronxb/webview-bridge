@@ -1,5 +1,6 @@
+import { createEvents } from "@rnbridge/util";
+
 import type { Bridge } from "./types";
-import { createEvents } from "./utils";
 
 export const createWebMethod: Bridge = (bridge) => {
   const bridgeEntries = Object.entries(bridge);
