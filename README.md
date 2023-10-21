@@ -1,4 +1,4 @@
-# rnbridge (WIP)
+# rnbridge
 
 [![NPM](https://img.shields.io/npm/v/%40rnbridge%2Fnative/latest?label=%40rnbridge%2Fnative)](https://www.npmjs.com/package/@rnbridge/native)
 [![NPM](https://img.shields.io/npm/v/%40rnbridge%2Fweb/latest?label=%40rnbridge%2Fweb)](https://www.npmjs.com/package/@rnbridge/web)
@@ -41,8 +41,8 @@ $ npm install @rnbridge/web
 ```
 
 ## Getting Started
-
-### React Native
+### Using React Native Methods in Web
+* React Native
 
 ```tsx
 import { createWebView } from "@rnbridge/native";
@@ -83,9 +83,7 @@ function App(): JSX.Element {
 
 export default App;
 ```
-
-### Web
-
+* Web
 ```tsx
 import { createNativeMethod } from "@rnbridge/web";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
@@ -94,6 +92,43 @@ const nativeMethod = createNativeMethod<AppBridge>();
 
 nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
 nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
+```
+### Using Web Methods in React Native
+* Web
+
+```tsx
+import { createNativeMethod, createWebMethod } from "@rnbridge/web";
+
+// Register functions in the createWebMethod object in your web code
+export const webBridge = createWebMethod({
+  alert: (message: string) => {
+    window.alert(message);
+  },
+  sum: (a: number, b: number) => {
+    return a + b;
+  },
+  // ... Add more functions as needed
+});
+
+// Export the bridge type to be used in the web application
+export type WebBridge = typeof webBridge;
+```
+
+* React Native
+```tsx
+// When you bridge a webview, a WebMethod is extracted.
+export const { WebMethod } = createWebView<WebBridge>({
+  // .. 
+});
+
+// When the value of the WebMethod is binding, it is checked with isReady and executed.
+if (WebMethod.current.isReady) {
+  WebMethod.current.alert("This called from webview");
+}
+
+if (WebMethod.current.isReady) {
+  WebMethod.current.sum(1, 2).then((result) => setValue(result));
+}
 ```
 
 ## Exporting Type Declarations
