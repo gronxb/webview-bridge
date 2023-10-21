@@ -1,6 +1,6 @@
 {
   "name": "@rnbridge/native",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Integration React Native Webview and Web",
   "main": "dist/packages/native/src/index.js",
