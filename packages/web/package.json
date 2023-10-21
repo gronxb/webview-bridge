@@ -17,12 +17,12 @@
   ],
   "main": "/dist/commonjs/index.cjs",
   "module": "/dist/module/index.mjs",
-  "types": "/dist/typescript/index.d.ts",
+  "types": "/dist/typescript/web/src/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/module/index.mjs",
       "require": "./dist/commonjs/index.cjs",
-      "types": "./dist/typescript/index.d.ts"
+      "types": "./dist/typescript/web/src/index.d.ts"
     }
   },
   "scripts": {

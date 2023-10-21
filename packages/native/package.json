@@ -1,10 +1,10 @@
 {
   "name": "@rnbridge/native",
   "version": "0.0.2",
+  "type": "module",
   "description": "Integration React Native Webview and Web",
-  "main": "dist/commonjs/index.js",
-  "module": "dist/module/index.js",
-  "types": "dist/typescript/index.d.ts",
+  "main": "dist/native/src/index.js",
+  "types": "dist/native/src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -18,27 +18,17 @@
     "package.json"
   ],
   "scripts": {
-    "build": "bob build",
+    "build": "tspc",
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/react": "^18.2.25",
     "react": "^18.2.0",
-    "react-native-builder-bob": "^0.23.1",
     "react-native-webview": "^13.6.2",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "react": ">=18.2.0",
     "react-native-webview": ">=^13.6.2"
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "dist",
-    "targets": [
-      "commonjs",
-      "module",
-      "typescript"
-    ]
   }
 }

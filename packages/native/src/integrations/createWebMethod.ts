@@ -1,7 +1,7 @@
 import {
   createRandomId,
   createResolver,
-  EventEmitter,
+  type EventEmitter,
   timeout,
 } from "@rnbridge/util";
 import WebView from "react-native-webview";

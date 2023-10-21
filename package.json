@@ -15,14 +15,17 @@
     "@babel/runtime": "^7.20.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
+    "esbuild": "^0.19.4",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "prettier": "^3.0.3",
+    "ts-patch": "^3.0.2",
     "turbo": "^1.10.15",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "typescript-transform-paths": "^3.4.6"
   },
   "packageManager": "pnpm@8.9.0"
 }
