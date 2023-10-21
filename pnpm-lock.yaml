@@ -164,13 +164,13 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  packages/util: {}
-
   packages/web:
     devDependencies:
       esbuild:
         specifier: ^0.19.4
         version: 0.19.4
+
+  shared/util: {}
 
 packages:
 
