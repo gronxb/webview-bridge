@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "./packages",
+    "baseUrl": ".",
     "paths": {
-      "@rnbridge/util": ["util/src"]
+      "@rnbridge/util": ["shared/util/src"]
     },
     "plugins": [
       { "transform": "typescript-transform-paths" },

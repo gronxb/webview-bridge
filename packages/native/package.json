@@ -3,8 +3,8 @@
   "version": "0.0.2",
   "type": "module",
   "description": "Integration React Native Webview and Web",
-  "main": "dist/native/src/index.js",
-  "types": "dist/native/src/index.d.ts",
+  "main": "dist/packages/native/src/index.js",
+  "types": "dist/packages/native/src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
