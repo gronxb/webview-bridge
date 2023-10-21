@@ -18,26 +18,26 @@ Inspired by the functionality of `tRPC`, `rnbridge` simplifies the communication
 
 ### React Native Project
 ```sh
-# Using npm:
-$ npm install @rnbridge/native react-native-webview
+# Using pnpm:
+$ pnpm add @rnbridge/native react-native-webview
 
 # Using yarn:
 $ yarn add @rnbridge/native react-native-webview
 
-# Using pnpm:
-$ pnpm add @rnbridge/native react-native-webview
+# Using npm:
+$ npm install @rnbridge/native react-native-webview
 ```
 ### Web Project
 
 ```sh
-# Using npm:
-$ npm install @rnbridge/web
+# Using pnpm:
+$ pnpm add @rnbridge/web
 
 # Using yarn:
 $ yarn add @rnbridge/web
 
-# Using pnpm:
-$ pnpm add @rnbridge/web
+# Using npm:
+$ npm install @rnbridge/web
 ```
 
 ## Getting Started
