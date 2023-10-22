@@ -8,7 +8,8 @@
 Inspired by the functionality of `tRPC`, `rnbridge` simplifies the communication process between `react-native-webview` and web applications.
 
 **Key Features:**
-- Zero Dependencies
+- Built upon `react-native-webview`.
+- Designed with zero external dependencies (except for `react-native-webview`).
 - Type-Safety
 
 ![rnbridge](https://github.com/gronxb/rnbridge/assets/41789633/02cd8d69-6d93-4cac-8b2b-75b637c54bc7)
