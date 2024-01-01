@@ -37,10 +37,18 @@ $ yarn add -D @rnbridge/web
 
 :::
 
-## Using React Native Methods in Web
+## Using a Native Method
+
+This guide covers how to use methods declared in React Native within a web.
+
+
 ### React Native Part
 
 Register functions in the bridge object in your React Native code
+
+::: warning IMPORTANT
+You need to export the created `typeof appBridge` and share its type with the web project. Failing to do so will result in a lack of type safety. This principle is similar to how `tRPC` operates.
+:::
 
 ```tsx
 import { createWebView } from "@rnbridge/native";
@@ -110,43 +118,4 @@ const nativeMethod = linkNativeMethod<AppBridge>();
 nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
 nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 ```
-### Using Web Methods in React Native
-* Web
 
-```tsx
-import { linkNativeMethod, registerWebMethod } from "@rnbridge/web";
-
-// Register functions in the registerWebMethod object in your web code
-export const webBridge = registerWebMethod({
-  alert: (message: string) => {
-    window.alert(message);
-  },
-  sum: (a: number, b: number) => {
-    return a + b;
-  },
-  // ... Add more functions as needed
-});
-
-// Export the bridge type to be used in the web application
-export type WebBridge = typeof webBridge;
-```
-
-* React Native
-```tsx
-// When you bridge a webview, a linkWebMethod is extracted.
-export const { linkWebMethod } = createWebView({
-  // .. 
-});
-
-const WebMethod = linkWebMethod<WebBridge>();
-
-
-// When the value of the WebMethod is binding, it is checked with isReady and executed.
-if (WebMethod.current.isReady) {
-  WebMethod.current.alert("This called from webview");
-}
-
-if (WebMethod.current.isReady) {
-  WebMethod.current.sum(1, 2).then((result) => setValue(result));
-}
-```
