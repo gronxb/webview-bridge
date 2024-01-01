@@ -7,7 +7,7 @@ import {
 
 const emitter = createEvents();
 
-export const linkNativeMethod = <T = unknown>(
+export const linkNativeMethod = <T extends object>(
   options = {
     timeout: 2000,
   },
@@ -21,11 +21,12 @@ export const linkNativeMethod = <T = unknown>(
     window.nativeEmitter = emitter;
   }
 
-  return bridgeMethods.reduce((acc, method) => {
+  const target = bridgeMethods.reduce((acc, method) => {
     return {
       ...acc,
       [method]: (...args: unknown[]) => {
         const eventId = createRandomId();
+
         return Promise.race([
           createResolver(emitter, method, eventId, () => {
             window.ReactNativeWebView.postMessage(
@@ -44,4 +45,22 @@ export const linkNativeMethod = <T = unknown>(
       },
     };
   }, {} as T);
+
+  return new Proxy(target, {
+    get: (target, prop: string) => {
+      if (prop in target) {
+        return (target as { [key: string]: () => string })[prop];
+      }
+
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: "fallback",
+          body: {
+            method: prop,
+          },
+        }),
+      );
+      console.warn(`[linkMethod] ${prop} is not defined`);
+    },
+  });
 };

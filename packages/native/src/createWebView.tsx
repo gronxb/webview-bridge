@@ -33,6 +33,7 @@ export const createWebView = <
   bridge,
   debug,
   responseTimeout = 2000,
+  fallback,
 }: CreateWebViewArgs<T>) => {
   const WebMethod = {
     current: {
@@ -112,6 +113,13 @@ export const createWebView = <
             };
 
             emitter.emit(`${funcName}-${eventId}`, value);
+            return;
+          }
+          case "fallback": {
+            const { method } = body as {
+              method: keyof T;
+            };
+            fallback?.(method);
             return;
           }
         }

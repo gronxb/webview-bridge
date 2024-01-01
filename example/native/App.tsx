@@ -25,6 +25,9 @@ export const appBridge = bridge({
 export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,
   debug: true,
+  fallback: (method) => {
+    console.warn(`Method '${method}' not found in native`);
+  },
 });
 
 const WebMethod = linkWebMethod<WebBridge>();
