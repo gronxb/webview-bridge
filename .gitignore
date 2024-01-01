@@ -63,5 +63,5 @@ vendor/bundle/
 
 
 dist
-
-.turbo
+cache
+temp

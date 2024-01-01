@@ -2,7 +2,7 @@
   "name": "@rnbridge/web",
   "type": "module",
   "version": "1.0.0",
-  "description": "Integration React Native Webview and Web",
+  "description": "Integration Web and React Native Webview",
   "publishConfig": {
     "access": "public"
   },

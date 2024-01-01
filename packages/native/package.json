@@ -1,8 +1,8 @@
 {
   "name": "@rnbridge/native",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Integration React Native Webview and Web",
+  "description": "Integration Web and React Native Webview",
   "main": "dist/packages/native/src/index.js",
   "types": "dist/packages/native/src/index.d.ts",
   "publishConfig": {
