@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "jsx": "react-native",
-    "lib": ["esnext", "DOM"],
-    "module": "esnext",
-    "strict": true,
-    "target": "esnext"
-  }
-}
