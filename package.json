@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "build": "pnpm -r build",
-    "test:type": "pnpm -r test:type"
+    "test:type": "pnpm -r test:type",
+    "docs:build": "pnpm -r docs:build"
   },
   "keywords": [],
   "author": "",
@@ -26,5 +27,5 @@
     "typescript": "^5.2.2",
     "typescript-transform-paths": "^3.4.6"
   },
-  "packageManager": "pnpm@8.9.2"
+  "packageManager": "pnpm@8.10.3"
 }

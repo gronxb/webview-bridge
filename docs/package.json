@@ -1,16 +1,19 @@
 {
   "name": "@rnbridge/docs",
   "version": "1.0.0",
-  "description": "",
+  "description": "Integration Web and React Native Webview",
+  "homepage": "https://gronxb.github.io/rnbridge/",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "gh-pages": "^6.1.1",
     "vitepress": "1.0.0-rc.34"
   },
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "deploy": "gh-pages -d build"
   }
 }
