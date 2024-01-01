@@ -27,10 +27,11 @@ export const linkNativeMethod = <T extends object>(
     onFallback,
   } = options;
 
-  const bridgeMethods = window.__bridgeMethods__;
-  if (!bridgeMethods || !window.ReactNativeWebView) {
-    throw new Error("Bridge methods not found");
+  if (!window.ReactNativeWebView) {
+    console.warn("[RNBridge] Not in a WebView environment");
   }
+
+  const bridgeMethods = window.__bridgeMethods__ ?? [];
 
   if (!window.nativeEmitter) {
     window.nativeEmitter = emitter;
@@ -44,7 +45,7 @@ export const linkNativeMethod = <T extends object>(
 
         return Promise.race([
           createResolver(emitter, method, eventId, () => {
-            window.ReactNativeWebView.postMessage(
+            window.ReactNativeWebView?.postMessage(
               JSON.stringify({
                 type: "bridge",
                 body: {
@@ -66,7 +67,7 @@ export const linkNativeMethod = <T extends object>(
       if (method in target) {
         return (target as { [key: string]: () => string })[method];
       }
-      window.ReactNativeWebView.postMessage(
+      window.ReactNativeWebView?.postMessage(
         JSON.stringify({
           type: "fallback",
           body: {

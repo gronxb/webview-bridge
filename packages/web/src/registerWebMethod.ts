@@ -3,6 +3,11 @@ import { createEvents } from "@rnbridge/util";
 import type { Bridge } from "./types";
 
 export const registerWebMethod: Bridge = (bridge) => {
+  if (!window.ReactNativeWebView) {
+    console.warn("[RNBridge] Not in a WebView environment");
+    return bridge;
+  }
+
   const bridgeEntries = Object.entries(bridge);
   const bridgeNames = Object.keys(bridge);
   const emitter = createEvents();
@@ -12,7 +17,7 @@ export const registerWebMethod: Bridge = (bridge) => {
   for (const [funcName, func] of bridgeEntries) {
     const $func = async (eventId: string, args: unknown[]) => {
       const value = await func(...args);
-      window.ReactNativeWebView.postMessage(
+      window.ReactNativeWebView?.postMessage(
         JSON.stringify({
           type: "webMethodResponse",
           body: { funcName, eventId, value },
@@ -24,7 +29,7 @@ export const registerWebMethod: Bridge = (bridge) => {
   }
 
   const register = () => {
-    window.ReactNativeWebView.postMessage(
+    window.ReactNativeWebView?.postMessage(
       JSON.stringify({
         type: "registerWebMethod",
         body: { bridgeNames },

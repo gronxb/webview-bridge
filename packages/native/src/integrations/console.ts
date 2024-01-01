@@ -6,7 +6,7 @@ export const INTEGRATIONS_SCRIPTS_CONSOLE = `
 
   console.log = function() {
     var message = Array.from(arguments).join(' ');
-    window.ReactNativeWebView.postMessage(
+    window.ReactNativeWebView?.postMessage(
       JSON.stringify({ type: "log", body: { method: "log", args: message } }),
     );
     originalConsoleLog.apply(console, arguments);
@@ -14,7 +14,7 @@ export const INTEGRATIONS_SCRIPTS_CONSOLE = `
 
   console.error = function() {
     var message = Array.from(arguments).join(' ');
-    window.ReactNativeWebView.postMessage(
+    window.ReactNativeWebView?.postMessage(
       JSON.stringify({ type: "log", body: { method: "error", args: message } }),
     );
     originalConsoleError.apply(console, arguments);
@@ -22,7 +22,7 @@ export const INTEGRATIONS_SCRIPTS_CONSOLE = `
 
   console.warn = function() {
     var message = Array.from(arguments).join(' ');
-    window.ReactNativeWebView.postMessage(
+    window.ReactNativeWebView?.postMessage(
       JSON.stringify({ type: "log", body: { method: "warn", args: message } }),
     );
     originalConsoleWarn.apply(console, arguments);
