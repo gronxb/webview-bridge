@@ -86,10 +86,10 @@ export default App;
 ```
 * Web
 ```tsx
-import { createNativeMethod } from "@rnbridge/web";
+import { linkNativeMethod } from "@rnbridge/web";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
-const nativeMethod = createNativeMethod<AppBridge>();
+const nativeMethod = linkNativeMethod<AppBridge>();
 
 nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
 nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
@@ -98,7 +98,7 @@ nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 * Web
 
 ```tsx
-import { createNativeMethod, createWebMethod } from "@rnbridge/web";
+import { linkNativeMethod, createWebMethod } from "@rnbridge/web";
 
 // Register functions in the createWebMethod object in your web code
 export const webBridge = createWebMethod({
@@ -117,10 +117,13 @@ export type WebBridge = typeof webBridge;
 
 * React Native
 ```tsx
-// When you bridge a webview, a WebMethod is extracted.
-export const { WebMethod } = createWebView<WebBridge>({
+// When you bridge a webview, a linkWebMethod is extracted.
+export const { linkWebMethod } = createWebView({
   // .. 
 });
+
+const WebMethod = linkWebMethod<WebBridge>();
+
 
 // When the value of the WebMethod is binding, it is checked with isReady and executed.
 if (WebMethod.current.isReady) {

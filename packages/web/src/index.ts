@@ -1,3 +1,3 @@
-export * from "./createNativeMethod";
 export * from "./createWebMethod";
+export * from "./linkNativeMethod";
 export * from "./types";

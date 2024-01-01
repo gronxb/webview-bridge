@@ -7,7 +7,7 @@ import {
 
 const emitter = createEvents();
 
-export const createNativeMethod = <T = unknown>(
+export const linkNativeMethod = <T = unknown>(
   options = {
     timeout: 2000,
   },

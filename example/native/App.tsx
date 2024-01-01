@@ -22,10 +22,12 @@ export const appBridge = bridge({
   },
 });
 
-export const { WebView, WebMethod } = createWebView<WebBridge>({
+export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,
   debug: true,
 });
+
+const WebMethod = linkWebMethod<WebBridge>();
 
 function App(): JSX.Element {
   const [value, setValue] = useState(0);
@@ -33,6 +35,8 @@ function App(): JSX.Element {
   const webviewRef = React.useRef<RNBridgeWebView>(null);
 
   const handleWebAlert = () => {
+    console.log(WebMethod);
+
     if (WebMethod.current.isReady) {
       WebMethod.current.alert("This called from webview");
     }
