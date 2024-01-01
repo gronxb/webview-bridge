@@ -38,4 +38,5 @@ export default defineConfig({
       { icon: "github", link: "https://github.com/gronxb/rnbridge" },
     ],
   },
+  base: "/rnbridge/",
 });
