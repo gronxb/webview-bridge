@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "pnpm -r build",
-    "test:type": "turbo test:type"
+    "test:type": "pnpm -r test:type"
   },
   "keywords": [],
   "author": "",
