@@ -1,3 +1,4 @@
 export * from "./createWebMethod";
+export * from "./error";
 export * from "./linkNativeMethod";
-export * from "./types";
+export type * from "./types";

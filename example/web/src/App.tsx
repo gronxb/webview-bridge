@@ -12,7 +12,9 @@ export const webBridge = createWebMethod({
   },
 });
 
-const nativeMethod = linkNativeMethod<AppBridge>();
+const nativeMethod = linkNativeMethod<AppBridge>({
+  throwOnError: true,
+});
 
 function App() {
   const [message, setMessage] = useState("");
@@ -28,9 +30,9 @@ function App() {
       <h1>This is a web page.</h1>
       <h1>{message}</h1>
       <button
-        onClick={() =>
-          nativeMethod.openInAppBrowser("https://github.com/gronxb/rnbridge")
-        }
+        onClick={() => {
+          nativeMethod.openInAppBrowser("https://github.com/gronxb/rnbridge");
+        }}
       >
         open InAppBrowser
       </button>

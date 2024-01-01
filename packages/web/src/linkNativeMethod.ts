@@ -5,13 +5,28 @@ import {
   timeout,
 } from "@rnbridge/util";
 
+import { MethodNotFoundError } from "./error";
+
 const emitter = createEvents();
 
+export interface LinkNativeMethodOptions<T extends object> {
+  timeout?: number;
+  throwOnError?: boolean;
+  onFallback?: (method: keyof T) => void;
+}
+
 export const linkNativeMethod = <T extends object>(
-  options = {
+  options: LinkNativeMethodOptions<T> = {
     timeout: 2000,
+    throwOnError: false,
   },
 ) => {
+  const {
+    timeout: timeoutMs = 2000,
+    throwOnError = false,
+    onFallback,
+  } = options;
+
   const bridgeMethods = window.__bridgeMethods__;
   if (!bridgeMethods || !window.ReactNativeWebView) {
     throw new Error("Bridge methods not found");
@@ -40,27 +55,33 @@ export const linkNativeMethod = <T extends object>(
               }),
             );
           }),
-          timeout(options.timeout),
+          timeout(timeoutMs),
         ]);
       },
     };
   }, {} as T);
 
   return new Proxy(target, {
-    get: (target, prop: string) => {
-      if (prop in target) {
-        return (target as { [key: string]: () => string })[prop];
+    get: (target, method: string) => {
+      if (method in target) {
+        return (target as { [key: string]: () => string })[method];
       }
-
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
           type: "fallback",
           body: {
-            method: prop,
+            method,
           },
         }),
       );
-      console.warn(`[linkMethod] ${prop} is not defined`);
+      onFallback?.(method as keyof T);
+
+      if (throwOnError) {
+        return () => Promise.reject(new MethodNotFoundError(method));
+      } else {
+        console.warn(`[RNBridge] ${method} is not defined, using fallback.`);
+      }
+      return () => Promise.resolve();
     },
   });
 };
