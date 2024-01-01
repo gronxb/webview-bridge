@@ -2,7 +2,7 @@ import { createEvents } from "@rnbridge/util";
 
 import type { Bridge } from "./types";
 
-export const createWebMethod: Bridge = (bridge) => {
+export const registerWebMethod: Bridge = (bridge) => {
   const bridgeEntries = Object.entries(bridge);
   const bridgeNames = Object.keys(bridge);
   const emitter = createEvents();
@@ -26,7 +26,7 @@ export const createWebMethod: Bridge = (bridge) => {
   const register = () => {
     window.ReactNativeWebView.postMessage(
       JSON.stringify({
-        type: "createWebMethod",
+        type: "registerWebMethod",
         body: { bridgeNames },
       }),
     );

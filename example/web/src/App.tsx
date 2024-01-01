@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { linkNativeMethod, createWebMethod } from "@rnbridge/web";
+import { linkNativeMethod, registerWebMethod } from "@rnbridge/web";
 import type { AppBridge } from "@rnbridge/example-native";
 
-export const webBridge = createWebMethod({
+export const webBridge = registerWebMethod({
   alert: (message: string) => {
     window.alert(message);
   },

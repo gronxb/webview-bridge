@@ -98,10 +98,10 @@ nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 * Web
 
 ```tsx
-import { linkNativeMethod, createWebMethod } from "@rnbridge/web";
+import { linkNativeMethod, registerWebMethod } from "@rnbridge/web";
 
-// Register functions in the createWebMethod object in your web code
-export const webBridge = createWebMethod({
+// Register functions in the registerWebMethod object in your web code
+export const webBridge = registerWebMethod({
   alert: (message: string) => {
     window.alert(message);
   },
@@ -146,3 +146,4 @@ To enhance your experience with rnbridge, it's recommended to export the type de
 ## Contributor Guide
 
 If you would like to contribute to rnbridge by submitting bug fixes or performance improvements, please refer to our [CONTRIBUTING.md](https://github.com/brandazine/rnbridge/blob/main/CONTRIBUTING.md) guide for detailed instructions. We welcome and appreciate your contributions.
+

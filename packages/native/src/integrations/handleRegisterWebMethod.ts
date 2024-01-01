@@ -8,7 +8,7 @@ import WebView from "react-native-webview";
 
 import { Procedure } from "../types";
 
-export const handleCreateWebMethod = (
+export const handleRegisterWebMethod = (
   emitter: EventEmitter,
   webview: WebView,
   bridgeNames: string[],

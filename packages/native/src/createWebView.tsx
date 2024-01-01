@@ -11,7 +11,7 @@ import {
   INTEGRATIONS_SCRIPTS_CONSOLE,
   LogType,
 } from "./integrations";
-import { handleCreateWebMethod } from "./integrations/createWebMethod";
+import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { Procedure, ProceduresObject, RNBridgeWebView } from "./types";
 
 export type CreateWebViewArgs<
@@ -89,13 +89,13 @@ export const createWebView = <
             });
             return;
           }
-          case "createWebMethod": {
+          case "registerWebMethod": {
             const { bridgeNames } = body as {
               bridgeNames: string[];
             };
             Object.assign(
               WebMethod.current,
-              handleCreateWebMethod(
+              handleRegisterWebMethod(
                 emitter,
                 webviewRef.current,
                 bridgeNames,
