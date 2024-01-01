@@ -26,8 +26,8 @@
     }
   },
   "scripts": {
-    "tsc": "tsc --emitDeclarationOnly",
-    "build": "node esbuild.config.js",
+    "prepare": "pnpm build",
+    "build": "node esbuild.config.js && tsc --emitDeclarationOnly",
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {

@@ -35,8 +35,6 @@ function App(): JSX.Element {
   const webviewRef = React.useRef<RNBridgeWebView>(null);
 
   const handleWebAlert = () => {
-    console.log(WebMethod);
-
     if (WebMethod.current.isReady) {
       WebMethod.current.alert("This called from webview");
     }
