@@ -36,6 +36,24 @@ export default defineConfig({
           },
         ],
       },
+      {
+        text: "API Reference",
+        items: [
+          {
+            text: "React Native",
+            base: "/reference/react-native-",
+            items: [{ text: "createWebView", link: "create-webview" }],
+          },
+          {
+            text: "Web",
+            base: "/reference/web-",
+            items: [
+              { text: "linkNativeMethod", link: "link-native-method" },
+              { text: "registerWebMethod", link: "register-web-method" },
+            ],
+          },
+        ],
+      },
     ],
 
     socialLinks: [
