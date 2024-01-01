@@ -30,6 +30,10 @@ export default defineConfig({
             text: "Using a Web Method",
             link: "/using-a-web-method",
           },
+          {
+            text: "Backward Compatibility",
+            link: "/backward-compatibility",
+          },
         ],
       },
     ],
