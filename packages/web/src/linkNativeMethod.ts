@@ -11,7 +11,7 @@ const emitter = createEvents();
 
 export interface LinkNativeMethodOptions<T extends object> {
   timeout?: number;
-  throwOnError?: boolean;
+  throwOnError?: boolean | (keyof T)[];
   onFallback?: (method: keyof T) => void;
 }
 
@@ -77,7 +77,12 @@ export const linkNativeMethod = <T extends object>(
       );
       onFallback?.(method as keyof T);
 
-      if (throwOnError) {
+      if (throwOnError === true) {
+        return () => Promise.reject(new MethodNotFoundError(method));
+      } else if (
+        Array.isArray(throwOnError) &&
+        throwOnError.includes(method as keyof T)
+      ) {
         return () => Promise.reject(new MethodNotFoundError(method));
       } else {
         console.warn(`[RNBridge] ${method} is not defined, using fallback.`);
