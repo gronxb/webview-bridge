@@ -10,7 +10,9 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Guide", link: "/getting-started" },
     ],
-
+    search: {
+      provider: "local",
+    },
     sidebar: [
       {
         text: "Introduction",

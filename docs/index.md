@@ -13,8 +13,8 @@ hero:
       text: View on GitHub
       link: https://github.com/gronxb/rnbridge
 
-features:
 
+features:
   - icon: ✅
     title: Type Safety
     details: Guarantees reliable and error-free communication, enhancing development efficiency.
@@ -30,9 +30,12 @@ features:
   - icon: 🛠️
     title: Zero Dependencies
     details: Operates with `react-native-webview` alone, ensuring simple and streamlined integration.
-
-  
 ---
+
+
+  <div class="demo">
+      <video src="/demo.mp4" autoplay muted loop />
+  </div>
 
 
 <style>
@@ -41,5 +44,20 @@ features:
   --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #e09fff 30%, #64daff);
 
   --vp-home-hero-image-filter: blur(44px);
+}
+
+.demo {
+  padding: 24px;
+  border-radius: 12px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  video {
+    border-radius: 12px;
+    width: 1152px;
+  }
 }
 </style>
