@@ -14,7 +14,8 @@ Inspired by the functionality of `tRPC`, `rnbridge` simplifies the communication
 - Backward Compatibility
 - No App Review Needed
 
-![rnbridge](https://github.com/gronxb/rnbridge/assets/41789633/02cd8d69-6d93-4cac-8b2b-75b637c54bc7)
+![rnbridge](https://github.com/gronxb/rnbridge/assets/41789633/a93e6439-f410-42ac-bc4b-b8f32213a537)
+
 
 ## Documentation
 visit [Docs](https://gronxb.github.io/rnbridge)
