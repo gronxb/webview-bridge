@@ -20,6 +20,9 @@ Inspired by the functionality of `tRPC`, `rnbridge` simplifies the communication
 ## Documentation
 visit [Docs](https://gronxb.github.io/rnbridge)
 
+## Example
+visit [Example](https://github.com/gronxb/rnbridge-example)
+
 ## Exporting Type Declarations
 To enhance your experience with rnbridge, it's recommended to export the type declaration of the native bridge object to the web application. Here are a few ways to achieve this:
 

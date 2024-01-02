@@ -12,7 +12,9 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/gronxb/rnbridge
-
+    - theme: alt
+      text: View on Example
+      link: https://github.com/gronxb/rnbridge-example
 
 features:
   - icon: ✅
