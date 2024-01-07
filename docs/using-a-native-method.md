@@ -11,8 +11,7 @@ You need to export the created `typeof appBridge` and share its type with the we
 :::
 
 ```tsx
-import { createWebView } from "@webview-bridge/react-native";
-import { bridge } from "@webview-bridge/react-native";
+import { createWebView, bridge } from "@webview-bridge/react-native";
 
 // Register functions in the bridge object in your React Native code
 export const appBridge = bridge({
