@@ -16,7 +16,7 @@ Assuming the contents of `src/bridge.ts` are as follows:
 
 ```ts
 // This file is src/bridge.ts
-import { bridge } from "@webview-bridge/native";
+import { bridge } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
 export const appBridge = bridge({

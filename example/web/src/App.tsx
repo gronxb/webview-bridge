@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
-import type { AppBridge } from "@webview-bridge/example-native";
+import type { AppBridge } from "src/bridge";
 
 export const webBridge = registerWebMethod({
   alert: (message: string) => {

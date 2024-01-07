@@ -3,8 +3,8 @@
   "version": "1.0.2",
   "type": "module",
   "description": "Integration Web and React Native WebView",
-  "main": "dist/packages/native/src/index.js",
-  "types": "dist/packages/native/src/index.d.ts",
+  "main": "dist/packages/react-native/src/index.js",
+  "types": "dist/packages/react-native/src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },

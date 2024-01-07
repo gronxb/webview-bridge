@@ -43,7 +43,7 @@ Define your bridge functions in a separate file for clarity and organization. Fo
 
 ```ts
 // This file is src/bridge.ts
-import { bridge } from "@webview-bridge/native";
+import { bridge } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
 export const appBridge = bridge({

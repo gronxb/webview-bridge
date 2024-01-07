@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@webview-bridge/example-native": ["../native/src/bridge.ts"],
+      "@webview-bridge/example-native": ["../react-native/src/bridge.ts"],
       "@webview-bridge/example-web": ["../web/src/bridge.ts"]
     },
     "target": "ES2020",

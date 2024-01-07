@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@webview-bridge/example-native": ["../native/src/bridge.ts"],
+      "@webview-bridge/example-native": ["src/bridge.ts"],
       "@webview-bridge/example-web": ["../web/src/bridge.ts"]
     },
     "lib": ["DOM"],

@@ -1,7 +1,7 @@
 # webview-bridge
 
-[![NPM](https://img.shields.io/npm/v/%40rnbridge%2Fnative/latest?label=%40rnbridge%2Fnative)](https://www.npmjs.com/package/@webview-bridge/react-native)
-[![NPM](https://img.shields.io/npm/v/%40rnbridge%2Fweb/latest?label=%40rnbridge%2Fweb)](https://www.npmjs.com/package/@webview-bridge/web)
+[![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Freact-native/latest?label=%40webview-bridge%2Freact-native)](https://www.npmjs.com/package/@webview-bridge/react-native)
+[![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Fweb/latest?label=%40webview-bridge%2Fweb)](https://www.npmjs.com/package/@webview-bridge/web)
 
 `webview-bridge` is a powerful interface that acts as a bridge between React Native and web applications using `react-native-webview`. It providing seamless interaction and ensuring type safety.
 
@@ -35,4 +35,4 @@ To enhance your experience with webview-bridge, it's recommended to export the t
 
 ## Contributor Guide
 
-If you would like to contribute to webview-bridge by submitting bug fixes or performance improvements, please refer to our [CONTRIBUTING.md](https://github.com/brandazine/webview-bridge/blob/main/CONTRIBUTING.md) guide for detailed instructions. We welcome and appreciate your contributions.
+If you would like to contribute to webview-bridge by submitting bug fixes or performance improvements, please refer to our [CONTRIBUTING.md](https://github.com/gronxb/webview-bridge/blob/main/CONTRIBUTING.md) guide for detailed instructions. We welcome and appreciate your contributions.
