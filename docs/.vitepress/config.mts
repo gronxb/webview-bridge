@@ -39,19 +39,33 @@ export default defineConfig({
         ],
       },
       {
+        text: "Exporting Type Declarations",
+        base: "/exporting-type-declarations",
+        items: [
+          {
+            text: "Multi Repository",
+            link: "/multi-repository",
+          },
+          {
+            text: "Mono Repository",
+            link: "/mono-repository",
+          },
+        ],
+      },
+      {
         text: "API Reference",
         items: [
           {
             text: "React Native",
-            base: "/reference/react-native-",
-            items: [{ text: "createWebView", link: "create-webview" }],
+            base: "/reference/react-native",
+            items: [{ text: "createWebView", link: "/create-webview" }],
           },
           {
             text: "Web",
-            base: "/reference/web-",
+            base: "/reference/web",
             items: [
-              { text: "linkNativeMethod", link: "link-native-method" },
-              { text: "registerWebMethod", link: "register-web-method" },
+              { text: "linkNativeMethod", link: "/link-native-method" },
+              { text: "registerWebMethod", link: "/register-web-method" },
             ],
           },
         ],
