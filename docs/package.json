@@ -1,8 +1,8 @@
 {
-  "name": "@rnbridge/docs",
+  "name": "@webview-bridge/docs",
   "version": "1.0.0",
-  "description": "Integration Web and React Native Webview",
-  "homepage": "https://gronxb.github.io/rnbridge/",
+  "description": "Integration Web and React Native WebView",
+  "homepage": "https://gronxb.github.io/webview-bridge/",
   "keywords": [],
   "author": "",
   "license": "ISC",

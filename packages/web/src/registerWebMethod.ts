@@ -1,10 +1,10 @@
-import { createEvents } from "@rnbridge/util";
+import { createEvents } from "@webview-bridge/util";
 
 import type { Bridge } from "./types";
 
 export const registerWebMethod: Bridge = (bridge) => {
   if (!window.ReactNativeWebView) {
-    console.warn("[RNBridge] Not in a WebView environment");
+    console.warn("[WebViewBridge] Not in a WebView environment");
     return bridge;
   }
 

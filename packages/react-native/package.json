@@ -1,0 +1,35 @@
+{
+  "name": "@webview-bridge/react-native",
+  "version": "1.0.1",
+  "type": "module",
+  "description": "Integration Web and React Native WebView",
+  "main": "dist/packages/react-native/src/index.js",
+  "types": "dist/packages/react-native/src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gronxb/webview-bridge.git"
+  },
+  "license": "MIT",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "prepare": "pnpm build",
+    "build": "tspc",
+    "test:type": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.25",
+    "react": "^18.2.0",
+    "react-native-webview": "^13.6.2",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native-webview": "*"
+  }
+}

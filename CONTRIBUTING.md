@@ -20,7 +20,7 @@ $ pnpm build
 ## React Native (iOS) Start
 
 ```sh
-$ cd example/native
+$ cd example/react-native
 $ pnpx pod-install
 $ pnpm ios
 ```

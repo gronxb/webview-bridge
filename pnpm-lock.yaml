@@ -57,11 +57,11 @@ importers:
         specifier: 1.0.0-rc.34
         version: 1.0.0-rc.34(@algolia/client-search@4.22.0)(search-insights@2.13.0)(typescript@5.2.2)
 
-  example/native:
+  example/react-native:
     dependencies:
-      '@rnbridge/native':
+      '@webview-bridge/react-native':
         specifier: workspace:^
-        version: link:../../packages/native
+        version: link:../../packages/react-native
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -84,9 +84,15 @@ importers:
       '@babel/runtime':
         specifier: ^7.20.0
         version: 7.23.1
+      '@react-native-community/cli-platform-android':
+        specifier: ^13.2.0
+        version: 13.2.0
       '@react-native/eslint-config':
         specifier: ^0.72.2
         version: 0.72.2(eslint@8.51.0)(jest@29.7.0)(prettier@3.0.3)(typescript@5.2.2)
+      '@react-native/gradle-plugin':
+        specifier: ^0.72.5
+        version: 0.72.11
       '@react-native/metro-config':
         specifier: ^0.72.11
         version: 0.72.11(@babel/core@7.23.0)
@@ -117,7 +123,7 @@ importers:
 
   example/web:
     dependencies:
-      '@rnbridge/web':
+      '@webview-bridge/web':
         specifier: workspace:^
         version: link:../../packages/web
       react:
@@ -155,7 +161,7 @@ importers:
         specifier: ^4.4.5
         version: 4.4.11
 
-  packages/native:
+  packages/react-native:
     devDependencies:
       '@types/react':
         specifier: ^18.2.25
@@ -2554,6 +2560,19 @@ packages:
     transitivePeerDependencies:
       - encoding
 
+  /@react-native-community/cli-platform-android@13.2.0:
+    resolution: {integrity: sha512-+sbtMwc1yeR/mO3nrqJJh6iWVR17zXXNXb6gH5Sy0/YIQP3EhVgAHuTy8G0Vx1e2e9dTD67ChRhwd4il+jm6gQ==}
+    dependencies:
+      '@react-native-community/cli-tools': 13.2.0
+      chalk: 4.1.2
+      execa: 5.1.1
+      fast-xml-parser: 4.3.2
+      glob: 7.2.3
+      logkitty: 0.7.1
+    transitivePeerDependencies:
+      - encoding
+    dev: true
+
   /@react-native-community/cli-platform-ios@11.3.7:
     resolution: {integrity: sha512-Z/8rseBput49EldX7MogvN6zJlWzZ/4M97s2P+zjS09ZoBU7I0eOKLi0N9wx+95FNBvGQQ/0P62bB9UaFQH2jw==}
     dependencies:
@@ -2619,6 +2638,23 @@ packages:
       shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
+
+  /@react-native-community/cli-tools@13.2.0:
+    resolution: {integrity: sha512-/w3L/iIoIxd4UKk0W2ZGWtuQ1OLkTXtVDxduiuriszv4cB+QUxFgNXEqNLKV1TA5POlG3prSVlXuDDVt9Nq5iw==}
+    dependencies:
+      appdirsjs: 1.2.7
+      chalk: 4.1.2
+      find-up: 5.0.0
+      mime: 2.6.0
+      node-fetch: 2.7.0
+      open: 6.4.0
+      ora: 5.4.1
+      semver: 7.5.4
+      shell-quote: 1.8.1
+      sudo-prompt: 9.2.1
+    transitivePeerDependencies:
+      - encoding
+    dev: true
 
   /@react-native-community/cli-types@11.3.7:
     resolution: {integrity: sha512-OhSr/TiDQkXjL5YOs8+hvGSB+HltLn5ZI0+A3DCiMsjUgTTsYh+Z63OtyMpNjrdCEFcg0MpfdU2uxstCS6Dc5g==}

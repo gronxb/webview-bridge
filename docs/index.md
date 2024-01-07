@@ -3,18 +3,18 @@
 layout: home
 
 hero:
-  name: "RNBridge"
-  text: "Integration Web and React Native Webview"
+  name: "WebViewBridge"
+  text: "Integration Web and React Native WebView"
   actions:
     - theme: brand
       text: Get Started
       link: /getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/gronxb/rnbridge
+      link: https://github.com/gronxb/webview-bridge
     - theme: alt
       text: View on Example
-      link: https://github.com/gronxb/rnbridge-example
+      link: https://github.com/gronxb/webview-bridge-example
 
 features:
   - icon: ✅
@@ -22,7 +22,7 @@ features:
     details: Guarantees reliable and error-free communication, enhancing development efficiency.
 
   - icon: ⏳
-    title: Backward Compatibility 
+    title: Backward Compatibility
     details: Supports seamless fallbacks, ensuring compatibility with older versions of React Native apps
 
   - icon: 🚀
@@ -34,11 +34,9 @@ features:
     details: Operates with `react-native-webview` alone, ensuring simple and streamlined integration.
 ---
 
-
   <div class="demo">
       <video src="/demo.mp4" autoplay muted loop />
   </div>
-
 
 <style>
 :root {

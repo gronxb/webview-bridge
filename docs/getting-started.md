@@ -1,38 +1,39 @@
 # Getting Started
 
-
 ## Installation
 
 ### React Native Project
+
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @rnbridge/native react-native-webview
+$ npm add -D @webview-bridge/react-native react-native-webview
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @rnbridge/native react-native-webview
+$ pnpm add -D @webview-bridge/react-native react-native-webview
 ```
 
 ```sh [yarn]
-$ yarn add -D @rnbridge/native react-native-webview
+$ yarn add -D @webview-bridge/react-native react-native-webview
 ```
 
 :::
 
 ### Web Project
+
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @rnbridge/web
+$ npm add -D @webview-bridge/web
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @rnbridge/web
+$ pnpm add -D @webview-bridge/web
 ```
 
 ```sh [yarn]
-$ yarn add -D @rnbridge/web
+$ yarn add -D @webview-bridge/web
 ```
 
 :::
@@ -40,7 +41,6 @@ $ yarn add -D @rnbridge/web
 ## Using a Native Method
 
 This guide covers how to use methods declared in React Native within a web.
-
 
 ### React Native Part
 
@@ -51,8 +51,7 @@ You need to export the created `typeof appBridge` and share its type with the we
 :::
 
 ```tsx
-import { createWebView } from "@rnbridge/native";
-import { bridge } from "@rnbridge/native";
+import { createWebView, bridge } from "@webview-bridge/react-native";
 
 // Register functions in the bridge object in your React Native code
 export const appBridge = bridge({
@@ -74,7 +73,6 @@ Create a WebView Component by combining the previously defined `bridge` with `cr
 ::: tip NOTE
 The WebView created through `createWebView` is identical to the typical react-native-webview.
 :::
-
 
 ```tsx
 export const { WebView } = createWebView({
@@ -99,10 +97,9 @@ function App(): JSX.Element {
 export default App;
 ```
 
-
 ### Web Part
 
-Now, let's setting up the web project that will be displayed in the WebView. 
+Now, let's setting up the web project that will be displayed in the WebView.
 Utilize the previously exported `AppBridge` as a generic in `linkNativeMethod`.
 
 That's all there is to it!
@@ -110,7 +107,7 @@ That's all there is to it!
 You can directly use `nativeMethod` as shown below and receive the results.
 
 ```tsx
-import { linkNativeMethod } from "@rnbridge/web";
+import { linkNativeMethod } from "@webview-bridge/web";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
 const nativeMethod = linkNativeMethod<AppBridge>();
@@ -118,4 +115,3 @@ const nativeMethod = linkNativeMethod<AppBridge>();
 nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
 nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 ```
-
