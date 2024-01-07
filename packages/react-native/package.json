@@ -1,6 +1,6 @@
 {
   "name": "@webview-bridge/react-native",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Integration Web and React Native WebView",
   "main": "dist/packages/react-native/src/index.js",
@@ -29,7 +29,7 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
-    "react": ">=18.2.0",
-    "react-native-webview": ">=^13.6.2"
+    "react": "*",
+    "react-native-webview": "*"
   }
 }
