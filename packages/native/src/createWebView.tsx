@@ -1,4 +1,4 @@
-import { createEvents } from "@rnbridge/util";
+import { createEvents } from "@webview-bridge/util";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import React from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
@@ -12,7 +12,7 @@ import {
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import type { Procedure, ProceduresObject, RNBridgeWebView } from "./types";
+import type { BridgeWebView, Procedure, ProceduresObject } from "./types";
 
 export type CreateWebViewArgs<
   T extends ProceduresObject<Record<string, Procedure>>,
@@ -43,7 +43,7 @@ export const createWebView = <
 
   const emitter = createEvents();
   return {
-    WebView: forwardRef<RNBridgeWebView, WebViewProps>((props, ref) => {
+    WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
 
       const bridgeNames = useMemo(
@@ -54,7 +54,7 @@ export const createWebView = <
         [],
       );
 
-      useImperativeHandle(ref, () => webviewRef.current as RNBridgeWebView, []);
+      useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
 
       const handleMessage = async (event: WebViewMessageEvent) => {
         props.onMessage?.(event);

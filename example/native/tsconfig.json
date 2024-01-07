@@ -3,8 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@rnbridge/example-native": ["../native/src/bridge.ts"],
-      "@rnbridge/example-web": ["../web/src/bridge.ts"]
+      "@webview-bridge/example-native": ["../native/src/bridge.ts"],
+      "@webview-bridge/example-web": ["../web/src/bridge.ts"]
     },
     "lib": ["DOM"],
     "module": "ESNext",

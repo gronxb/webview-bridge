@@ -1,8 +1,8 @@
 {
-  "name": "@rnbridge/native",
+  "name": "@webview-bridge/react-native",
   "version": "1.0.2",
   "type": "module",
-  "description": "Integration Web and React Native Webview",
+  "description": "Integration Web and React Native WebView",
   "main": "dist/packages/native/src/index.js",
   "types": "dist/packages/native/src/index.d.ts",
   "publishConfig": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gronxb/rnbridge.git"
+    "url": "https://github.com/gronxb/webview-bridge.git"
   },
   "license": "MIT",
   "files": [

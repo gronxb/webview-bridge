@@ -3,7 +3,7 @@ import {
   createRandomId,
   createResolver,
   timeout,
-} from "@rnbridge/util";
+} from "@webview-bridge/util";
 
 import { MethodNotFoundError } from "./error";
 
@@ -28,7 +28,7 @@ export const linkNativeMethod = <T extends object>(
   } = options;
 
   if (!window.ReactNativeWebView) {
-    console.warn("[RNBridge] Not in a WebView environment");
+    console.warn("[WebViewBridge] Not in a WebView environment");
   }
 
   const bridgeMethods = window.__bridgeMethods__ ?? [];
@@ -85,7 +85,9 @@ export const linkNativeMethod = <T extends object>(
       ) {
         return () => Promise.reject(new MethodNotFoundError(method));
       } else {
-        console.warn(`[RNBridge] ${method} is not defined, using fallback.`);
+        console.warn(
+          `[WebViewBridge] ${method} is not defined, using fallback.`,
+        );
       }
       return () => Promise.resolve();
     },

@@ -1,5 +1,5 @@
-# rnbridge
+# webview-bridge
 
-rnbridge package for web
+webview-bridge package for web
 
-For more information, check out https://github.com/gronxb/rnbridge
+For more information, check out https://github.com/gronxb/webview-bridge

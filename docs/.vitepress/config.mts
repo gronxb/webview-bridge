@@ -2,8 +2,8 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "RNBridge",
-  description: "Integration Web and React Native Webview",
+  title: "WebViewBridge",
+  description: "Integration Web and React Native WebView",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -17,7 +17,7 @@ export default defineConfig({
       {
         text: "Introduction",
         items: [
-          { text: "What is RNBridge", link: "/what-is-rnbridge" },
+          { text: "What is WebViewBridge", link: "/what-is-webview-bridge" },
           { text: "Getting Started", link: "/getting-started" },
         ],
       },
@@ -59,8 +59,8 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/gronxb/rnbridge" },
+      { icon: "github", link: "https://github.com/gronxb/webview-bridge" },
     ],
   },
-  base: "/rnbridge/",
+  base: "/webview-bridge/",
 });

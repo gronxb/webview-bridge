@@ -3,7 +3,7 @@ import {
   createResolver,
   type EventEmitter,
   timeout,
-} from "@rnbridge/util";
+} from "@webview-bridge/util";
 import WebView from "react-native-webview";
 
 import { Procedure } from "../types";

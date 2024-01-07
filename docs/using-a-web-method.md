@@ -11,7 +11,7 @@ Maintaining a bidirectional bridge can become challenging due to the need for ex
 Define web-specific methods using `registerWebMethod`.
 
 ```tsx
-import { linkNativeMethod, registerWebMethod } from "@rnbridge/web";
+import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
 
 // Register functions in the registerWebMethod object in your web code
 export const webBridge = registerWebMethod({
@@ -37,11 +37,10 @@ Use the type exported earlier as a generic. Methods can be used normally when `i
 ```tsx
 // When you bridge a webview, a linkWebMethod is extracted.
 export const { linkWebMethod } = createWebView({
-  // .. 
+  // ..
 });
 
 const WebMethod = linkWebMethod<WebBridge>();
-
 
 // When the value of the WebMethod is binding, it is checked with isReady and executed.
 if (WebMethod.current.isReady) {

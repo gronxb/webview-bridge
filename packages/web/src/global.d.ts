@@ -1,4 +1,4 @@
-import type { DefaultEvents, EventEmitter } from "@rnbridge/util";
+import type { DefaultEvents, EventEmitter } from "@webview-bridge/util";
 
 export {};
 

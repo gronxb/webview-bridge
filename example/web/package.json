@@ -1,5 +1,5 @@
 {
-  "name": "@rnbridge/example-web",
+  "name": "@webview-bridge/example-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
-    "@rnbridge/web": "workspace:^",
+    "@webview-bridge/web": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

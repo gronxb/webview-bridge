@@ -1,5 +1,5 @@
-# rnbridge
+# webview-bridge
 
-rnbridge package for react native
+webview-bridge package for react native
 
-For more information, check out https://github.com/gronxb/rnbridge
+For more information, check out https://github.com/gronxb/webview-bridge

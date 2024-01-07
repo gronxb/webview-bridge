@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@rnbridge/util": ["shared/util/src"]
+      "@webview-bridge/util": ["shared/util/src"]
     },
     "plugins": [
       { "transform": "typescript-transform-paths" },

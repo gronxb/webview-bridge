@@ -7,9 +7,13 @@
 
 import React, { useState } from "react";
 import { Button, Text, SafeAreaView } from "react-native";
-import { bridge, createWebView, type RNBridgeWebView } from "@rnbridge/native";
+import {
+  bridge,
+  createWebView,
+  type BridgeWebView,
+} from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
-import { WebBridge } from "@rnbridge/example-web";
+import { WebBridge } from "@webview-bridge/example-web";
 
 export const appBridge = bridge({
   getMessage: () => {

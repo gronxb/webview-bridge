@@ -14,7 +14,7 @@ export type Bridge = <T extends Record<string, Procedure>>(
   procedures: T,
 ) => ProceduresObject<T>;
 
-export type RNBridgeWebView = Pick<
+export type BridgeWebView = Pick<
   WebView,
   Exclude<keyof WebView, keyof Component<WebViewProps>>
 >;

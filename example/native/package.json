@@ -1,5 +1,5 @@
 {
-  "name": "@rnbridge/example-native",
+  "name": "@webview-bridge/example-native",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
-    "@rnbridge/native": "workspace:^",
+    "@webview-bridge/react-native": "workspace:^",
     "react": "18.2.0",
     "react-native": "0.72.5",
     "react-native-inappbrowser-reborn": "^3.7.0",
