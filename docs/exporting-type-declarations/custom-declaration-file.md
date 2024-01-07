@@ -1,7 +1,7 @@
 # Custom Declaration File Setup
 In some scenarios, you may have a react-native project and a web project as separate repositories.
 
-Exporting types is a key part of `rnbridge`, so here's a guide to sharing types across different projects.
+Exporting types is a key part of `webview-bridge`, so here's a guide to sharing types across different projects.
 This guide is for moving types from methods declared in the `React Native Project` to the `Web Project`.
   
 ## Steps for Exporting Types
@@ -43,7 +43,7 @@ Define your bridge functions in a separate file for clarity and organization. Fo
 
 ```ts
 // This file is src/bridge.ts
-import { bridge } from "@rnbridge/native";
+import { bridge } from "@webview-bridge/native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
 export const appBridge = bridge({

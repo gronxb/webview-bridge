@@ -1,7 +1,7 @@
 # Monorepo Setup
 In certain scenarios, you may manage a react-native project and a web project within the same monorepo.
 
-A crucial aspect of `rnbridge` is its ability to export types, facilitating seamless type sharing across different projects in the monorepo. This guide is tailored to demonstrate how you can efficiently move types from methods declared in the `React Native Project` to the `Web Project`, all within the unified structure of a monorepo.
+A crucial aspect of `webview-bridge` is its ability to export types, facilitating seamless type sharing across different projects in the monorepo. This guide is tailored to demonstrate how you can efficiently move types from methods declared in the `React Native Project` to the `Web Project`, all within the unified structure of a monorepo.
 
 There are many ways to export types, but here's one of them.
 
@@ -16,7 +16,7 @@ Assuming the contents of `src/bridge.ts` are as follows:
 
 ```ts
 // This file is src/bridge.ts
-import { bridge } from "@rnbridge/native";
+import { bridge } from "@webview-bridge/native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
 export const appBridge = bridge({
@@ -68,5 +68,5 @@ That's all there is to it! To export types from the Web Project to the React Nat
 
 
 ::: tip NOTE
-You can explore a practical example and further understand the implementation by visiting the rnbridge-example GitHub repository at https://github.com/gronxb/rnbridge-example. This repository provides a hands-on demonstration of the concepts and steps outlined in this guide.
+You can explore a practical example and further understand the implementation by visiting the webview-bridge-example GitHub repository at https://github.com/gronxb/webview-bridge-example. This repository provides a hands-on demonstration of the concepts and steps outlined in this guide.
 :::
