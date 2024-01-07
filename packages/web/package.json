@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/web",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "Integration Web and React Native WebView",
   "publishConfig": {
     "access": "public"

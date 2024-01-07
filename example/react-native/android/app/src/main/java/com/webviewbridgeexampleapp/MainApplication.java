@@ -1,4 +1,4 @@
-package com.rnbridgeexampleapp;
+package com.webviewbridgeexampleapp;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface RnBridgeExampleAppTests : XCTestCase
+@interface WebViewBridgeExampleAppTests : XCTestCase
 
 @end
 
-@implementation RnBridgeExampleAppTests
+@implementation WebViewBridgeExampleAppTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {

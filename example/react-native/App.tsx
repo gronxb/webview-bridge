@@ -39,7 +39,7 @@ const WebMethod = linkWebMethod<WebBridge>();
 function App(): JSX.Element {
   const [value, setValue] = useState(0);
 
-  const webviewRef = React.useRef<RNBridgeWebView>(null);
+  const webviewRef = React.useRef<BridgeWebView>(null);
 
   const handleWebAlert = () => {
     if (WebMethod.current.isReady) {
@@ -58,7 +58,7 @@ function App(): JSX.Element {
       <WebView
         ref={webviewRef}
         source={{
-          uri: "http://localhost:5173",
+          uri: "http://10.0.2.2:5173",
         }}
         style={{ height: "100%", flex: 1, width: "100%" }}
       />
