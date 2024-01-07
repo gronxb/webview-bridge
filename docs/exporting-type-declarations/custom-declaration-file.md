@@ -1,4 +1,4 @@
-# Exporting Type Declarations in a Multi-Repository Setup
+# Custom Declaration File Setup
 In some scenarios, you may have a react-native project and a web project as separate repositories.
 
 Exporting types is a key part of `rnbridge`, so here's a guide to sharing types across different projects.

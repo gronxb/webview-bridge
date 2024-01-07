@@ -1,4 +1,4 @@
-# Exporting Type Declarations in a Mono-Repository Setup
+# Monorepo Setup
 In certain scenarios, you may manage a react-native project and a web project within the same monorepo.
 
 A crucial aspect of `rnbridge` is its ability to export types, facilitating seamless type sharing across different projects in the monorepo. This guide is tailored to demonstrate how you can efficiently move types from methods declared in the `React Native Project` to the `Web Project`, all within the unified structure of a monorepo.

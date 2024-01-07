@@ -43,12 +43,12 @@ export default defineConfig({
         base: "/exporting-type-declarations",
         items: [
           {
-            text: "Multi Repository",
-            link: "/multi-repository",
+            text: "Monorepo",
+            link: "/monorepo",
           },
           {
-            text: "Mono Repository",
-            link: "/mono-repository",
+            text: "Custom Declaration File",
+            link: "/custom-declaration-file",
           },
         ],
       },

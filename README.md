@@ -26,8 +26,8 @@ visit [Example](https://github.com/gronxb/rnbridge-example)
 ## Exporting Type Declarations
 To enhance your experience with rnbridge, it's recommended to export the type declaration of the native bridge object to the web application. Here are a few ways to achieve this:
 
-1. [Monorepo Setup (Recommended)](https://gronxb.github.io/rnbridge/exporting-type-declarations/mono-repository): Use a monorepo setup to export the type of the native bridge.
-2. [Custom Declaration File](https://gronxb.github.io/rnbridge/exporting-type-declarations/multi-repository): Build a bridge declaration file using tsc and move the file as needed.
+1. [Monorepo Setup (Recommended)](https://gronxb.github.io/rnbridge/exporting-type-declarations/monorepo): Use a monorepo setup to export the type of the native bridge.
+2. [Custom Declaration File](https://gronxb.github.io/rnbridge/exporting-type-declarations/custom-declaration-file): Build a bridge declaration file using tsc and move the file as needed.
 3. Private npm Registry: Utilize a private npm registry to export the type of the native bridge.
 
 
