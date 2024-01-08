@@ -82,24 +82,7 @@ $ yarn dts-bundle-generator -o output.ts src/bridge.ts  --project=tsconfig.build
 ### 5. Copying the Type Definitions File:
 Once you have generated output.ts, copy this file to your web project.
 
-### 6. Install `@webview-bridge/react-native` to web project:
-::: code-group
-
-```sh [npm]
-$ npm add @webview-bridge/react-native --save-dev
-```
-
-```sh [pnpm]
-$ pnpm add @webview-bridge/react-native -D
-```
-
-```sh [yarn]
-$ yarn add @webview-bridge/react-native --dev
-```
-
-:::
-
-### 7. Importing in the Web Project:
+### 6. Importing in the Web Project:
 In your web project, import the types as shown below:
 
 ```ts
