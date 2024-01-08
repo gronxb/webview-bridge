@@ -53,20 +53,14 @@ Typically, to avoid halting app functionality, the default value for `throwOnErr
 
 ```javascript
 // Setting throwOnError globally
-const nativeMethod =
-  linkNativeMethod <
-  AppBridge >
-  {
-    throwOnError: true,
-  };
+const nativeMethod = linkNativeMethod<AppBridge>({
+  throwOnError: true,
+});
 
 // Selective error throwing using method names
-const nativeMethod =
-  linkNativeMethod <
-  AppBridge >
-  {
-    throwOnError: ["openInAppBrowser" /* other method */],
-  };
+const nativeMethod = linkNativeMethod<AppBridge>({
+  throwOnError: ["openInAppBrowser", /* other method */],
+});
 ```
 
 ### onFallback
@@ -76,7 +70,7 @@ The `onFallback` method can be used for batch processing of errors. It's suitabl
 ```tsx
 const nativeMethod = linkNativeMethod<AppBridge>({
   onFallback: (method) => {
-    toast("The app is outdated. Please update.");
+    Alert.alert("The app is outdated. Please update.");
   },
 });
 ```
