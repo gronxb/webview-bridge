@@ -124,6 +124,7 @@ export const createWebView = <BridgeObject extends Bridge>({
 
       return (
         <WebView
+          {...props}
           ref={webviewRef}
           onMessage={handleMessage}
           injectedJavaScriptBeforeContentLoaded={[
@@ -140,7 +141,6 @@ export const createWebView = <BridgeObject extends Bridge>({
           ]
             .filter(Boolean)
             .join("\n")}
-          {...props}
         />
       );
     }),
