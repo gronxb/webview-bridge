@@ -16,7 +16,7 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
 
 export const appBridge = bridge({
-  getMessage: () => {
+  getMessage: async () => {
     return "I'm from native" as const;
   },
   openInAppBrowser: async (url: string) => {
