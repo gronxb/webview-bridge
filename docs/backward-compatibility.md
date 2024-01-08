@@ -81,7 +81,7 @@ For example, it's configured as follows. You can handle this through the `create
 
 ```tsx
 export const appBridge = bridge({
-  getMessage: () => {
+  getMessage: async () => {
     return "I'm from native" as const;
   },
   openInAppBrowser: async (url: string) => {

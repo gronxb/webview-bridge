@@ -1,13 +1,15 @@
 import WebView from "react-native-webview";
 
-import type { Bridge, Procedure, ProceduresObject } from "../types";
+import type { Bridge } from "../types/bridge";
 
-export const bridge: Bridge = (procedures) => {
+export const bridge = <BridgeObject extends Bridge>(
+  procedures: BridgeObject,
+): BridgeObject => {
   return procedures;
 };
 
 type HandleBridgeArgs<ArgType = unknown> = {
-  bridge: ProceduresObject<Record<string, Procedure>>;
+  bridge: Bridge;
   method: string;
   args?: ArgType[];
   webview: WebView;

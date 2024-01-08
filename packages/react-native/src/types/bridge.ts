@@ -2,7 +2,3 @@
 export type AsyncFunction = (...args: any[]) => Promise<any>;
 
 export type Bridge = Record<string, AsyncFunction>;
-
-export type WithAvailable<T> = {
-  isWebViewBridgeAvailable: boolean;
-} & T;

@@ -2,7 +2,9 @@ import { createEvents } from "@webview-bridge/util";
 
 import type { Bridge } from "./types";
 
-export const registerWebMethod: Bridge = (bridge) => {
+export const registerWebMethod = <BridgeObject extends Bridge>(
+  bridge: BridgeObject,
+): BridgeObject => {
   if (!window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
     return bridge;
