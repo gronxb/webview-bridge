@@ -6,6 +6,7 @@ import {
 } from "@webview-bridge/util";
 
 import { MethodNotFoundError } from "./error";
+import { WithAvailable } from "./types";
 
 const emitter = createEvents();
 
@@ -20,7 +21,7 @@ export const linkNativeMethod = <T extends object>(
     timeout: 2000,
     throwOnError: false,
   },
-) => {
+): WithAvailable<T> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -37,30 +38,36 @@ export const linkNativeMethod = <T extends object>(
     window.nativeEmitter = emitter;
   }
 
-  const target = bridgeMethods.reduce((acc, method) => {
-    return {
-      ...acc,
-      [method]: (...args: unknown[]) => {
-        const eventId = createRandomId();
+  const target = bridgeMethods.reduce(
+    (acc, method) => {
+      return {
+        ...acc,
+        [method]: (...args: unknown[]) => {
+          const eventId = createRandomId();
 
-        return Promise.race([
-          createResolver(emitter, method, eventId, () => {
-            window.ReactNativeWebView?.postMessage(
-              JSON.stringify({
-                type: "bridge",
-                body: {
-                  method,
-                  eventId,
-                  args,
-                },
-              }),
-            );
-          }),
-          timeout(timeoutMs),
-        ]);
-      },
-    };
-  }, {} as T);
+          return Promise.race([
+            createResolver(emitter, method, eventId, () => {
+              window.ReactNativeWebView?.postMessage(
+                JSON.stringify({
+                  type: "bridge",
+                  body: {
+                    method,
+                    eventId,
+                    args,
+                  },
+                }),
+              );
+            }),
+            timeout(timeoutMs),
+          ]);
+        },
+      };
+    },
+    {
+      isWebViewBridgeAvailable:
+        Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
+    } as WithAvailable<T>,
+  );
 
   return new Proxy(target, {
     get: (target, method: string) => {
