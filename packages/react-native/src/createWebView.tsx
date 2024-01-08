@@ -12,29 +12,26 @@ import {
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import type { BridgeWebView, Procedure, ProceduresObject } from "./types";
+import { Bridge } from "./types/bridge";
+import type { BridgeWebView } from "./types/webview";
 
-export type CreateWebViewArgs<
-  T extends ProceduresObject<Record<string, Procedure>>,
-> = {
-  bridge: T;
+export type CreateWebViewArgs<BridgeObject extends Bridge> = {
+  bridge: BridgeObject;
   debug?: boolean;
   responseTimeout?: number;
-  fallback?: (method: keyof T) => void;
+  fallback?: (method: keyof BridgeObject) => void;
 };
 
 export type WebMethod<T> = T & {
   isReady: boolean;
 };
 
-export const createWebView = <
-  T extends ProceduresObject<Record<string, Procedure>>,
->({
+export const createWebView = <BridgeObject extends Bridge>({
   bridge,
   debug,
   responseTimeout = 2000,
   fallback,
-}: CreateWebViewArgs<T>) => {
+}: CreateWebViewArgs<BridgeObject>) => {
   const WebMethod = {
     current: {
       isReady: false,
@@ -117,7 +114,7 @@ export const createWebView = <
           }
           case "fallback": {
             const { method } = body as {
-              method: keyof T;
+              method: keyof BridgeObject;
             };
             fallback?.(method);
             return;

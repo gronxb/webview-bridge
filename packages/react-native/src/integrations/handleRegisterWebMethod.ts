@@ -6,7 +6,7 @@ import {
 } from "@webview-bridge/util";
 import WebView from "react-native-webview";
 
-import { Procedure } from "../types";
+import { Bridge } from "../types/bridge";
 
 export const handleRegisterWebMethod = (
   emitter: EventEmitter,
@@ -14,29 +14,26 @@ export const handleRegisterWebMethod = (
   bridgeNames: string[],
   responseTimeout: number,
 ) => {
-  return bridgeNames.reduce(
-    (acc, method) => {
-      acc[method] = async (...args: unknown[]) => {
-        const eventId = createRandomId();
+  return bridgeNames.reduce((acc, method) => {
+    acc[method] = async (...args: unknown[]) => {
+      const eventId = createRandomId();
 
-        return Promise.race([
-          createResolver(emitter, method, eventId, () => {
-            webview.injectJavaScript(
-              `
+      return Promise.race([
+        createResolver(emitter, method, eventId, () => {
+          webview.injectJavaScript(
+            `
               window.webEmitter.emit('${method}', '${eventId}', ${JSON.stringify(
                 args,
               )});
             
               true;
               `,
-            );
-          }),
-          timeout(responseTimeout),
-        ]);
-      };
+          );
+        }),
+        timeout(responseTimeout),
+      ]);
+    };
 
-      return acc;
-    },
-    {} as Record<string, Procedure>,
-  );
+    return acc;
+  }, {} as Bridge);
 };
