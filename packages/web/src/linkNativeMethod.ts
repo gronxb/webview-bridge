@@ -6,22 +6,22 @@ import {
 } from "@webview-bridge/util";
 
 import { MethodNotFoundError } from "./error";
-import { WithAvailable } from "./types";
+import { Bridge, WithAvailable } from "./types";
 
 const emitter = createEvents();
 
-export interface LinkNativeMethodOptions<T extends object> {
+export interface LinkNativeMethodOptions<BridgeObject extends Bridge> {
   timeout?: number;
-  throwOnError?: boolean | (keyof T)[];
-  onFallback?: (method: keyof T) => void;
+  throwOnError?: boolean | (keyof BridgeObject)[];
+  onFallback?: (method: keyof BridgeObject) => void;
 }
 
-export const linkNativeMethod = <T extends object>(
-  options: LinkNativeMethodOptions<T> = {
+export const linkNativeMethod = <BridgeObject extends Bridge>(
+  options: LinkNativeMethodOptions<BridgeObject> = {
     timeout: 2000,
     throwOnError: false,
   },
-): WithAvailable<T> => {
+): WithAvailable<BridgeObject> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -66,13 +66,13 @@ export const linkNativeMethod = <T extends object>(
     {
       isWebViewBridgeAvailable:
         Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
-    } as WithAvailable<T>,
+    } as WithAvailable<BridgeObject>,
   );
 
   return new Proxy(target, {
     get: (target, method: string) => {
       if (method in target) {
-        return (target as { [key: string]: () => string })[method];
+        return (target as { [key: string]: () => Promise<string> })[method];
       }
       window.ReactNativeWebView?.postMessage(
         JSON.stringify({
@@ -82,13 +82,13 @@ export const linkNativeMethod = <T extends object>(
           },
         }),
       );
-      onFallback?.(method as keyof T);
+      onFallback?.(method as keyof BridgeObject);
 
       if (throwOnError === true) {
         return () => Promise.reject(new MethodNotFoundError(method));
       } else if (
         Array.isArray(throwOnError) &&
-        throwOnError.includes(method as keyof T)
+        throwOnError.includes(method as keyof BridgeObject)
       ) {
         return () => Promise.reject(new MethodNotFoundError(method));
       } else {
