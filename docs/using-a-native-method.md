@@ -8,10 +8,16 @@ Register functions in the bridge object in your React Native code
 
 ::: warning IMPORTANT
 You need to export the created `typeof appBridge` and share its type with the web project. Failing to do so will result in a lack of type safety. This principle is similar to how `tRPC` operates.
+
+**For detailed guides, visit:**   
+Monorepo setup: [Exporting Type Declarations in a Monorepo](https://gronxb.github.io/webview-bridge/exporting-type-declarations/monorepo.html)  
+Custom declaration file: [Exporting Type Declarations with a Custom Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/custom-declaration-file.html)
 :::
+
 
 ```tsx
 import { createWebView, bridge } from "@webview-bridge/react-native";
+import InAppBrowser from "react-native-inappbrowser-reborn";
 
 // Register functions in the bridge object in your React Native code
 export const appBridge = bridge({
@@ -20,6 +26,11 @@ export const appBridge = bridge({
   },
   sum: (a: number, b: number) => {
     return a + b;
+  },
+  openInAppBrowser: async (url: string) => {
+    if (await InAppBrowser.isAvailable()) {
+      await InAppBrowser.open(url);
+    }
   },
   // ... Add more functions as needed
 });
@@ -74,4 +85,15 @@ const nativeMethod = linkNativeMethod<AppBridge>();
 
 nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
 nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
+nativeMethod.openInAppBrowser("https://google.com"); // Open google in the native inAppBrowser
+```
+
+### Checking WebView Bridge Availability
+
+You can use this to safely execute methods only when the WebView bridge is available. Here's how you can implement this:
+
+```tsx
+if (nativeMethod.isWebViewBridgeAvailable) {
+    nativeMethod.openInAppBrowser();
+}
 ```

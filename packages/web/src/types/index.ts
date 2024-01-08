@@ -10,3 +10,7 @@ export type ProceduresObject<T extends Record<string, Procedure>> = {
 export type Bridge = <T extends Record<string, Procedure>>(
   procedures: T,
 ) => ProceduresObject<T>;
+
+export type WithAvailable<T> = {
+  isWebViewBridgeAvailable: boolean;
+} & T;
