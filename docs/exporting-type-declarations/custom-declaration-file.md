@@ -32,9 +32,10 @@ Next, create a `tsconfig.build.json` file with the necessary compiler options:
 ```json
 {
   "compilerOptions": {
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "lib": ["ES6"]
+    "lib": ["ES6"],
+    // You should also put in the `jsx`, `paths` fields if you want.
   }
 }
 ```
@@ -65,15 +66,15 @@ Use `dts-bundle-generator` to create your type definitions file:
 ::: code-group
 
 ```sh [npm]
-$ npm dts-bundle-generator -o output.ts src/bridge.ts --project=tsconfig.build.json
+$ npm dts-bundle-generator -o output.ts src/bridge.ts --project=tsconfig.build.json --no-check
 ```
 
 ```sh [pnpm]
-$ pnpm dts-bundle-generator -o output.ts src/bridge.ts --project=tsconfig.build.json
+$ pnpm dts-bundle-generator -o output.ts src/bridge.ts --project=tsconfig.build.json --no-check
 ```
 
 ```sh [yarn]
-$ yarn dts-bundle-generator -o output.ts src/bridge.ts --project=tsconfig.build.json
+$ yarn dts-bundle-generator -o output.ts src/bridge.ts  --project=tsconfig.build.json --no-check
 ```
 
 :::
@@ -81,7 +82,24 @@ $ yarn dts-bundle-generator -o output.ts src/bridge.ts --project=tsconfig.build.
 ### 5. Copying the Type Definitions File:
 Once you have generated output.ts, copy this file to your web project.
 
-### 6. Importing in the Web Project:
+### 6. Install `@webview-bridge/react-native` to web project:
+::: code-group
+
+```sh [npm]
+$ npm add @webview-bridge/react-native --save-dev
+```
+
+```sh [pnpm]
+$ pnpm add @webview-bridge/react-native -D
+```
+
+```sh [yarn]
+$ yarn add @webview-bridge/react-native --dev
+```
+
+:::
+
+### 7. Importing in the Web Project:
 In your web project, import the types as shown below:
 
 ```ts
