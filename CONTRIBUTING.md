@@ -4,17 +4,20 @@ Welcome to the project's contributor guide! This document will provide you with 
 
 ## Development Environment Setup
 
-To ensure consistent and efficient development, we utilize yarn as our package manager. We kindly request all contributors to use yarn for managing dependencies. If you're not familiar with pnpm, please take a moment to familiarize yourself with its documentation and installation instructions.
+To ensure consistent and efficient development, we utilize `pnpm` as our package manager. We kindly request all contributors to use `pnpm` for managing dependencies. If you're not familiar with pnpm, please take a moment to familiarize yourself with its documentation and installation instructions.
 
 ## Examples
 
 To help you get started quickly, we have provided several examples in the example folder. These examples demonstrate the usage and capabilities of our software. We encourage you to explore them and leverage the insights gained to enhance your understanding of our project's functionality.
+
+If the files in `packages/*` have changed, you will need to do `pnpm -w build`.
 
 ## Setup
 
 ```sh
 $ pnpm i
 $ pnpm build
+$ pnpm start --reset-cache
 ```
 
 ## React Native (iOS) Start
@@ -31,3 +34,4 @@ $ pnpm ios
 $ cd example/web
 $ pnpm dev
 ```
+
