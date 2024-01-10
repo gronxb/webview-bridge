@@ -34,7 +34,7 @@ Handling can be done as follows:
         if (e instanceof MethodNotFoundError) {
           // This is where you can do failover.
           console.log("Method not found");
-          alert("Please update from the app store.");
+          alert("The app is outdated. Please update.");
         }
       });
   }}
