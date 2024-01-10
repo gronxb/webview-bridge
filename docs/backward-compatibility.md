@@ -32,7 +32,9 @@ Handling can be done as follows:
       })
       .catch((e) => {
         if (e instanceof MethodNotFoundError) {
+          // This is where you can do failover.
           console.log("Method not found");
+          alert("Please update from the app store.");
         }
       });
   }}
