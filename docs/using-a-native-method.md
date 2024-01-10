@@ -90,10 +90,25 @@ nativeMethod.openInAppBrowser("https://google.com"); // Open google in the nativ
 
 ### Checking WebView Bridge Availability
 
-You can use this to safely execute methods only when the WebView bridge is available. Here's how you can implement this:
+You can also check for the availability of specific methods using `isNativeMethodAvailable`.
+
+This allows you to safely execute methods only when they are available. Here's how you can implement this:
+
+```tsx
+if (nativeMethod.isNativeMethodAvailable("openInAppBrowser")) {
+    nativeMethod.openInAppBrowser();
+} else {
+    console.warn("openInAppBrowser method not supported");
+}
+```
+
+In addition, to check the general availability of the WebView bridge, you can use `isWebViewBridgeAvailable`:
 
 ```tsx
 if (nativeMethod.isWebViewBridgeAvailable) {
     nativeMethod.openInAppBrowser();
+} else {
+    console.warn("native method not supported")
 }
 ```
+
