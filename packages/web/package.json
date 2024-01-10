@@ -2,7 +2,7 @@
   "name": "@webview-bridge/web",
   "type": "module",
   "version": "1.0.4",
-  "description": "Integration Web and React Native WebView",
+  "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"
   },

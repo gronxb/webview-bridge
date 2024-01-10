@@ -3,6 +3,8 @@
 [![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Freact-native/latest?label=%40webview-bridge%2Freact-native)](https://www.npmjs.com/package/@webview-bridge/react-native)
 [![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Fweb/latest?label=%40webview-bridge%2Fweb)](https://www.npmjs.com/package/@webview-bridge/web)
 
+**Fully Type-Safe Integration for React Native WebView and Web**
+
 `webview-bridge` is a powerful interface that acts as a bridge between React Native and web applications using `react-native-webview`. It providing seamless interaction and ensuring type safety.
 
 Inspired by the functionality of `tRPC`, `webview-bridge` simplifies the communication process between `react-native-webview` and web applications.

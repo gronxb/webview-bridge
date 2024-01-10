@@ -2,7 +2,7 @@
   "name": "@webview-bridge/react-native",
   "version": "1.0.4",
   "type": "module",
-  "description": "Integration Web and React Native WebView",
+  "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "main": "dist/packages/react-native/src/index.js",
   "types": "dist/packages/react-native/src/index.d.ts",
   "publishConfig": {

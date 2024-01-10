@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "WebViewBridge"
-  text: "Integration Web and React Native WebView"
+  text: "Fully Type-Safe Integration for React Native WebView and Web"
   actions:
     - theme: brand
       text: Get Started
@@ -42,7 +42,6 @@ features:
 :root {
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #e09fff 30%, #64daff);
-
   --vp-home-hero-image-filter: blur(44px);
 }
 

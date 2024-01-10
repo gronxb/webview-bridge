@@ -1,14 +1,14 @@
 {
   "name": "@webview-bridge/docs",
   "version": "1.0.0",
-  "description": "Integration Web and React Native WebView",
+  "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "homepage": "https://gronxb.github.io/webview-bridge/",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "gh-pages": "^6.1.1",
-    "vitepress": "1.0.0-rc.34"
+    "vitepress": "1.0.0-rc.36"
   },
   "scripts": {
     "docs:dev": "vitepress dev",
