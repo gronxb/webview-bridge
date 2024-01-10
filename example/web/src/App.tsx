@@ -31,9 +31,11 @@ function App() {
       <h1>{message}</h1>
       <button
         onClick={() => {
-          nativeMethod.openInAppBrowser(
-            "https://github.com/gronxb/webview-bridge",
-          );
+          if (nativeMethod.isNativeMethodAvailable("openInAppBrowser")) {
+            nativeMethod.openInAppBrowser(
+              "https://github.com/gronxb/webview-bridge",
+            );
+          }
         }}
       >
         open InAppBrowser

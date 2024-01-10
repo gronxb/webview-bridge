@@ -66,6 +66,10 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
     {
       isWebViewBridgeAvailable:
         Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
+      isNativeMethodAvailable: (method) =>
+        typeof method === "string" &&
+        Boolean(window.ReactNativeWebView) &&
+        bridgeMethods.includes(method),
     } as WithAvailable<BridgeObject>,
   );
 
