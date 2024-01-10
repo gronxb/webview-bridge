@@ -5,4 +5,5 @@ export type Bridge = Record<string, AsyncFunction>;
 
 export type WithAvailable<T> = {
   isWebViewBridgeAvailable: boolean;
+  isNativeMethodAvailable: (method: keyof T) => boolean;
 } & T;
