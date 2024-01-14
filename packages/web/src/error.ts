@@ -4,3 +4,10 @@ export class MethodNotFoundError extends Error {
     this.name = "MethodNotFoundError";
   }
 }
+
+export class NativeBridgeError extends Error {
+  constructor(methodName: string) {
+    super(`An error occurred in the native bridge: ${methodName}`);
+    this.name = "NativeBridgeError";
+  }
+}

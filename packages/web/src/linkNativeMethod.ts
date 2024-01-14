@@ -5,7 +5,7 @@ import {
   timeout,
 } from "@webview-bridge/util";
 
-import { MethodNotFoundError } from "./error";
+import { MethodNotFoundError, NativeBridgeError } from "./error";
 import { Bridge, WithAvailable } from "./types";
 
 const emitter = createEvents();
@@ -38,6 +38,14 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
     window.nativeEmitter = emitter;
   }
 
+  const isMethodAvailable = (methodName: string) => {
+    return (
+      throwOnError === true ||
+      (Array.isArray(throwOnError) &&
+        throwOnError.includes(methodName as keyof BridgeObject))
+    );
+  };
+
   const target = bridgeMethods.reduce(
     (acc, method) => {
       return {
@@ -46,18 +54,24 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
           const eventId = createRandomId();
 
           return Promise.race([
-            createResolver(emitter, method, eventId, () => {
-              window.ReactNativeWebView?.postMessage(
-                JSON.stringify({
-                  type: "bridge",
-                  body: {
-                    method,
-                    eventId,
-                    args,
-                  },
-                }),
-              );
-            }),
+            createResolver(
+              emitter,
+              method,
+              eventId,
+              () => {
+                window.ReactNativeWebView?.postMessage(
+                  JSON.stringify({
+                    type: "bridge",
+                    body: {
+                      method,
+                      eventId,
+                      args,
+                    },
+                  }),
+                );
+              },
+              isMethodAvailable(method) && new NativeBridgeError(method),
+            ),
             timeout(timeoutMs),
           ]);
         },
@@ -91,12 +105,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
       );
       onFallback?.(method as keyof BridgeObject);
 
-      if (throwOnError === true) {
-        return () => Promise.reject(new MethodNotFoundError(method));
-      } else if (
-        Array.isArray(throwOnError) &&
-        throwOnError.includes(method as keyof BridgeObject)
-      ) {
+      if (isMethodAvailable(method)) {
         return () => Promise.reject(new MethodNotFoundError(method));
       } else {
         console.warn(
