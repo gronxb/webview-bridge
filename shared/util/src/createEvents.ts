@@ -42,12 +42,25 @@ export const createResolver = (
   method: string,
   eventId: string,
   evaluate: () => void,
+  failHandler: Error | false = false,
 ) => {
-  return new Promise((resolve) => {
-    const unbind = emitter.on(`${method}-${eventId}`, (data) => {
-      unbind();
-      resolve(data);
-    });
+  return new Promise((resolve, reject) => {
+    const unbind = emitter.on(
+      `${method}-${eventId}`,
+      (data, throwOccurred: boolean) => {
+        unbind();
+
+        if (throwOccurred) {
+          if (failHandler instanceof Error) {
+            reject(failHandler);
+          } else {
+            resolve(void 0);
+          }
+        } else {
+          resolve(data);
+        }
+      },
+    );
     evaluate();
   });
 };

@@ -23,15 +23,24 @@ export const handleBridge = async ({
   webview,
   eventId,
 }: HandleBridgeArgs) => {
-  const response = await bridge[method]?.(...(args ?? []));
+  try {
+    const response = await bridge[method]?.(...(args ?? []));
 
-  webview.injectJavaScript(`
+    webview.injectJavaScript(`
     window.nativeEmitter.emit('${method}-${eventId}',${JSON.stringify(
       response,
     )});
   
     true;
   `);
+  } catch (error) {
+    console.error(error);
+    webview.injectJavaScript(`
+    window.nativeEmitter.emit('${method}-${eventId}', {}, true);
+
+    true;
+  `);
+  }
 };
 
 export const INTEGRATIONS_SCRIPTS_BRIDGE = (bridgeNames: string[]) => `
