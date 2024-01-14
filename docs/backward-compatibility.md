@@ -83,10 +83,10 @@ For example, it's configured as follows. You can handle this through the `create
 
 ```tsx
 export const appBridge = bridge({
-  getMessage: async () => {
+  async getMessage() {
     return "I'm from native" as const;
   },
-  openInAppBrowser: async (url: string) => {
+  async openInAppBrowser(url: string) {
     if (await InAppBrowser.isAvailable()) {
       await InAppBrowser.open(url);
     }
