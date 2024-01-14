@@ -5,7 +5,7 @@ import {
   timeout,
 } from "@webview-bridge/util";
 
-import { MethodNotFoundError, NativeBridgeError } from "./error";
+import { MethodNotFoundError, NativeMethodError } from "./error";
 import { Bridge, WithAvailable } from "./types";
 
 const emitter = createEvents();
@@ -70,7 +70,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
                   }),
                 );
               },
-              isMethodAvailable(method) && new NativeBridgeError(method),
+              isMethodAvailable(method) && new NativeMethodError(method),
             ),
             timeout(timeoutMs),
           ]);
