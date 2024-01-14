@@ -21,13 +21,13 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 
 // Register functions in the bridge object in your React Native code
 export const appBridge = bridge({
-  getMessage: async () => {
+  async getMessage() {
     return "Hello, I'm native";
   },
-  sum: async (a: number, b: number) => {
+  async sum(a: number, b: number) {
     return a + b;
   },
-  openInAppBrowser: async (url: string) => {
+  async openInAppBrowser(url: string) {
     if (await InAppBrowser.isAvailable()) {
       await InAppBrowser.open(url);
     }
