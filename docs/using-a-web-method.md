@@ -15,10 +15,10 @@ import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
 
 // Register functions in the registerWebMethod object in your web code
 export const webBridge = registerWebMethod({
-  alert: (message: string) => {
+  async alert(message: string) {
     window.alert(message);
   },
-  sum: (a: number, b: number) => {
+  async sum(a: number, b: number) {
     return a + b;
   },
   // ... Add more functions as needed

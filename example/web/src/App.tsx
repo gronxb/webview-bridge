@@ -4,10 +4,10 @@ import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
 import type { AppBridge } from "@webview-bridge/example-native";
 
 export const webBridge = registerWebMethod({
-  alert: async (message: string) => {
+  async alert(message: string) {
     window.alert(message);
   },
-  sum: async (a: number, b: number) => {
+  async sum(a: number, b: number) {
     return a + b;
   },
 });
