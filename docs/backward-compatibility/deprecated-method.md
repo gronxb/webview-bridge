@@ -36,9 +36,7 @@ export const appBridge = bridge({
 
 ### loose
 
-Using the `loose` keyword in `nativeMethod`, even if there's a `throwOnError` field, no error will occur. It provides minimal type completion without throwing errors for unknown types.
-
-For older versions, simply appending the `.loose` prefix to the previous method is enough.
+Using the `loose` keyword in `nativeMethod`, It provides minimal type completion without throwing errors for unknown types.
 
 ```ts
 const nativeMethod = linkNativeMethod<AppBridge>({

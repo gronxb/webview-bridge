@@ -12,8 +12,8 @@ const emitter = createEvents();
 
 export interface LinkNativeMethodOptions<BridgeObject extends Bridge> {
   timeout?: number;
-  throwOnError?: boolean | (keyof BridgeObject)[];
-  onFallback?: (method: keyof BridgeObject) => void;
+  throwOnError?: boolean | (keyof BridgeObject)[] | string[];
+  onFallback?: (method: string) => void;
 }
 
 const createNativeMethod =
@@ -76,11 +76,13 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
 
   const target = bridgeMethods.reduce(
     (acc, method) => {
-      const throwOnError = willMethodThrowOnError(method);
-
       return {
         ...acc,
-        [method]: createNativeMethod(method, timeoutMs, throwOnError),
+        [method]: createNativeMethod(
+          method,
+          timeoutMs,
+          willMethodThrowOnError(method),
+        ),
       };
     },
     {
@@ -106,7 +108,11 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
       ) {
         return target[method];
       }
-      return createNativeMethod(method, timeoutMs, false);
+      return createNativeMethod(
+        method,
+        timeoutMs,
+        willMethodThrowOnError(method),
+      );
     },
   });
 
@@ -125,7 +131,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
           },
         }),
       );
-      onFallback?.(method as keyof BridgeObject);
+      onFallback?.(method);
 
       if (willMethodThrowOnError(method)) {
         return () => Promise.reject(new MethodNotFoundError(method));
