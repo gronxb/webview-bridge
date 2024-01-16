@@ -34,7 +34,17 @@ export default defineConfig({
           },
           {
             text: "Backward Compatibility",
-            link: "/backward-compatibility",
+            base: "/backward-compatibility",
+            items: [
+              {
+                text: "New Method",
+                link: "/new-method",
+              },
+              {
+                text: "Deprecated Method",
+                link: "/deprecated-method",
+              },
+            ],
           },
         ],
       },

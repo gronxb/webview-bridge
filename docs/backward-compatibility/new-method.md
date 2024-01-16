@@ -1,6 +1,6 @@
-# Backward Compatibility
+# Backward Compatibility for New Method
 
-Since a WebView is web-based, it can always be kept up-to-date upon deployment. In contrast, rolling out a React Native app can take time.
+Since a WebView is web-based, it can always be updated to the latest version upon deployment. In contrast, rolling out updates for a React Native app can take time.
 
 When a new method is added in React Native, it can be invoked from the web.
 
@@ -79,7 +79,7 @@ const nativeMethod = linkNativeMethod<AppBridge>({
 
 ## React Native Part
 
-For example, it's configured as follows. You can handle this through the `createWebview` fallback field.
+For example, it's configured as follows. You can handle this through the `createWebView` fallback field.
 
 ```tsx
 export const appBridge = bridge({
