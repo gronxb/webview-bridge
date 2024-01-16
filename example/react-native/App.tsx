@@ -16,8 +16,16 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
 
 export const appBridge = bridge({
+  // A bridge scenario that existed in the past. Assume the this method existed in a previous version.
+  // async getBridgeVersion() {
+  //   return 1;
+  // },
+  // async getOldVersionMessage() {
+  //   return "I'm from native old version" as const;
+  // },
+
   async getBridgeVersion() {
-    return 1;
+    return 2;
   },
   async getMessage() {
     return "I'm from native" as const;
