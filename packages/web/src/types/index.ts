@@ -3,7 +3,15 @@ export type AsyncFunction = (...args: any[]) => Promise<any>;
 
 export type Bridge = Record<string, AsyncFunction>;
 
-export type WithAvailable<T> = {
+export type NativeMethod<T> = {
   isWebViewBridgeAvailable: boolean;
   isNativeMethodAvailable(method: keyof T): boolean;
+  isNativeMethodAvailable(method: string): boolean;
+  loose: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [K in keyof T]: (...args: any[]) => any;
+  } & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: (...args: any[]) => any;
+  };
 } & T;

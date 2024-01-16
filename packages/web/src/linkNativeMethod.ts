@@ -6,7 +6,7 @@ import {
 } from "@webview-bridge/util";
 
 import { MethodNotFoundError, NativeMethodError } from "./error";
-import { Bridge, WithAvailable } from "./types";
+import { Bridge, NativeMethod } from "./types";
 
 const emitter = createEvents();
 
@@ -16,12 +16,40 @@ export interface LinkNativeMethodOptions<BridgeObject extends Bridge> {
   onFallback?: (method: keyof BridgeObject) => void;
 }
 
+const createNativeMethod =
+  (method: string, timeoutMs: number, throwOnError: boolean) =>
+  (...args: unknown[]) => {
+    const eventId = createRandomId();
+
+    return Promise.race([
+      createResolver(
+        emitter,
+        method,
+        eventId,
+        () => {
+          window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+              type: "bridge",
+              body: {
+                method,
+                eventId,
+                args,
+              },
+            }),
+          );
+        },
+        throwOnError && new NativeMethodError(method),
+      ),
+      timeout(timeoutMs),
+    ]);
+  };
+
 export const linkNativeMethod = <BridgeObject extends Bridge>(
   options: LinkNativeMethodOptions<BridgeObject> = {
     timeout: 2000,
     throwOnError: false,
   },
-): WithAvailable<BridgeObject> => {
+): NativeMethod<BridgeObject> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -38,7 +66,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
     window.nativeEmitter = emitter;
   }
 
-  const isMethodAvailable = (methodName: string) => {
+  const willMethodThrowOnError = (methodName: string) => {
     return (
       throwOnError === true ||
       (Array.isArray(throwOnError) &&
@@ -48,33 +76,11 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
 
   const target = bridgeMethods.reduce(
     (acc, method) => {
+      const throwOnError = willMethodThrowOnError(method);
+
       return {
         ...acc,
-        [method]: (...args: unknown[]) => {
-          const eventId = createRandomId();
-
-          return Promise.race([
-            createResolver(
-              emitter,
-              method,
-              eventId,
-              () => {
-                window.ReactNativeWebView?.postMessage(
-                  JSON.stringify({
-                    type: "bridge",
-                    body: {
-                      method,
-                      eventId,
-                      args,
-                    },
-                  }),
-                );
-              },
-              isMethodAvailable(method) && new NativeMethodError(method),
-            ),
-            timeout(timeoutMs),
-          ]);
-        },
+        [method]: createNativeMethod(method, timeoutMs, throwOnError),
       };
     },
     {
@@ -87,14 +93,30 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
           bridgeMethods.includes(method)
         );
       },
-    } as WithAvailable<BridgeObject>,
+    } as NativeMethod<BridgeObject>,
   );
 
+  const loose = new Proxy(target, {
+    get: (target, method: string) => {
+      if (
+        method in target &&
+        !["isWebViewBridgeAvailable", "isNativeMethodAvailable"].includes(
+          method,
+        )
+      ) {
+        return target[method];
+      }
+      return createNativeMethod(method, timeoutMs, false);
+    },
+  });
+
+  Object.assign(target, { loose });
   return new Proxy(target, {
     get: (target, method: string) => {
       if (method in target) {
-        return (target as { [key: string]: () => Promise<string> })[method];
+        return target[method];
       }
+
       window.ReactNativeWebView?.postMessage(
         JSON.stringify({
           type: "fallback",
@@ -105,7 +127,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
       );
       onFallback?.(method as keyof BridgeObject);
 
-      if (isMethodAvailable(method)) {
+      if (willMethodThrowOnError(method)) {
         return () => Promise.reject(new MethodNotFoundError(method));
       } else {
         console.warn(
