@@ -20,9 +20,20 @@ function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    nativeMethod.getMessage().then((message) => {
-      setMessage(message);
-    });
+    async function init() {
+      const version = await nativeMethod.getBridgeVersion();
+      if (version >= 2) {
+        const message = await nativeMethod.getMessage();
+        setMessage(message);
+      } else {
+        // Support for old native methods with `loose`
+        const oldVersionMessage =
+          await nativeMethod.loose.getOldVersionMessage();
+        setMessage(oldVersionMessage);
+      }
+    }
+
+    init();
   }, []);
 
   return (
@@ -31,7 +42,9 @@ function App() {
       <h1>{message}</h1>
       <button
         onClick={() => {
-          if (nativeMethod.isNativeMethodAvailable("openInAppBrowser")) {
+          if (
+            nativeMethod.isNativeMethodAvailable("openInAppBrowser") === true
+          ) {
             nativeMethod.openInAppBrowser(
               "https://github.com/gronxb/webview-bridge",
             );
