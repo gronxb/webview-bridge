@@ -40,7 +40,7 @@ const createNativeMethod =
         },
         throwOnError && new NativeMethodError(method),
       ),
-      timeout(timeoutMs),
+      timeout(timeoutMs, throwOnError),
     ]);
   };
 
