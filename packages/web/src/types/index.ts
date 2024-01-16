@@ -9,9 +9,9 @@ export type NativeMethod<T> = {
   isNativeMethodAvailable(method: string): boolean;
   loose: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [K in keyof T]: (...args: any[]) => any;
+    [K in keyof T]: (...args: any[]) => Promise<any>;
   } & {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: (...args: any[]) => any;
+    [key: string]: (...args: any[]) => Promise<any>;
   };
 } & T;
