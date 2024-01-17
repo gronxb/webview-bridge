@@ -29,6 +29,10 @@ export default defineConfig({
             link: "/using-a-native-method",
           },
           {
+            text: "Using a Loose Native Method",
+            link: "/using-a-loose-native-method",
+          },
+          {
             text: "Using a Web Method",
             link: "/using-a-web-method",
           },
