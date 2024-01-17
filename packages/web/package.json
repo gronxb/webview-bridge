@@ -15,9 +15,9 @@
     "dist",
     "package.json"
   ],
-  "main": "/dist/commonjs/index.cjs",
-  "module": "/dist/module/index.mjs",
-  "types": "/dist/typescript/packages/web/src/index.d.ts",
+  "main": "dist/commonjs/index.cjs",
+  "module": "dist/module/index.mjs",
+  "types": "dist/typescript/packages/web/src/index.d.ts",
   "exports": {
     ".": {
       "require": {
