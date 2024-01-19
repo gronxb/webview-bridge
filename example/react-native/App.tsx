@@ -60,8 +60,18 @@ function App(): JSX.Element {
 
   const handleSum = () => {
     if (WebMethod.current.isReady) {
-      WebMethod.current.sum(1, 2).then((result) => setValue(result));
+      WebMethod.current.sum(1, 2).then((result) => {
+        setValue(result);
+      });
     }
+  };
+
+  const handleError = () => {
+    // test for timeout
+    WebMethod.current.timeoutSum(1, 2).catch((e) => console.error("(test)", e));
+
+    // test for throw
+    WebMethod.current.throw(true).catch((e) => console.error("(test)", e));
   };
 
   return (
@@ -80,6 +90,8 @@ function App(): JSX.Element {
         </Text>
       )}
       <Button onPress={handleSum} title="Web Sum" />
+
+      <Button onPress={handleError} title="Error Test" />
     </SafeAreaView>
   );
 }

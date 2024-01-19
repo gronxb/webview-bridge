@@ -112,6 +112,16 @@ export const createWebView = <BridgeObject extends Bridge>({
             emitter.emit(`${funcName}-${eventId}`, value);
             return;
           }
+          case "webMethodError": {
+            const { eventId, funcName } = body as {
+              eventId: string;
+              funcName: string;
+              value: unknown;
+            };
+
+            emitter.emit(`${funcName}-${eventId}`, {}, true);
+            return;
+          }
           case "fallback": {
             const { method } = body as {
               method: keyof BridgeObject;

@@ -6,6 +6,7 @@ import {
 } from "@webview-bridge/util";
 import WebView from "react-native-webview";
 
+import { WebMethodError } from "../error";
 import { Bridge } from "../types/bridge";
 
 export const handleRegisterWebMethod = (
@@ -19,17 +20,23 @@ export const handleRegisterWebMethod = (
       const eventId = createRandomId();
 
       return Promise.race([
-        createResolver(emitter, method, eventId, () => {
-          webview.injectJavaScript(
-            `
+        createResolver(
+          emitter,
+          method,
+          eventId,
+          () => {
+            webview.injectJavaScript(
+              `
               window.webEmitter.emit('${method}', '${eventId}', ${JSON.stringify(
                 args,
               )});
             
               true;
               `,
-          );
-        }),
+            );
+          },
+          new WebMethodError(method),
+        ),
         timeout(responseTimeout),
       ]);
     };
