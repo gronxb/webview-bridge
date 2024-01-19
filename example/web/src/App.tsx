@@ -10,6 +10,22 @@ export const webBridge = registerWebMethod({
   async sum(a: number, b: number) {
     return a + b;
   },
+
+  // (test) Calling this function will result in an error.
+  timeoutSum(a: number, b: number) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(a + b);
+      }, 3000);
+    });
+  },
+  // (test) Calling this function will result in an error.
+  async throw(thrown: boolean) {
+    if (thrown) {
+      throw new Error("Thrown from web");
+    }
+    return true;
+  },
 });
 
 const nativeMethod = linkNativeMethod<AppBridge>({
