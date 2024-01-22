@@ -5,6 +5,7 @@
  * @format
  */
 
+import { z } from "zod";
 import React, { useState } from "react";
 import { Button, Text, SafeAreaView } from "react-native";
 import {
@@ -23,7 +24,6 @@ export const appBridge = bridge({
   // async getOldVersionMessage() {
   //   return "I'm from native old version" as const;
   // },
-
   async getBridgeVersion() {
     return 2;
   },
@@ -37,11 +37,17 @@ export const appBridge = bridge({
   },
 });
 
-export const { WebView, linkWebMethod } = createWebView({
+export const { WebView, linkWebMethod, postMessage } = createWebView({
   bridge: appBridge,
   debug: true,
   fallback: (method) => {
     console.warn(`Method '${method}' not found in native`);
+  },
+
+  validatePostMessage: {
+    openModal: z.object({
+      isOpen: z.boolean(),
+    }),
   },
 });
 
