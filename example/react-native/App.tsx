@@ -18,7 +18,7 @@ import {
 import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
 
-export const appBridge = bridge({
+export const appMethod = bridge({
   // A bridge scenario that existed in the past. Assume the this method existed in a previous version.
   // async getBridgeVersion() {
   //   return 1;
@@ -49,7 +49,7 @@ export const appEvent = eventBridge({
 });
 
 export const { WebView, linkWebMethod, postMessage } = createWebView({
-  bridge: bind([appBridge, appEvent]),
+  bridge: bind([appMethod, appEvent]),
   debug: true,
   fallback: (method) => {
     console.warn(`Method '${method}' not found in native`);
