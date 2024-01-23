@@ -56,7 +56,7 @@ export const { WebView, linkWebMethod, postMessage } = createWebView({
   },
 });
 
-postMessage("openModal", { test: true });
+postMessage("openModal", { isOpen: true });
 
 const WebMethod = linkWebMethod<WebBridge>();
 

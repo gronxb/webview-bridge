@@ -216,11 +216,9 @@ export const createWebView = <
         current: WebMethod<T>;
       };
     },
-    postMessage(
-      eventName: Exclude<keyof EventBridgeObject, "__signature">,
-      data: z.infer<
-        EventBridgeObject[Exclude<keyof EventBridgeObject, "__signature">]
-      >,
+    postMessage<T extends Exclude<keyof EventBridgeObject, "__signature">>(
+      eventName: T,
+      data: z.infer<EventBridgeObject[T]>,
     ) {
       if (!_webviewRef.current) {
         throw new Error("postMessage is not ready");
