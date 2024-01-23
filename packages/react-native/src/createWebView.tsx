@@ -19,18 +19,22 @@ import {
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import { Bridge } from "./types/bridge";
+import { BridgeSignature, EventBridge, MethodBridge } from "./types/bridge";
 import type { BridgeWebView } from "./types/webview";
 
+export type LinkBridge<
+  BridgeObject extends MethodBridge,
+  EventBridgeObject extends EventBridge,
+> = BridgeObject | EventBridgeObject | [BridgeObject, EventBridgeObject];
+
 export type CreateWebViewArgs<
-  BridgeObject extends Bridge,
-  ValidatePostMessage extends Record<string, z.AnyZodObject>,
+  BridgeObject extends MethodBridge,
+  EventBridgeObject extends EventBridge,
 > = {
-  bridge: BridgeObject;
+  bridge: LinkBridge<BridgeObject, EventBridgeObject>;
   debug?: boolean;
   responseTimeout?: number;
-  fallback?: (method: keyof BridgeObject) => void;
-  validatePostMessage?: ValidatePostMessage;
+  fallback?: (method: Exclude<keyof BridgeObject, "__signature">) => void;
 };
 
 export type WebMethod<T> = T & {
@@ -38,14 +42,37 @@ export type WebMethod<T> = T & {
 };
 
 export const createWebView = <
-  BridgeObject extends Bridge,
-  ValidatePostMessage extends Record<string, z.AnyZodObject>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  BridgeObject extends MethodBridge<any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  EventBridgeObject extends EventBridge<any>,
 >({
   bridge,
   debug,
   responseTimeout = 2000,
   fallback,
-}: CreateWebViewArgs<BridgeObject, ValidatePostMessage>) => {
+}: CreateWebViewArgs<BridgeObject, EventBridgeObject>) => {
+  const findBridge = (
+    bridge: LinkBridge<BridgeObject, EventBridgeObject>,
+    signature: BridgeSignature,
+  ) => {
+    if (Array.isArray(bridge)) {
+      const _bridge = bridge.find(
+        (b) =>
+          "__signature" in b &&
+          typeof b.__signature === "string" &&
+          b.__signature === signature,
+      );
+      if (!_bridge) {
+        throw new Error(
+          "The 'bridge' fields are incorrect. Did you use 'bridge' or 'eventBridge'?",
+        );
+      }
+    }
+
+    return bridge;
+  };
+
   const WebMethod = {
     current: {
       isReady: false,
@@ -106,8 +133,9 @@ export const createWebView = <
               eventId: string;
             };
 
+            const _bridge = findBridge(bridge, "methodBridge") as BridgeObject;
             handleBridge({
-              bridge,
+              bridge: _bridge,
               method,
               args,
               eventId,
@@ -153,7 +181,7 @@ export const createWebView = <
           }
           case "fallback": {
             const { method } = body as {
-              method: keyof BridgeObject;
+              method: Exclude<keyof BridgeObject, "__signature">;
             };
             fallback?.(method);
             return;
@@ -189,13 +217,10 @@ export const createWebView = <
       };
     },
     postMessage(
-      eventName: keyof ValidatePostMessage extends undefined
-        ? string
-        : keyof ValidatePostMessage,
-      data: keyof ValidatePostMessage extends undefined
-        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          any
-        : z.infer<ValidatePostMessage[keyof ValidatePostMessage]>,
+      eventName: Exclude<keyof EventBridgeObject, "__signature">,
+      data: z.infer<
+        EventBridgeObject[Exclude<keyof EventBridgeObject, "__signature">]
+      >,
     ) {
       if (!_webviewRef.current) {
         throw new Error("postMessage is not ready");

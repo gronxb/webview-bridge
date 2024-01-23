@@ -7,7 +7,7 @@ import {
 import WebView from "react-native-webview";
 
 import { WebMethodError } from "../error";
-import { Bridge } from "../types/bridge";
+import { MethodBridge } from "../types/bridge";
 
 export const handleRegisterWebMethod = (
   emitter: EventEmitter,
@@ -42,5 +42,5 @@ export const handleRegisterWebMethod = (
     };
 
     return acc;
-  }, {} as Bridge);
+  }, {} as MethodBridge);
 };

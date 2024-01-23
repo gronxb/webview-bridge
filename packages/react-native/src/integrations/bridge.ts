@@ -1,17 +1,20 @@
 import WebView from "react-native-webview";
 
-import type { Bridge } from "../types/bridge";
+import type { MethodBridge } from "../types/bridge";
 
-export const bridge = <BridgeObject extends Bridge>(
+export const bridge = <BridgeObject extends Omit<MethodBridge, "__signature">>(
   procedures: BridgeObject,
-): BridgeObject => {
-  return procedures;
+): MethodBridge<BridgeObject> => {
+  return {
+    ...procedures,
+    __signature: "methodBridge",
+  } as MethodBridge<BridgeObject>;
 };
 
-type HandleBridgeArgs<ArgType = unknown> = {
-  bridge: Bridge;
+type HandleBridgeArgs = {
+  bridge: MethodBridge;
   method: string;
-  args?: ArgType[];
+  args?: unknown[];
   webview: WebView;
   eventId: string;
 };
