@@ -10,8 +10,10 @@ import React, { useState } from "react";
 import { Button, Text, SafeAreaView } from "react-native";
 import {
   bridge,
+  eventBridge,
   createWebView,
   type BridgeWebView,
+  bind,
 } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
@@ -37,19 +39,24 @@ export const appBridge = bridge({
   },
 });
 
+export const appEvent = eventBridge({
+  openModal: z.object({
+    isOpen: z.boolean(),
+  }),
+  openModal2: z.object({
+    test: z.boolean(),
+  }),
+});
+
 export const { WebView, linkWebMethod, postMessage } = createWebView({
-  bridge: appBridge,
+  bridge: bind([appBridge, appEvent]),
   debug: true,
   fallback: (method) => {
     console.warn(`Method '${method}' not found in native`);
   },
-
-  validatePostMessage: {
-    openModal: z.object({
-      isOpen: z.boolean(),
-    }),
-  },
 });
+
+postMessage("openModal", { test: true });
 
 const WebMethod = linkWebMethod<WebBridge>();
 
