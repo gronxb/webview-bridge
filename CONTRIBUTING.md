@@ -23,7 +23,7 @@ $ pnpm start --reset-cache
 ## React Native (iOS) Start
 
 ```sh
-$ cd example/react-native
+$ cd example/basic/react-native
 $ pnpx pod-install
 $ pnpm ios
 ```
@@ -31,7 +31,7 @@ $ pnpm ios
 ## Web Start
 
 ```sh
-$ cd example/web
+$ cd example/basic/web
 $ pnpm dev
 ```
 
