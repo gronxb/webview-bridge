@@ -7,6 +7,7 @@ declare global {
     __bridgeMethods__?: string[];
     nativeEmitter?: EventEmitter<DefaultEvents>;
     webEmitter?: EventEmitter<DefaultEvents>;
+    eventEmitter?: EventEmitter<DefaultEvents>;
     ReactNativeWebView: {
       postMessage: (data: string) => void;
     };

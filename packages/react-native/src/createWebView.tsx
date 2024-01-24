@@ -1,4 +1,4 @@
-import { createEvents, createRandomId } from "@webview-bridge/util";
+import { createEvents } from "@webview-bridge/util";
 import {
   createRef,
   forwardRef,
@@ -203,11 +203,10 @@ export const createWebView = <
       if (!_webviewRef.current) {
         throw new Error("postMessage is not ready");
       }
-      const eventId = createRandomId();
       return _webviewRef.current.injectJavaScript(`
-        window.webEmitter.emit('${String(
-          eventName,
-        )}', '${eventId}', ${JSON.stringify(data)});
+        window.eventEmitter.emit('${String(eventName)}', ${JSON.stringify(
+          data,
+        )});
 
         true;
         `);
