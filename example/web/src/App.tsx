@@ -1,7 +1,12 @@
+import { z } from "zod";
 import { useEffect, useState } from "react";
 import "./App.css";
-import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
-import type { AppBridge } from "@webview-bridge/example-native";
+import {
+  linkNativeMethod,
+  linkNativeEvent,
+  registerWebMethod,
+} from "@webview-bridge/web";
+import type { AppMethod, AppEvent } from "@webview-bridge/example-native";
 
 export const webBridge = registerWebMethod({
   async alert(message: string) {
@@ -28,12 +33,28 @@ export const webBridge = registerWebMethod({
   },
 });
 
-const nativeMethod = linkNativeMethod<AppBridge>({
+const nativeMethod = linkNativeMethod<AppMethod>({
   throwOnError: true,
 });
 
+const emitter = linkNativeEvent<AppEvent>();
+
+function useNativeEventListener<K extends keyof Omit<AppEvent, "__signature">>(
+  eventName: K,
+  cb: (data: z.infer<Omit<AppEvent, "__signature">[K]>) => void,
+) {
+  useEffect(() => {
+    return emitter.on(eventName, cb);
+  }, []);
+}
+
 function App() {
   const [message, setMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  useNativeEventListener("openModal", ({ isOpen }) => {
+    setIsOpen(isOpen);
+  });
 
   useEffect(() => {
     async function init() {
@@ -69,6 +90,8 @@ function App() {
       >
         open InAppBrowser
       </button>
+
+      {isOpen ? <p>Hello. I'm Modal</p> : null}
 
       <div>
         {`isWebViewBridgeAvailable: ${String(

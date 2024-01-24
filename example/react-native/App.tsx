@@ -56,8 +56,6 @@ export const { WebView, linkWebMethod, postMessage } = createWebView({
   },
 });
 
-postMessage("openModal", { isOpen: true });
-
 const WebMethod = linkWebMethod<WebBridge>();
 
 function App(): JSX.Element {
@@ -87,6 +85,10 @@ function App(): JSX.Element {
     WebMethod.current.throw(true).catch((e) => console.error("(test)", e));
   };
 
+  const handlePostMessage = () => {
+    postMessage("openModal", { isOpen: true });
+  };
+
   return (
     <SafeAreaView style={{ height: "100%" }}>
       <WebView
@@ -96,6 +98,8 @@ function App(): JSX.Element {
         }}
         style={{ height: "100%", flex: 1, width: "100%" }}
       />
+      <Button onPress={handlePostMessage} title="postMessage (openModal)" />
+
       <Button onPress={handleWebAlert} title="Web Alert" />
       {value > 0 && (
         <Text style={{ alignSelf: "center" }}>
