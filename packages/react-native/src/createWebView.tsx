@@ -14,12 +14,12 @@ import type { z } from "zod";
 import {
   handleBridge,
   handleLog,
-  INTEGRATIONS_SCRIPTS_BRIDGE,
   INTEGRATIONS_SCRIPTS_CONSOLE,
+  INTEGRATIONS_SCRIPTS_METHOD_BRIDGE,
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import { BridgeSignature, EventBridge, MethodBridge } from "./types/bridge";
+import { EventBridge, MethodBridge } from "./types/bridge";
 import type { BridgeWebView } from "./types/webview";
 
 export type LinkBridge<
@@ -52,26 +52,10 @@ export const createWebView = <
   responseTimeout = 2000,
   fallback,
 }: CreateWebViewArgs<BridgeObject, EventBridgeObject>) => {
-  const findBridge = (
-    bridge: LinkBridge<BridgeObject, EventBridgeObject>,
-    signature: BridgeSignature,
-  ) => {
-    if (Array.isArray(bridge)) {
-      const _bridge = bridge.find(
-        (b) =>
-          "__signature" in b &&
-          typeof b.__signature === "string" &&
-          b.__signature === signature,
-      );
-      if (!_bridge) {
-        throw new Error(
-          "The 'bridge' fields are incorrect. Did you use 'bridge' or 'eventBridge'?",
-        );
-      }
-    }
-
-    return bridge;
-  };
+  const [methodBridge] = (Array.isArray(bridge) ? bridge : [bridge]) as [
+    BridgeObject,
+    EventBridgeObject,
+  ];
 
   const WebMethod = {
     current: {
@@ -85,11 +69,8 @@ export const createWebView = <
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
 
-      const bridgeNames = useMemo(
-        () =>
-          Object.values(bridge ?? {}).map((func) => {
-            return `'${func.name}'`;
-          }),
+      const methodBridgeNames = useMemo(
+        () => Object.values(methodBridge ?? {}).map((func) => `'${func.name}'`),
         [],
       );
 
@@ -133,9 +114,8 @@ export const createWebView = <
               eventId: string;
             };
 
-            const _bridge = findBridge(bridge, "methodBridge") as BridgeObject;
             handleBridge({
-              bridge: _bridge,
+              bridge: methodBridge,
               method,
               args,
               eventId,
@@ -195,7 +175,7 @@ export const createWebView = <
           ref={webviewRef}
           onMessage={handleMessage}
           injectedJavaScriptBeforeContentLoaded={[
-            INTEGRATIONS_SCRIPTS_BRIDGE(bridgeNames),
+            INTEGRATIONS_SCRIPTS_METHOD_BRIDGE(methodBridgeNames),
             props.injectedJavaScriptBeforeContentLoaded,
             "true;",
           ]

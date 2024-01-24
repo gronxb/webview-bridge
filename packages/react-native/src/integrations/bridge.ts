@@ -46,6 +46,6 @@ export const handleBridge = async ({
   }
 };
 
-export const INTEGRATIONS_SCRIPTS_BRIDGE = (bridgeNames: string[]) => `
+export const INTEGRATIONS_SCRIPTS_METHOD_BRIDGE = (bridgeNames: string[]) => `
     window.__bridgeMethods__ = [${bridgeNames.join(", ")}];
 `;

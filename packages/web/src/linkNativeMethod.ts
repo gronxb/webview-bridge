@@ -6,11 +6,13 @@ import {
 } from "@webview-bridge/util";
 
 import { MethodNotFoundError, NativeMethodError } from "./error";
-import { Bridge, NativeMethod } from "./types";
+import { MethodBridge, NativeMethod } from "./types";
 
 const emitter = createEvents();
 
-export interface LinkNativeMethodOptions<BridgeObject extends Bridge> {
+export interface LinkNativeMethodOptions<
+  BridgeObject extends MethodBridge<BridgeObject>,
+> {
   timeout?: number;
   throwOnError?: boolean | (keyof BridgeObject)[] | string[];
   onFallback?: (method: string) => void;
@@ -44,12 +46,14 @@ const createNativeMethod =
     ]);
   };
 
-export const linkNativeMethod = <BridgeObject extends Bridge>(
+export const linkNativeMethod = <
+  BridgeObject extends MethodBridge<BridgeObject>,
+>(
   options: LinkNativeMethodOptions<BridgeObject> = {
     timeout: 2000,
     throwOnError: false,
   },
-): NativeMethod<BridgeObject> => {
+): NativeMethod<Omit<BridgeObject, "__signature">> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -70,7 +74,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
     return (
       throwOnError === true ||
       (Array.isArray(throwOnError) &&
-        throwOnError.includes(methodName as keyof BridgeObject))
+        throwOnError.includes(methodName as keyof BridgeObject & string))
     );
   };
 
@@ -99,7 +103,8 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
   );
 
   const loose = new Proxy(target, {
-    get: (target, method: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    get: (target: any, method: string) => {
       if (
         method in target &&
         !["isWebViewBridgeAvailable", "isNativeMethodAvailable"].includes(
@@ -118,7 +123,8 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
 
   Object.assign(target, { loose });
   return new Proxy(target, {
-    get: (target, method: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    get: (target: any, method: string) => {
       if (method in target) {
         return target[method];
       }

@@ -1,8 +1,8 @@
 import { createEvents } from "@webview-bridge/util";
 
-import type { Bridge } from "./types";
+import type { AsyncObject } from "./types";
 
-export const registerWebMethod = <BridgeObject extends Bridge>(
+export const registerWebMethod = <BridgeObject extends AsyncObject>(
   bridge: BridgeObject,
 ): BridgeObject => {
   if (!window.ReactNativeWebView) {

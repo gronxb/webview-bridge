@@ -1,7 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AsyncFunction = (...args: any[]) => Promise<any>;
 
-export type Bridge = Record<string, AsyncFunction>;
+export type AsyncObject = Record<string, AsyncFunction>;
+
+export type MethodBridge<T extends object> = {
+  [key in keyof T]: key extends "__signature" ? "methodBridge" : AsyncFunction;
+};
 
 export type NativeMethod<T> = {
   isWebViewBridgeAvailable: boolean;
