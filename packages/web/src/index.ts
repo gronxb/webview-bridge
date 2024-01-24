@@ -1,5 +1,5 @@
 export * from "./error";
-export * from "./linkNativeEvent";
+export * from "./linkNativeEventListener";
 export * from "./linkNativeMethod";
 export * from "./registerWebMethod";
 export type * from "./types";

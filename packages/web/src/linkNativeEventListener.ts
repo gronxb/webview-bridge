@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { EventBridge } from "./types";
 
-export const linkNativeEvent = <
+export const linkNativeEventListener = <
   EventBridgeObject extends EventBridge<EventBridgeObject>,
 >() => {
   const emitter = createEvents();
