@@ -30,6 +30,11 @@ export const webBridge = registerWebMethod({
 
 const nativeMethod = linkNativeMethod<AppBridge>({
   throwOnError: true,
+  onReady: async (method) => {
+    console.log("nativeMethod is ready");
+    const version = await method.getBridgeVersion();
+    console.log("currentBridgerVersion", version);
+  },
 });
 
 function App() {
