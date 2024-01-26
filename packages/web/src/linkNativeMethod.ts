@@ -13,32 +13,33 @@ const emitter = createEvents();
 export interface LinkNativeMethodOptions<BridgeObject extends Bridge> {
   timeout?: number;
   throwOnError?: boolean | (keyof BridgeObject)[] | string[];
-  onFallback?: (method: string) => void;
+  onFallback?: (methodName: string) => void;
+  onReady?: (method: NativeMethod<BridgeObject>) => void;
 }
 
 const createNativeMethod =
-  (method: string, timeoutMs: number, throwOnError: boolean) =>
+  (methodName: string, timeoutMs: number, throwOnError: boolean) =>
   (...args: unknown[]) => {
     const eventId = createRandomId();
 
     return Promise.race([
       createResolver(
         emitter,
-        method,
+        methodName,
         eventId,
         () => {
           window.ReactNativeWebView?.postMessage(
             JSON.stringify({
               type: "bridge",
               body: {
-                method,
+                method: methodName,
                 eventId,
                 args,
               },
             }),
           );
         },
-        throwOnError && new NativeMethodError(method),
+        throwOnError && new NativeMethodError(methodName),
       ),
       timeout(timeoutMs, throwOnError),
     ]);
@@ -54,6 +55,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
     timeout: timeoutMs = 2000,
     throwOnError = false,
     onFallback,
+    onReady,
   } = options;
 
   if (!window.ReactNativeWebView) {
@@ -75,72 +77,75 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
   };
 
   const target = bridgeMethods.reduce(
-    (acc, method) => {
+    (acc, methodName) => {
       return {
         ...acc,
-        [method]: createNativeMethod(
-          method,
+        [methodName]: createNativeMethod(
+          methodName,
           timeoutMs,
-          willMethodThrowOnError(method),
+          willMethodThrowOnError(methodName),
         ),
       };
     },
     {
       isWebViewBridgeAvailable:
         Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
-      isNativeMethodAvailable(method) {
+      isNativeMethodAvailable(methodName) {
         return (
-          typeof method === "string" &&
+          typeof methodName === "string" &&
           Boolean(window.ReactNativeWebView) &&
-          bridgeMethods.includes(method)
+          bridgeMethods.includes(methodName)
         );
       },
     } as NativeMethod<BridgeObject>,
   );
 
   const loose = new Proxy(target, {
-    get: (target, method: string) => {
+    get: (target, methodName: string) => {
       if (
-        method in target &&
+        methodName in target &&
         !["isWebViewBridgeAvailable", "isNativeMethodAvailable"].includes(
-          method,
+          methodName,
         )
       ) {
-        return target[method];
+        return target[methodName];
       }
       return createNativeMethod(
-        method,
+        methodName,
         timeoutMs,
-        willMethodThrowOnError(method),
+        willMethodThrowOnError(methodName),
       );
     },
   });
 
   Object.assign(target, { loose });
-  return new Proxy(target, {
-    get: (target, method: string) => {
-      if (method in target) {
-        return target[method];
+  const proxy = new Proxy(target, {
+    get: (target, methodName: string) => {
+      if (methodName in target) {
+        return target[methodName];
       }
 
       window.ReactNativeWebView?.postMessage(
         JSON.stringify({
           type: "fallback",
           body: {
-            method,
+            method: methodName,
           },
         }),
       );
-      onFallback?.(method);
+      onFallback?.(methodName);
 
-      if (willMethodThrowOnError(method)) {
-        return () => Promise.reject(new MethodNotFoundError(method));
+      if (willMethodThrowOnError(methodName)) {
+        return () => Promise.reject(new MethodNotFoundError(methodName));
       } else {
         console.warn(
-          `[WebViewBridge] ${method} is not defined, using fallback.`,
+          `[WebViewBridge] ${methodName} is not defined, using fallback.`,
         );
       }
       return () => Promise.resolve();
     },
   });
+
+  onReady?.(proxy);
+  return proxy;
 };
