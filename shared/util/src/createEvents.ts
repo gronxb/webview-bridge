@@ -39,14 +39,14 @@ export const createEvents = <
 
 export const createResolver = (
   emitter: EventEmitter<DefaultEvents>,
-  method: string,
+  methodName: string,
   eventId: string,
   evaluate: () => void,
   failHandler: Error | false = false,
 ) => {
   return new Promise((resolve, reject) => {
     const unbind = emitter.on(
-      `${method}-${eventId}`,
+      `${methodName}-${eventId}`,
       (data, throwOccurred: boolean) => {
         unbind();
 
