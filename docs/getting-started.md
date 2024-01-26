@@ -119,7 +119,13 @@ You can directly use `nativeMethod` as shown below and receive the results.
 import { linkNativeMethod } from "@webview-bridge/web";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
-const nativeMethod = linkNativeMethod<AppBridge>();
+const nativeMethod = linkNativeMethod<AppBridge>({
+  onReady: async (method) => {
+    console.log("nativeMethod is ready");
+    const version = await method.getBridgeVersion();
+    console.log("currentBridgerVersion", version);
+  },
+});
 
 nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
 nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
