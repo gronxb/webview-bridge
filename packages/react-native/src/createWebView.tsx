@@ -12,7 +12,7 @@ import {
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import { Bridge } from "./types/bridge";
+import { AsyncFunction, Bridge } from "./types/bridge";
 import type { BridgeWebView } from "./types/webview";
 
 export type CreateWebViewArgs<BridgeObject extends Bridge> = {
@@ -45,9 +45,11 @@ export const createWebView = <BridgeObject extends Bridge>({
 
       const bridgeNames = useMemo(
         () =>
-          Object.values(bridge ?? {}).map((func) => {
-            return `'${func.name}'`;
-          }),
+          Object.values(bridge ?? {})
+            .filter((bridge) => typeof bridge === "function")
+            .map((func) => {
+              return `'${(func as AsyncFunction).name}'`;
+            }),
         [],
       );
 

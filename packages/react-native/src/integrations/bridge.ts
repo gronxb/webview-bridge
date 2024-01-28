@@ -23,8 +23,13 @@ export const handleBridge = async ({
   webview,
   eventId,
 }: HandleBridgeArgs) => {
+  const _method = bridge[method];
+  if (typeof _method !== "function") {
+    return;
+  }
+
   try {
-    const response = await bridge[method]?.(...(args ?? []));
+    const response = await _method?.(...(args ?? []));
 
     webview.injectJavaScript(`
     window.nativeEmitter.emit('${method}-${eventId}',${JSON.stringify(
