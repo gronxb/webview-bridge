@@ -15,19 +15,19 @@ export const handleRegisterWebMethod = (
   bridgeNames: string[],
   responseTimeout: number,
 ) => {
-  return bridgeNames.reduce((acc, method) => {
-    acc[method] = async (...args: unknown[]) => {
+  return bridgeNames.reduce((acc, methodName) => {
+    acc[methodName] = async (...args: unknown[]) => {
       const eventId = createRandomId();
 
       return Promise.race([
         createResolver(
           emitter,
-          method,
+          methodName,
           eventId,
           () => {
             webview.injectJavaScript(
               `
-              window.webEmitter.emit('${method}', '${eventId}', ${JSON.stringify(
+              window.webEmitter.emit('${methodName}', '${eventId}', ${JSON.stringify(
                 args,
               )});
             
@@ -35,7 +35,7 @@ export const handleRegisterWebMethod = (
               `,
             );
           },
-          new WebMethodError(method),
+          new WebMethodError(methodName),
         ),
         timeout(responseTimeout),
       ]);

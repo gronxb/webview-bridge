@@ -1,11 +1,57 @@
 import WebView from "react-native-webview";
 
-import type { Bridge } from "../types/bridge";
+import type { Bridge, BridgeStore, OnlyPrimitive } from "../types/bridge";
+import { removeUndefinedKeys } from "../utils/removeUndefinedKeys";
+
+export type Store<BridgeObject extends Bridge> = ({
+  get,
+  set,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get: () => BridgeObject;
+  set: (newState: Partial<OnlyPrimitive<BridgeObject>>) => void;
+}) => BridgeObject;
 
 export const bridge = <BridgeObject extends Bridge>(
-  procedures: BridgeObject,
-): BridgeObject => {
-  return procedures;
+  procedures: BridgeObject | Store<BridgeObject>,
+): BridgeStore<BridgeObject> => {
+  const getState = () => state;
+
+  const setState = (newState: Partial<OnlyPrimitive<BridgeObject>>) => {
+    state = {
+      ...state,
+      ...removeUndefinedKeys(newState),
+    };
+    emitChange();
+  };
+
+  let state: BridgeObject =
+    typeof procedures === "function"
+      ? procedures({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          get: getState,
+          set: setState,
+        })
+      : procedures;
+
+  const listeners = new Set<() => void>();
+
+  const emitChange = () => {
+    for (const listener of listeners) {
+      listener();
+    }
+  };
+
+  const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  };
+
+  return {
+    getState,
+    setState,
+    subscribe,
+  };
 };
 
 type HandleBridgeArgs<ArgType = unknown> = {

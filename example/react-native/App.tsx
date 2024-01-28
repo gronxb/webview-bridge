@@ -10,12 +10,22 @@ import { Button, Text, SafeAreaView } from "react-native";
 import {
   bridge,
   createWebView,
+  useBridge,
   type BridgeWebView,
+  type Bridge,
 } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
 
-export const appBridge = bridge({
+export interface AppBridge extends Bridge {
+  count: number;
+  increase(): Promise<void>;
+  getBridgeVersion(): Promise<number>;
+  getMessage(): Promise<string>;
+  openInAppBrowser(url: string): Promise<void>;
+}
+
+export const appBridge = bridge<AppBridge>(({ get, set }) => ({
   // A bridge scenario that existed in the past. Assume the this method existed in a previous version.
   // async getBridgeVersion() {
   //   return 1;
@@ -23,7 +33,11 @@ export const appBridge = bridge({
   // async getOldVersionMessage() {
   //   return "I'm from native old version" as const;
   // },
-
+  count: 0,
+  async increase() {
+    const { count } = get();
+    set({ count: count + 1 });
+  },
   async getBridgeVersion() {
     return 2;
   },
@@ -35,7 +49,7 @@ export const appBridge = bridge({
       await InAppBrowser.open(url);
     }
   },
-});
+}));
 
 export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,
@@ -45,9 +59,14 @@ export const { WebView, linkWebMethod } = createWebView({
   },
 });
 
+// const { count, setCount } = useSharedStore(appStore);
+// const count = useSharedStore(appStore, (state) => state.count);
+
 const WebMethod = linkWebMethod<WebBridge>();
 
 function App(): JSX.Element {
+  const { count, increase } = useBridge(appBridge);
+
   const [value, setValue] = useState(0);
 
   const webviewRef = React.useRef<BridgeWebView>(null);
@@ -76,6 +95,9 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
+      <Text>{count}</Text>
+      <Button onPress={() => increase()} title="Increase" />
+
       <WebView
         ref={webviewRef}
         source={{
