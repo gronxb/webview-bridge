@@ -32,7 +32,7 @@
   },
   "scripts": {
     "prepare": "pnpm build",
-    "build": "node esbuild.config.js && tsc --emitDeclarationOnly",
+    "build": "node esbuild.config.js && tspc",
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {

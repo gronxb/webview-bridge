@@ -1,3 +1,4 @@
+import type { Bridge, BridgeStore, ExtractStore } from "@webview-bridge/types";
 import {
   createEvents,
   createRandomId,
@@ -6,15 +7,18 @@ import {
 } from "@webview-bridge/util";
 
 import { MethodNotFoundError, NativeMethodError } from "./error";
-import { Bridge, NativeMethod } from "./types";
+import { NativeMethod } from "./types";
 
 const emitter = createEvents();
 
-export interface LinkNativeMethodOptions<BridgeObject extends Bridge> {
+export interface LinkNativeMethodOptions<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends BridgeStore<T extends Bridge ? T : any>,
+> {
   timeout?: number;
-  throwOnError?: boolean | (keyof BridgeObject)[] | string[];
+  throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string) => void;
-  onReady?: (method: NativeMethod<BridgeObject>) => void;
+  onReady?: (method: NativeMethod<ExtractStore<T>>) => void;
 }
 
 const createNativeMethod =
@@ -45,12 +49,15 @@ const createNativeMethod =
     ]);
   };
 
-export const linkNativeMethod = <BridgeObject extends Bridge>(
-  options: LinkNativeMethodOptions<BridgeObject> = {
+export const linkNativeMethod = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends BridgeStore<T extends Bridge ? T : any>,
+>(
+  options: LinkNativeMethodOptions<T> = {
     timeout: 2000,
     throwOnError: false,
   },
-): NativeMethod<BridgeObject> => {
+): NativeMethod<ExtractStore<T>> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -71,8 +78,7 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
   const willMethodThrowOnError = (methodName: string) => {
     return (
       throwOnError === true ||
-      (Array.isArray(throwOnError) &&
-        throwOnError.includes(methodName as keyof BridgeObject))
+      (Array.isArray(throwOnError) && throwOnError.includes(methodName))
     );
   };
 
@@ -90,14 +96,14 @@ export const linkNativeMethod = <BridgeObject extends Bridge>(
     {
       isWebViewBridgeAvailable:
         Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
-      isNativeMethodAvailable(methodName) {
+      isNativeMethodAvailable(methodName: string) {
         return (
           typeof methodName === "string" &&
           Boolean(window.ReactNativeWebView) &&
           bridgeMethods.includes(methodName)
         );
       },
-    } as NativeMethod<BridgeObject>,
+    } as NativeMethod<ExtractStore<T>>,
   );
 
   const loose = new Proxy(target, {
