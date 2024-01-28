@@ -55,7 +55,7 @@ export const bridge = <BridgeObject extends Bridge>(
 };
 
 type HandleBridgeArgs<ArgType = unknown> = {
-  bridge: Bridge;
+  bridge: BridgeStore<Bridge>;
   method: string;
   args?: ArgType[];
   webview: WebView;
@@ -69,7 +69,9 @@ export const handleBridge = async ({
   webview,
   eventId,
 }: HandleBridgeArgs) => {
-  const _method = bridge[method];
+  const _bridge = bridge.getState();
+
+  const _method = _bridge[method];
   if (typeof _method !== "function") {
     return;
   }
