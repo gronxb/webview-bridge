@@ -1,6 +1,6 @@
+import type { Bridge, BridgeStore, OnlyPrimitive } from "@webview-bridge/types";
 import WebView from "react-native-webview";
 
-import type { Bridge, BridgeStore, OnlyPrimitive } from "../types/bridge";
 import { removeUndefinedKeys } from "../utils/removeUndefinedKeys";
 
 export type Store<BridgeObject extends Bridge> = ({

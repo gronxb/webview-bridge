@@ -8,48 +8,12 @@
 import React, { useState } from "react";
 import { Button, Text, SafeAreaView } from "react-native";
 import {
-  bridge,
   createWebView,
   useBridge,
   type BridgeWebView,
-  type Bridge,
 } from "@webview-bridge/react-native";
-import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
-
-export interface AppBridge extends Bridge {
-  count: number;
-  increase(): Promise<void>;
-  getBridgeVersion(): Promise<number>;
-  getMessage(): Promise<string>;
-  openInAppBrowser(url: string): Promise<void>;
-}
-
-export const appBridge = bridge<AppBridge>(({ get, set }) => ({
-  // A bridge scenario that existed in the past. Assume the this method existed in a previous version.
-  // async getBridgeVersion() {
-  //   return 1;
-  // },
-  // async getOldVersionMessage() {
-  //   return "I'm from native old version" as const;
-  // },
-  count: 0,
-  async increase() {
-    const { count } = get();
-    set({ count: count + 1 });
-  },
-  async getBridgeVersion() {
-    return 2;
-  },
-  async getMessage() {
-    return "I'm from native" as const;
-  },
-  async openInAppBrowser(url: string) {
-    if (await InAppBrowser.isAvailable()) {
-      await InAppBrowser.open(url);
-    }
-  },
-}));
+import { appBridge } from "@webview-bridge/example-native";
 
 export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,
@@ -58,9 +22,6 @@ export const { WebView, linkWebMethod } = createWebView({
     console.warn(`Method '${method}' not found in native`);
   },
 });
-
-// const { count, setCount } = useSharedStore(appStore);
-// const count = useSharedStore(appStore, (state) => state.count);
 
 const WebMethod = linkWebMethod<WebBridge>();
 

@@ -1,3 +1,4 @@
+import type { AsyncFunction, Bridge, BridgeStore } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import React from "react";
@@ -12,7 +13,6 @@ import {
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import { AsyncFunction, Bridge, BridgeStore } from "./types/bridge";
 import type { BridgeWebView } from "./types/webview";
 
 export type CreateWebViewArgs<BridgeObject extends Bridge> = {

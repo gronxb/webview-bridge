@@ -1,3 +1,4 @@
+import { Bridge } from "@webview-bridge/types";
 import {
   createRandomId,
   createResolver,
@@ -7,7 +8,6 @@ import {
 import WebView from "react-native-webview";
 
 import { WebMethodError } from "../error";
-import { Bridge } from "../types/bridge";
 
 export const handleRegisterWebMethod = (
   emitter: EventEmitter,
