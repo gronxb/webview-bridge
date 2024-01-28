@@ -1,7 +1,7 @@
 import { type Bridge, bridge } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
-export interface AppBridge extends Bridge {
+export interface AppBridgeState extends Bridge {
   count: number;
   increase(): Promise<void>;
   getBridgeVersion(): Promise<number>;
@@ -9,7 +9,7 @@ export interface AppBridge extends Bridge {
   openInAppBrowser(url: string): Promise<void>;
 }
 
-export const appBridge = bridge<AppBridge>(({ get, set }) => ({
+export const appBridge = bridge<AppBridgeState>(({ get, set }) => ({
   // A bridge scenario that existed in the past. Assume the this method existed in a previous version.
   // async getBridgeVersion() {
   //   return 1;
@@ -34,3 +34,5 @@ export const appBridge = bridge<AppBridge>(({ get, set }) => ({
     }
   },
 }));
+
+export type AppBridge = typeof appBridge;
