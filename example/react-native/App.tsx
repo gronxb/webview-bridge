@@ -13,7 +13,7 @@ import {
   type BridgeWebView,
 } from "@webview-bridge/react-native";
 import { WebBridge } from "@webview-bridge/example-web";
-import { appBridge } from "@webview-bridge/example-native";
+import { appBridge } from "./src/bridge";
 
 export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,

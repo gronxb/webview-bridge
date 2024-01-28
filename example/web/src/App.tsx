@@ -37,8 +37,6 @@ const nativeMethod = linkNativeMethod<AppBridge>({
   },
 });
 
-// console.log(window.__bridgeMethods__);
-
 function App() {
   const [message, setMessage] = useState("");
 
