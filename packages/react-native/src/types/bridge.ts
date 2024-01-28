@@ -11,6 +11,8 @@ export type BridgeStore<T extends Bridge> = {
   subscribe: (listener: () => void) => () => void;
 };
 
+export type ExtractStore<S> = S extends { getState: () => infer T } ? T : never;
+
 export type OnlyPrimitive<T> = {
   [P in keyof T as T[P] extends Primitive ? P : never]: T[P];
 };

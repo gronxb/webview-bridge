@@ -64,9 +64,19 @@ export const { WebView, linkWebMethod } = createWebView({
 
 const WebMethod = linkWebMethod<WebBridge>();
 
-function App(): JSX.Element {
-  const { count, increase } = useBridge(appBridge);
+const CountValue = () => {
+  const count = useBridge(appBridge, (store) => store.count);
 
+  return <Text style={{ textAlign: "center" }}>Native Count: {count}</Text>;
+};
+
+const CountButton = () => {
+  const increase = useBridge(appBridge, (store) => store.increase);
+
+  return <Button onPress={increase} title="Increase" />;
+};
+
+function App(): JSX.Element {
   const [value, setValue] = useState(0);
 
   const webviewRef = React.useRef<BridgeWebView>(null);
@@ -95,8 +105,8 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
-      <Text>{count}</Text>
-      <Button onPress={() => increase()} title="Increase" />
+      <CountValue />
+      <CountButton />
 
       <WebView
         ref={webviewRef}
