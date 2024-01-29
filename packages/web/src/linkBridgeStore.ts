@@ -1,5 +1,5 @@
-import { Bridge, BridgeStore, OnlyPrimitive } from "@webview-bridge/types";
-import { removeUndefinedKeys } from "@webview-bridge/util";
+import { Bridge, BridgeStore, OnlyJSON } from "@webview-bridge/types";
+import { equals, removeUndefinedKeys } from "@webview-bridge/util";
 
 import { emitter } from "./emitter";
 
@@ -9,7 +9,7 @@ export type Store<BridgeObject extends Bridge> = ({
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: () => BridgeObject;
-  set: (newState: Partial<OnlyPrimitive<BridgeObject>>) => void;
+  set: (newState: Partial<OnlyJSON<BridgeObject>>) => void;
 }) => BridgeObject;
 
 export const linkBridgeStore = <
@@ -28,13 +28,18 @@ export const linkBridgeStore = <
 
   const getState = () => state;
 
-  const setState = (newState: Partial<OnlyPrimitive<T>>) => {
-    const prevState = state;
-    state = {
+  const setState = (newState: Partial<OnlyJSON<T>>) => {
+    const _newState = {
       ...state,
       ...removeUndefinedKeys(newState),
     };
 
+    if (equals(state, _newState)) {
+      return;
+    }
+
+    const prevState = state;
+    state = _newState;
     emitChange(state, prevState);
   };
 
@@ -53,6 +58,13 @@ export const linkBridgeStore = <
   const listeners = new Set<(newState: T, prevState: T) => void>();
 
   const emitChange = (newState: T, prevState: T) => {
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: "setBridgeState",
+        body: newState,
+      }),
+    );
+
     for (const listener of listeners) {
       listener(newState, prevState);
     }

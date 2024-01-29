@@ -1,10 +1,10 @@
 import type {
   Bridge,
   BridgeStore,
-  OnlyPrimitive,
+  OnlyJSON,
   Primitive,
 } from "@webview-bridge/types";
-import { removeUndefinedKeys } from "@webview-bridge/util";
+import { equals, removeUndefinedKeys } from "@webview-bridge/util";
 import WebView from "react-native-webview";
 
 export type Store<BridgeObject extends Bridge> = ({
@@ -13,7 +13,7 @@ export type Store<BridgeObject extends Bridge> = ({
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: () => BridgeObject;
-  set: (newState: Partial<OnlyPrimitive<BridgeObject>>) => void;
+  set: (newState: Partial<OnlyJSON<BridgeObject>>) => void;
 }) => BridgeObject;
 
 export const bridge = <T extends Bridge>(
@@ -21,13 +21,18 @@ export const bridge = <T extends Bridge>(
 ): BridgeStore<T> => {
   const getState = () => state;
 
-  const setState = (newState: Partial<OnlyPrimitive<T>>) => {
-    const prevState = state;
-    state = {
+  const setState = (newState: Partial<OnlyJSON<T>>) => {
+    const _newState = {
       ...state,
       ...removeUndefinedKeys(newState),
     };
 
+    if (equals(state, _newState)) {
+      return;
+    }
+
+    const prevState = state;
+    state = _newState;
     emitChange(state, prevState);
   };
 

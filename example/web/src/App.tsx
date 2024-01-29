@@ -43,6 +43,7 @@ function App() {
 
   const count = useBridge(bridge.store, (store) => store.count);
   const increase = useBridge(bridge.store, (store) => store.increase);
+  const { token } = useBridge(bridge.store, (store) => store.auth);
 
   useEffect(() => {
     async function init() {
@@ -62,6 +63,7 @@ function App() {
 
   return (
     <div>
+      <p>auth {token}</p>
       <p>native state: {count}</p>
       <button onClick={() => increase()}>increase from web</button>
       <h1>This is a web page.</h1>

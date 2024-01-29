@@ -25,6 +25,12 @@ export const { WebView, linkWebMethod } = createWebView({
 
 const WebMethod = linkWebMethod<WebBridge>();
 
+const AuthInfo = () => {
+  const { token } = useBridge(appBridge, (store) => store.auth);
+
+  return <Text style={{ textAlign: "center" }}>Native Count: {token}</Text>;
+};
+
 const CountValue = () => {
   const count = useBridge(appBridge, (store) => store.count);
 
@@ -66,6 +72,7 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
+      <AuthInfo />
       <CountValue />
       <CountButton />
 

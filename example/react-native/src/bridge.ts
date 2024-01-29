@@ -3,6 +3,10 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 
 export interface AppBridgeState extends Bridge {
   count: number;
+  auth: {
+    token: string;
+  };
+
   increase(): Promise<void>;
   getBridgeVersion(): Promise<number>;
   getMessage(): Promise<string>;
@@ -18,9 +22,15 @@ export const appBridge = bridge<AppBridgeState>(({ get, set }) => ({
   //   return "I'm from native old version" as const;
   // },
   count: 0,
+  auth: {
+    token: "1234",
+  },
   async increase() {
     const { count } = get();
     set({ count: count + 1 });
+  },
+  async setAuth(token: string) {
+    set({ auth: { token } });
   },
   async getBridgeVersion() {
     return 2;
