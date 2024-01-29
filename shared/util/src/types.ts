@@ -8,7 +8,7 @@ export type Bridge = Record<string, AsyncFunction | Primitive>;
 export type BridgeStore<T extends Bridge> = {
   getState: () => T;
   setState: (newState: Partial<OnlyPrimitive<T>>) => void;
-  subscribe: (listener: () => void) => () => void;
+  subscribe: (listener: (newState: T, prevState: T) => void) => () => void;
 };
 
 export type ExtractStore<S> = S extends { getState: () => infer T } ? T : never;

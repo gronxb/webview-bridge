@@ -1,7 +1,11 @@
-import type { Bridge, BridgeStore, OnlyPrimitive } from "@webview-bridge/types";
+import type {
+  Bridge,
+  BridgeStore,
+  OnlyPrimitive,
+  Primitive,
+} from "@webview-bridge/types";
+import { removeUndefinedKeys } from "@webview-bridge/util";
 import WebView from "react-native-webview";
-
-import { removeUndefinedKeys } from "../utils/removeUndefinedKeys";
 
 export type Store<BridgeObject extends Bridge> = ({
   get,
@@ -18,11 +22,13 @@ export const bridge = <BridgeObject extends Bridge>(
   const getState = () => state;
 
   const setState = (newState: Partial<OnlyPrimitive<BridgeObject>>) => {
+    const prevState = state;
     state = {
       ...state,
       ...removeUndefinedKeys(newState),
     };
-    emitChange();
+
+    emitChange(state, prevState);
   };
 
   let state: BridgeObject =
@@ -34,15 +40,19 @@ export const bridge = <BridgeObject extends Bridge>(
         })
       : procedures;
 
-  const listeners = new Set<() => void>();
+  const listeners = new Set<
+    (newState: BridgeObject, prevState: BridgeObject) => void
+  >();
 
-  const emitChange = () => {
+  const emitChange = (newState: BridgeObject, prevState: BridgeObject) => {
     for (const listener of listeners) {
-      listener();
+      listener(newState, prevState);
     }
   };
 
-  const subscribe = (listener: () => void) => {
+  const subscribe = (
+    listener: (newState: BridgeObject, prevState: BridgeObject) => void,
+  ) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
   };
@@ -96,6 +106,12 @@ export const handleBridge = async ({
   }
 };
 
-export const INTEGRATIONS_SCRIPTS_BRIDGE = (bridgeNames: string[]) => `
+export const INJECT_BRIDGE_METHODS = (bridgeNames: string[]) => `
     window.__bridgeMethods__ = [${bridgeNames.join(", ")}];
+`;
+
+export const INJECT_BRIDGE_STATE = (
+  initialState: Record<string, Primitive>,
+) => `
+    window.__bridgeInitialState__ = ${JSON.stringify(initialState)};
 `;

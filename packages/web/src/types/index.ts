@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AsyncFunction = (...args: any[]) => Promise<any>;
+import { AsyncFunction } from "@webview-bridge/types";
 
 export type WebBridge = Record<string, AsyncFunction>;
 

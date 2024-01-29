@@ -1,15 +1,9 @@
 import type { Bridge, BridgeStore, ExtractStore } from "@webview-bridge/types";
-import {
-  createEvents,
-  createRandomId,
-  createResolver,
-  timeout,
-} from "@webview-bridge/util";
+import { createRandomId, createResolver, timeout } from "@webview-bridge/util";
 
+import { emitter } from "./emitter";
 import { MethodNotFoundError, NativeMethodError } from "./error";
 import { NativeMethod } from "./types";
-
-const emitter = createEvents();
 
 export interface LinkNativeMethodOptions<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

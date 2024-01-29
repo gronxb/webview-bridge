@@ -1,6 +1,17 @@
-import type { AsyncFunction, Bridge, BridgeStore } from "@webview-bridge/types";
+import type {
+  AsyncFunction,
+  Bridge,
+  BridgeStore,
+  Primitive,
+} from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
-import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import {
+  createRef,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import React from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
@@ -8,8 +19,9 @@ import WebView from "react-native-webview";
 import {
   handleBridge,
   handleLog,
-  INTEGRATIONS_SCRIPTS_BRIDGE,
-  INTEGRATIONS_SCRIPTS_CONSOLE,
+  INJECT_BRIDGE_METHODS,
+  INJECT_BRIDGE_STATE,
+  INJECT_DEBUG,
   LogType,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
@@ -38,7 +50,17 @@ export const createWebView = <BridgeObject extends Bridge>({
     },
   };
 
+  const _webviewRef = createRef<BridgeWebView>();
   const emitter = createEvents();
+
+  bridge.subscribe((state) => {
+    _webviewRef.current?.injectJavaScript(`
+        window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
+          state,
+        )});
+    `);
+  });
+
   return {
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
@@ -53,7 +75,25 @@ export const createWebView = <BridgeObject extends Bridge>({
         [],
       );
 
+      const initialState = useMemo(
+        () =>
+          Object.fromEntries(
+            Object.entries(bridge.getState() ?? {})
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              .filter(([_, value]) => typeof value !== "function"),
+          ) as Record<string, Primitive>,
+        [],
+      );
+
       useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
+
+      useImperativeHandle(
+        _webviewRef,
+        () => {
+          return webviewRef.current as BridgeWebView;
+        },
+        [],
+      );
 
       const handleMessage = async (event: WebViewMessageEvent) => {
         props.onMessage?.(event);
@@ -140,14 +180,15 @@ export const createWebView = <BridgeObject extends Bridge>({
           ref={webviewRef}
           onMessage={handleMessage}
           injectedJavaScriptBeforeContentLoaded={[
-            INTEGRATIONS_SCRIPTS_BRIDGE(bridgeNames),
+            INJECT_BRIDGE_METHODS(bridgeNames),
+            INJECT_BRIDGE_STATE(initialState),
             props.injectedJavaScriptBeforeContentLoaded,
             "true;",
           ]
             .filter(Boolean)
             .join("\n")}
           injectedJavaScript={[
-            console && INTEGRATIONS_SCRIPTS_CONSOLE,
+            console && INJECT_DEBUG,
             props.injectedJavaScript,
             "true;",
           ]

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
+import {
+  linkBridge,
+  linkNativeMethod,
+  registerWebMethod,
+} from "@webview-bridge/web";
 import type { AppBridge } from "@webview-bridge/example-native";
+import { useBridge } from "./useBridge";
 
 export const webBridge = registerWebMethod({
   async alert(message: string) {
@@ -37,8 +42,12 @@ const nativeMethod = linkNativeMethod<AppBridge>({
   },
 });
 
+const store = linkBridge<AppBridge>();
+
 function App() {
   const [message, setMessage] = useState("");
+
+  const count = useBridge(store, (store) => store.count);
 
   useEffect(() => {
     async function init() {
@@ -59,6 +68,8 @@ function App() {
 
   return (
     <div>
+      <p>native state: {count}</p>
+      <button onClick={() => nativeMethod.increase()}>increase from web</button>
       <h1>This is a web page.</h1>
       <h1>{message}</h1>
       <button
