@@ -12,7 +12,7 @@ export type Store<BridgeObject extends Bridge> = ({
   set: (newState: Partial<OnlyPrimitive<BridgeObject>>) => void;
 }) => BridgeObject;
 
-export const linkBridge = <
+export const linkBridgeStore = <
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(): T => {
@@ -24,31 +24,33 @@ export const linkBridge = <
     window.nativeEmitter = emitter;
   }
 
-  emitter.on("bridgeStateChange", (data) => {
-    setState(data);
-  });
-
   const getState = () => state;
 
   const setState = (newState: Partial<OnlyPrimitive<T>>) => {
+    const prevState = state;
     state = {
       ...state,
       ...removeUndefinedKeys(newState),
     };
-    emitChange();
+
+    emitChange(state, prevState);
   };
+
+  emitter.on("bridgeStateChange", (data) => {
+    setState(data);
+  });
 
   let state: T = window.__bridgeInitialState__ as T;
 
-  const listeners = new Set<() => void>();
+  const listeners = new Set<(newState: T, prevState: T) => void>();
 
-  const emitChange = () => {
+  const emitChange = (newState: T, prevState: T) => {
     for (const listener of listeners) {
-      listener();
+      listener(newState, prevState);
     }
   };
 
-  const subscribe = (listener: () => void) => {
+  const subscribe = (listener: (newState: T, prevState: T) => void) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
   };
@@ -57,6 +59,5 @@ export const linkBridge = <
     getState,
     setState,
     subscribe,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any;
+  } as unknown as T;
 };

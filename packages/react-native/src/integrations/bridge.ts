@@ -16,12 +16,12 @@ export type Store<BridgeObject extends Bridge> = ({
   set: (newState: Partial<OnlyPrimitive<BridgeObject>>) => void;
 }) => BridgeObject;
 
-export const bridge = <BridgeObject extends Bridge>(
-  procedures: BridgeObject | Store<BridgeObject>,
-): BridgeStore<BridgeObject> => {
+export const bridge = <T extends Bridge>(
+  procedures: T | Store<T>,
+): BridgeStore<T> => {
   const getState = () => state;
 
-  const setState = (newState: Partial<OnlyPrimitive<BridgeObject>>) => {
+  const setState = (newState: Partial<OnlyPrimitive<T>>) => {
     const prevState = state;
     state = {
       ...state,
@@ -31,7 +31,7 @@ export const bridge = <BridgeObject extends Bridge>(
     emitChange(state, prevState);
   };
 
-  let state: BridgeObject =
+  let state: T =
     typeof procedures === "function"
       ? procedures({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,19 +40,15 @@ export const bridge = <BridgeObject extends Bridge>(
         })
       : procedures;
 
-  const listeners = new Set<
-    (newState: BridgeObject, prevState: BridgeObject) => void
-  >();
+  const listeners = new Set<(newState: T, prevState: T) => void>();
 
-  const emitChange = (newState: BridgeObject, prevState: BridgeObject) => {
+  const emitChange = (newState: T, prevState: T) => {
     for (const listener of listeners) {
       listener(newState, prevState);
     }
   };
 
-  const subscribe = (
-    listener: (newState: BridgeObject, prevState: BridgeObject) => void,
-  ) => {
+  const subscribe = (listener: (newState: T, prevState: T) => void) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
   };
