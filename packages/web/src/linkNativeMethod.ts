@@ -3,6 +3,7 @@ import { createRandomId, createResolver, timeout } from "@webview-bridge/util";
 
 import { emitter } from "./emitter";
 import { MethodNotFoundError, NativeMethodError } from "./error";
+import { linkBridgeStore } from "./linkBridgeStore";
 import { NativeMethod } from "./types";
 
 export interface LinkNativeMethodOptions<
@@ -12,7 +13,7 @@ export interface LinkNativeMethodOptions<
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string) => void;
-  onReady?: (method: NativeMethod<ExtractStore<T>>) => void;
+  onReady?: (method: NativeMethod<ExtractStore<T>, T>) => void;
 }
 
 const createNativeMethod =
@@ -51,7 +52,7 @@ export const linkNativeMethod = <
     timeout: 2000,
     throwOnError: false,
   },
-): NativeMethod<ExtractStore<T>> => {
+): NativeMethod<ExtractStore<T>, T> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -97,7 +98,8 @@ export const linkNativeMethod = <
           bridgeMethods.includes(methodName)
         );
       },
-    } as NativeMethod<ExtractStore<T>>,
+      store: linkBridgeStore<T>(),
+    } as NativeMethod<ExtractStore<T>, T>,
   );
 
   const loose = new Proxy(target, {

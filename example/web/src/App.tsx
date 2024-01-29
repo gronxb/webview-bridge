@@ -42,12 +42,10 @@ const nativeMethod = linkNativeMethod<AppBridge>({
   },
 });
 
-const store = linkBridgeStore<AppBridge>();
-
 function App() {
   const [message, setMessage] = useState("");
 
-  const count = useBridge(store, (store) => store.count);
+  const count = useBridge(nativeMethod.store, (store) => store.count);
 
   useEffect(() => {
     async function init() {
