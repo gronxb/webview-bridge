@@ -128,6 +128,14 @@ export const createWebView = <BridgeObject extends Bridge>({
             });
             return;
           }
+          case "getBridgeState": {
+            _webviewRef.current?.injectJavaScript(`
+              window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
+                bridge.getState(),
+              )});
+            `);
+            return;
+          }
           case "registerWebMethod": {
             const { bridgeNames } = body as {
               bridgeNames: string[];

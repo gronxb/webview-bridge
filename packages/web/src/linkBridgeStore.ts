@@ -36,6 +36,12 @@ export const linkBridgeStore = <
     emitChange(state, prevState);
   };
 
+  window.ReactNativeWebView?.postMessage(
+    JSON.stringify({
+      type: "getBridgeState",
+    }),
+  );
+
   emitter.on("bridgeStateChange", (data) => {
     setState(data);
   });
