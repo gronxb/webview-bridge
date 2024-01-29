@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import {
-  linkBridge,
+  linkBridgeStore,
   linkNativeMethod,
   registerWebMethod,
 } from "@webview-bridge/web";
@@ -42,7 +42,7 @@ const nativeMethod = linkNativeMethod<AppBridge>({
   },
 });
 
-const store = linkBridge<AppBridge>();
+const store = linkBridgeStore<AppBridge>();
 
 function App() {
   const [message, setMessage] = useState("");
