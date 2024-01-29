@@ -15,7 +15,9 @@ export type Store<BridgeObject extends Bridge> = ({
 export const linkBridgeStore = <
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
->(): T => {
+>(
+  initialState: Partial<T> = {},
+): T => {
   if (!window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
   }
@@ -36,17 +38,17 @@ export const linkBridgeStore = <
     emitChange(state, prevState);
   };
 
+  emitter.on("bridgeStateChange", (data) => {
+    setState(data);
+  });
+
   window.ReactNativeWebView?.postMessage(
     JSON.stringify({
       type: "getBridgeState",
     }),
   );
 
-  emitter.on("bridgeStateChange", (data) => {
-    setState(data);
-  });
-
-  let state: T = (window.__bridgeInitialState__ ?? {}) as T;
+  let state: T = { ...initialState, ...window.__bridgeInitialState__ } as T;
 
   const listeners = new Set<(newState: T, prevState: T) => void>();
 

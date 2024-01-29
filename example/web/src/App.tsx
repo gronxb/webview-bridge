@@ -42,6 +42,7 @@ function App() {
   const [message, setMessage] = useState("");
 
   const count = useBridge(bridge.store, (store) => store.count);
+  const increase = useBridge(bridge.store, (store) => store.increase);
 
   useEffect(() => {
     async function init() {
@@ -62,7 +63,7 @@ function App() {
   return (
     <div>
       <p>native state: {count}</p>
-      <button onClick={() => bridge.increase()}>increase from web</button>
+      <button onClick={() => increase()}>increase from web</button>
       <h1>This is a web page.</h1>
       <h1>{message}</h1>
       <button

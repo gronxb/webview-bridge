@@ -3,7 +3,6 @@ import type {
   BridgeStore,
   ExcludePrimitive,
   ExtractStore,
-  OnlyPrimitive,
 } from "@webview-bridge/types";
 import { createRandomId, createResolver, timeout } from "@webview-bridge/util";
 
@@ -19,12 +18,7 @@ export interface LinkBridgeOptions<
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string) => void;
-  onReady?: (
-    method: LinkBridge<
-      ExcludePrimitive<ExtractStore<T>>,
-      BridgeStore<OnlyPrimitive<ExtractStore<T>>>
-    >,
-  ) => void;
+  onReady?: (method: LinkBridge<ExcludePrimitive<ExtractStore<T>>, T>) => void;
 }
 
 const createNativeMethod =
@@ -63,10 +57,7 @@ export const linkBridge = <
     timeout: 2000,
     throwOnError: false,
   },
-): LinkBridge<
-  ExcludePrimitive<ExtractStore<T>>,
-  BridgeStore<OnlyPrimitive<ExtractStore<T>>>
-> => {
+): LinkBridge<ExcludePrimitive<ExtractStore<T>>, T> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -102,21 +93,7 @@ export const linkBridge = <
         ),
       };
     },
-    {
-      isWebViewBridgeAvailable:
-        Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
-      isNativeMethodAvailable(methodName: string) {
-        return (
-          typeof methodName === "string" &&
-          Boolean(window.ReactNativeWebView) &&
-          bridgeMethods.includes(methodName)
-        );
-      },
-      store: linkBridgeStore<T>(),
-    } as LinkBridge<
-      ExtractStore<T>,
-      BridgeStore<OnlyPrimitive<ExtractStore<T>>>
-    >,
+    {} as LinkBridge<ExtractStore<T>, T>,
   );
 
   const loose = new Proxy(target, {
@@ -137,7 +114,19 @@ export const linkBridge = <
     },
   });
 
-  Object.assign(target, { loose });
+  Object.assign(target, {
+    loose,
+    store: linkBridgeStore<T>(target),
+    isWebViewBridgeAvailable:
+      Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0,
+    isNativeMethodAvailable(methodName: string) {
+      return (
+        typeof methodName === "string" &&
+        Boolean(window.ReactNativeWebView) &&
+        bridgeMethods.includes(methodName)
+      );
+    },
+  });
   const proxy = new Proxy(target, {
     get: (target, methodName: string) => {
       if (methodName in target) {
