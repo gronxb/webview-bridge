@@ -1,5 +1,5 @@
 export * from "./error";
-export * from "./linkBridge";
+export * from "./linkBridgeStore";
 export * from "./linkNativeMethod";
 export * from "./registerWebMethod";
 export type * from "./types";
