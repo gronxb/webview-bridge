@@ -2,7 +2,7 @@ import { AsyncFunction } from "@webview-bridge/types";
 
 export type WebBridge = Record<string, AsyncFunction>;
 
-export type NativeMethod<T, U> = {
+export type LinkBridge<T, U> = {
   isWebViewBridgeAvailable: boolean;
   isNativeMethodAvailable(method: keyof T): boolean;
   isNativeMethodAvailable(method: string): boolean;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
+import { linkBridge, registerWebMethod } from "@webview-bridge/web";
 import type { AppBridge } from "@webview-bridge/example-native";
 import { useBridge } from "./useBridge";
 
@@ -29,7 +29,7 @@ export const webBridge = registerWebMethod({
   },
 });
 
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   throwOnError: true,
   onReady: async (method) => {
     console.log("nativeMethod is ready");
@@ -41,18 +41,17 @@ const nativeMethod = linkNativeMethod<AppBridge>({
 function App() {
   const [message, setMessage] = useState("");
 
-  const count = useBridge(nativeMethod.store, (store) => store.count);
+  const count = useBridge(bridge.store, (store) => store.count);
 
   useEffect(() => {
     async function init() {
-      const version = await nativeMethod.getBridgeVersion();
+      const version = await bridge.getBridgeVersion();
       if (version >= 2) {
-        const message = await nativeMethod.getMessage();
+        const message = await bridge.getMessage();
         setMessage(message);
       } else {
         // Support for old native methods with `loose`
-        const oldVersionMessage =
-          await nativeMethod.loose.getOldVersionMessage();
+        const oldVersionMessage = await bridge.loose.getOldVersionMessage();
         setMessage(oldVersionMessage);
       }
     }
@@ -63,17 +62,13 @@ function App() {
   return (
     <div>
       <p>native state: {count}</p>
-      <button onClick={() => nativeMethod.increase()}>increase from web</button>
+      <button onClick={() => bridge.increase()}>increase from web</button>
       <h1>This is a web page.</h1>
       <h1>{message}</h1>
       <button
         onClick={() => {
-          if (
-            nativeMethod.isNativeMethodAvailable("openInAppBrowser") === true
-          ) {
-            nativeMethod.openInAppBrowser(
-              "https://github.com/gronxb/webview-bridge",
-            );
+          if (bridge.isNativeMethodAvailable("openInAppBrowser") === true) {
+            bridge.openInAppBrowser("https://github.com/gronxb/webview-bridge");
           }
         }}
       >
@@ -81,9 +76,7 @@ function App() {
       </button>
 
       <div>
-        {`isWebViewBridgeAvailable: ${String(
-          nativeMethod.isWebViewBridgeAvailable,
-        )}`}
+        {`isWebViewBridgeAvailable: ${String(bridge.isWebViewBridgeAvailable)}`}
       </div>
     </div>
   );
