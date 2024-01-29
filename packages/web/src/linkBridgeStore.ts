@@ -40,7 +40,7 @@ export const linkBridgeStore = <
     setState(data);
   });
 
-  let state: T = window.__bridgeInitialState__ as T;
+  let state: T = (window.__bridgeInitialState__ ?? {}) as T;
 
   const listeners = new Set<(newState: T, prevState: T) => void>();
 
