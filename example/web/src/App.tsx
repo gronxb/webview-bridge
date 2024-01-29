@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import {
-  linkBridgeStore,
-  linkNativeMethod,
-  registerWebMethod,
-} from "@webview-bridge/web";
+import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
 import type { AppBridge } from "@webview-bridge/example-native";
 import { useBridge } from "./useBridge";
 
