@@ -16,3 +16,7 @@ export type ExtractStore<S> = S extends { getState: () => infer T } ? T : never;
 export type OnlyPrimitive<T> = {
   [P in keyof T as T[P] extends Primitive ? P : never]: T[P];
 };
+
+export type ExcludePrimitive<T> = {
+  [P in keyof T as T[P] extends Primitive ? never : P]: T[P];
+};
