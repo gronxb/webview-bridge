@@ -1,6 +1,6 @@
 import "./App.css";
 import { linkBridge } from "@webview-bridge/web";
-import type { AppBridge } from "@webview-bridge-example-native-method/react-native";
+import type { AppBridge } from "@webview-bridge-example-shared-state-integration-react/react-native";
 import { useBridge } from "./useBridge";
 
 const bridge = linkBridge<AppBridge>({
