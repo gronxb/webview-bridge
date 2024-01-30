@@ -7,17 +7,16 @@ import type {
 import { equals, removeUndefinedKeys } from "@webview-bridge/util";
 import WebView from "react-native-webview";
 
-export type Store<BridgeObject extends Bridge> = ({
+export type StoreCallback<T> = ({
   get,
   set,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get: () => BridgeObject;
-  set: (newState: Partial<OnlyJSON<BridgeObject>>) => void;
-}) => BridgeObject;
+  get: () => T;
+  set: (newState: Partial<OnlyJSON<T>>) => void;
+}) => T;
 
 export const bridge = <T extends Bridge>(
-  procedures: T | Store<T>,
+  procedures: T | StoreCallback<T>,
 ): BridgeStore<T> => {
   const getState = () => state;
 
@@ -39,7 +38,6 @@ export const bridge = <T extends Bridge>(
   let state: T =
     typeof procedures === "function"
       ? procedures({
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           get: getState,
           set: setState,
         })
@@ -62,7 +60,7 @@ export const bridge = <T extends Bridge>(
     getState,
     setState,
     subscribe,
-  };
+  } as BridgeStore<T>;
 };
 
 type HandleBridgeArgs<ArgType = unknown> = {
