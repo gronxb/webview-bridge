@@ -8,34 +8,12 @@
 import React, { useState } from "react";
 import { Button, Text, SafeAreaView } from "react-native";
 import {
-  bridge,
   createWebView,
+  useBridge,
   type BridgeWebView,
 } from "@webview-bridge/react-native";
-import InAppBrowser from "react-native-inappbrowser-reborn";
 import { WebBridge } from "@webview-bridge/example-web";
-
-export const appBridge = bridge({
-  // A bridge scenario that existed in the past. Assume the this method existed in a previous version.
-  // async getBridgeVersion() {
-  //   return 1;
-  // },
-  // async getOldVersionMessage() {
-  //   return "I'm from native old version" as const;
-  // },
-
-  async getBridgeVersion() {
-    return 2;
-  },
-  async getMessage() {
-    return "I'm from native" as const;
-  },
-  async openInAppBrowser(url: string) {
-    if (await InAppBrowser.isAvailable()) {
-      await InAppBrowser.open(url);
-    }
-  },
-});
+import { appBridge } from "./src/bridge";
 
 export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,
@@ -46,6 +24,24 @@ export const { WebView, linkWebMethod } = createWebView({
 });
 
 const WebMethod = linkWebMethod<WebBridge>();
+
+const AuthInfo = () => {
+  const { token } = useBridge(appBridge, (store) => store.auth);
+
+  return <Text style={{ textAlign: "center" }}>Native Count: {token}</Text>;
+};
+
+const CountValue = () => {
+  const count = useBridge(appBridge, (store) => store.count);
+
+  return <Text style={{ textAlign: "center" }}>Native Count: {count}</Text>;
+};
+
+const CountButton = () => {
+  const increase = useBridge(appBridge, (store) => store.increase);
+
+  return <Button onPress={increase} title="Increase" />;
+};
 
 function App(): JSX.Element {
   const [value, setValue] = useState(0);
@@ -76,6 +72,10 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={{ height: "100%" }}>
+      <AuthInfo />
+      <CountValue />
+      <CountButton />
+
       <WebView
         ref={webviewRef}
         source={{
