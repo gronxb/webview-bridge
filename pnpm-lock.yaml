@@ -164,7 +164,7 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
 
-  example/shared-state/react:
+  example/shared-state-integration-react/react:
     dependencies:
       '@webview-bridge/web':
         specifier: workspace:^
@@ -191,7 +191,7 @@ importers:
       '@vitejs/plugin-react-swc':
         specifier: ^3.3.2
         version: 3.4.0(vite@4.4.11)
-      '@webview-bridge-example-shared-state/react-native':
+      '@webview-bridge-example-shared-state-integration-react/react-native':
         specifier: workspace:^
         version: link:../react-native
       eslint:
@@ -207,7 +207,7 @@ importers:
         specifier: ^4.4.5
         version: 4.4.11
 
-  example/shared-state/react-native:
+  example/shared-state-integration-react/react-native:
     dependencies:
       '@webview-bridge/react-native':
         specifier: workspace:^
