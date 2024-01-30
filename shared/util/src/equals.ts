@@ -28,24 +28,6 @@ export const equals = (a: any, b: any) => {
       return false;
     }
 
-    const dateA = a instanceof Date;
-    const dateB = b instanceof Date;
-    if (dateA !== dateB) {
-      return false;
-    }
-    if (dateA && dateB) {
-      return a.getTime() === b.getTime();
-    }
-
-    const regexpA = a instanceof RegExp;
-    const regexpB = b instanceof RegExp;
-    if (regexpA !== regexpB) {
-      return false;
-    }
-    if (regexpA && regexpB) {
-      return a.toString() === b.toString();
-    }
-
     const keys = Object.keys(a);
     length = keys.length;
 
@@ -65,7 +47,6 @@ export const equals = (a: any, b: any) => {
         return false;
       }
     }
-
     return true;
   }
 
