@@ -81,7 +81,7 @@ function Input() {
       <Text>Native Count: {data.text}</Text>
       <TextInput
         value={data.text}
-        // onChangeText={setDataText}
+        onChangeText={setDataText}
         style={{ borderWidth: 1, width: "50%" }}
       />
     </View>
