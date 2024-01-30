@@ -11,12 +11,11 @@ import {
   createWebView,
   type BridgeWebView,
   bridge,
-  Bridge,
   useBridge,
 } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
-interface AppBridgeState extends Bridge {
+type AppBridgeState = {
   getMessage(): Promise<string>;
   openInAppBrowser(url: string): Promise<void>;
   count: number;
@@ -25,7 +24,7 @@ interface AppBridgeState extends Bridge {
     text: string;
   };
   setDataText(text: string): Promise<void>;
-}
+};
 
 export const appBridge = bridge<AppBridgeState>(({ get, set }) => ({
   async getMessage() {
