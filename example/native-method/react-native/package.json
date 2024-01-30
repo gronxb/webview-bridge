@@ -1,7 +1,8 @@
 {
-  "name": "@webview-bridge/example-native",
+  "name": "@webview-bridge-example-native-method/react-native",
   "version": "0.0.1",
   "private": true,
+  "types": "App.tsx",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
