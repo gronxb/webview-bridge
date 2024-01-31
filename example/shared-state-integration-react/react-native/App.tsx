@@ -76,7 +76,7 @@ function Input() {
   const { data, setDataText } = useBridge(appBridge);
 
   return (
-    <View>
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
       <Text
         style={{
           marginBottom: 10,
@@ -88,7 +88,7 @@ function Input() {
       <TextInput
         value={data.text}
         onChangeText={setDataText}
-        style={{ borderWidth: 1, minWidth: "50%" }}
+        style={{ borderWidth: 1, minWidth: "50%", maxWidth: "50%" }}
       />
     </View>
   );

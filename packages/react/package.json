@@ -1,5 +1,5 @@
 {
-  "name": "@webview-bridge/web",
+  "name": "@webview-bridge/react",
   "type": "module",
   "version": "1.2.0",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
@@ -17,16 +17,16 @@
   ],
   "main": "dist/commonjs/index.cjs",
   "module": "dist/module/index.mjs",
-  "types": "dist/typescript/packages/web/src/index.d.ts",
+  "types": "dist/typescript/index.d.ts",
   "exports": {
     ".": {
       "require": {
         "default": "./dist/commonjs/index.cjs",
-        "types": "./dist/typescript/packages/web/src/index.d.cts"
+        "types": "./dist/typescript/index.d.cts"
       },
       "import": {
         "default": "./dist/module/index.mjs",
-        "types": "./dist/typescript/packages/web/src/index.d.ts"
+        "types": "./dist/typescript/index.d.ts"
       }
     }
   },
@@ -36,6 +36,20 @@
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/use-sync-external-store": "^0.0.6",
+    "@webview-bridge/web": "workspace:^",
     "esbuild": "^0.19.4"
+  },
+  "dependencies": {
+    "use-sync-external-store": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@webview-bridge/web": ">=1.2.0",
+    "react": ">=16.8"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   }
 }

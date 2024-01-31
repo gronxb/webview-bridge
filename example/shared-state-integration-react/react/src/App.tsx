@@ -1,7 +1,8 @@
 import "./App.css";
 import { linkBridge } from "@webview-bridge/web";
+import { useBridge } from "@webview-bridge/react";
+
 import type { AppBridge } from "@webview-bridge-example-shared-state-integration-react/react-native";
-import { useBridge } from "./useBridge";
 
 const bridge = linkBridge<AppBridge>({
   throwOnError: true,
@@ -11,12 +12,14 @@ const bridge = linkBridge<AppBridge>({
 });
 
 function Count() {
+  // render when only count changed
   const count = useBridge(bridge.store, (state) => state.count);
 
   return <p>Native Count: {count}</p>;
 }
 
 function DataText() {
+  // render when only 'data.text' changed
   const text = useBridge(bridge.store, (state) => state.data.text);
 
   return (

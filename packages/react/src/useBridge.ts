@@ -1,5 +1,5 @@
 import type { Bridge, BridgeStore, ExtractStore } from "@webview-bridge/web";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 export function useBridge<T extends Bridge>(
   store: Omit<BridgeStore<T>, "setState">,

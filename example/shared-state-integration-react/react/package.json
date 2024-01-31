@@ -9,6 +9,7 @@
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
+    "@webview-bridge/react": "workspace:^",
     "@webview-bridge/web": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
