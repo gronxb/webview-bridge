@@ -12,12 +12,14 @@ const bridge = linkBridge<AppBridge>({
 });
 
 function Count() {
+  // render when only count changed
   const count = useBridge(bridge.store, (state) => state.count);
 
   return <p>Native Count: {count}</p>;
 }
 
 function DataText() {
+  // render when only 'data.text' changed
   const text = useBridge(bridge.store, (state) => state.data.text);
 
   return (
