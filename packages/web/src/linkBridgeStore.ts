@@ -17,7 +17,7 @@ export const linkBridgeStore = <
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   initialState: Partial<T> = {},
-): T => {
+): Omit<T, "setState"> => {
   if (!window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
   }
@@ -70,7 +70,6 @@ export const linkBridgeStore = <
 
   return {
     getState,
-    setState,
     subscribe,
-  } as unknown as T;
+  } as unknown as Omit<T, "setState">;
 };

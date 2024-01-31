@@ -19,6 +19,6 @@ export const linkNativeMethod = <
     timeout: 2000,
     throwOnError: false,
   },
-): LinkBridge<ExcludePrimitive<ExtractStore<T>>, T> => {
+): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">> => {
   return linkBridge(options);
 };
