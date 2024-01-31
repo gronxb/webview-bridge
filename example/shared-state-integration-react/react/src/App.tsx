@@ -39,6 +39,7 @@ function App() {
       <div>
         {`isWebViewBridgeAvailable: ${String(bridge.isWebViewBridgeAvailable)}`}
       </div>
+      <h2>This is WebView</h2>
 
       <button
         onClick={() => {

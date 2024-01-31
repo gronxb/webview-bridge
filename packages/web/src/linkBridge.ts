@@ -18,7 +18,9 @@ export interface LinkBridgeOptions<
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string) => void;
-  onReady?: (method: LinkBridge<ExcludePrimitive<ExtractStore<T>>, T>) => void;
+  onReady?: (
+    method: LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>,
+  ) => void;
 }
 
 const createNativeMethod =
@@ -57,7 +59,7 @@ export const linkBridge = <
     timeout: 2000,
     throwOnError: false,
   },
-): LinkBridge<ExcludePrimitive<ExtractStore<T>>, T> => {
+): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">> => {
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
@@ -93,7 +95,7 @@ export const linkBridge = <
         ),
       };
     },
-    {} as LinkBridge<ExtractStore<T>, T>,
+    {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">>,
   );
 
   const loose = new Proxy(target, {

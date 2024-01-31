@@ -17,7 +17,7 @@ export const linkBridgeStore = <
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   initialState: Partial<T> = {},
-): T => {
+): Omit<T, "setState"> => {
   if (!window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
   }
@@ -58,13 +58,6 @@ export const linkBridgeStore = <
   const listeners = new Set<(newState: T, prevState: T) => void>();
 
   const emitChange = (newState: T, prevState: T) => {
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({
-        type: "setBridgeState",
-        body: newState,
-      }),
-    );
-
     for (const listener of listeners) {
       listener(newState, prevState);
     }
@@ -77,7 +70,6 @@ export const linkBridgeStore = <
 
   return {
     getState,
-    setState,
     subscribe,
-  } as unknown as T;
+  } as unknown as Omit<T, "setState">;
 };

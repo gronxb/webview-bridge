@@ -136,10 +136,6 @@ export const createWebView = <BridgeObject extends Bridge>({
             `);
             return;
           }
-          case "setBridgeState": {
-            bridge.setState(body);
-            return;
-          }
           case "registerWebMethod": {
             const { bridgeNames } = body as {
               bridgeNames: string[];

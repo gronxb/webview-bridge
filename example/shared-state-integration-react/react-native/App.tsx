@@ -77,11 +77,18 @@ function Input() {
 
   return (
     <View>
-      <Text>Native Count: {data.text}</Text>
+      <Text
+        style={{
+          marginBottom: 10,
+          textAlign: "center",
+        }}
+      >
+        Native Data Text: {data.text}
+      </Text>
       <TextInput
         value={data.text}
         onChangeText={setDataText}
-        style={{ borderWidth: 1, width: "50%" }}
+        style={{ borderWidth: 1, minWidth: "50%" }}
       />
     </View>
   );
@@ -109,6 +116,10 @@ function App(): JSX.Element {
           height: "50%",
         }}
       >
+        <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 10 }}>
+          This is Native
+        </Text>
+
         <Count />
         <Button onPress={() => increase()} title="Increase From Native" />
 
