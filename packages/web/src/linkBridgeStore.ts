@@ -58,13 +58,6 @@ export const linkBridgeStore = <
   const listeners = new Set<(newState: T, prevState: T) => void>();
 
   const emitChange = (newState: T, prevState: T) => {
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({
-        type: "setBridgeState",
-        body: newState,
-      }),
-    );
-
     for (const listener of listeners) {
       listener(newState, prevState);
     }
