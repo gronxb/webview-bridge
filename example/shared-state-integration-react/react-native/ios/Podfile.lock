@@ -668,7 +668,7 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 71803c074f6325f10b5ec891c443b6bbabef0ca7
-  FBReactNativeSpec: 4b6fd1e36efb6ef8fa9cf6c2be574b684b72da0e
+  FBReactNativeSpec: 5665a76e3f8d9e09ee15e6584328695a85ed8dfa
   Flipper: 6edb735e6c3e332975d1b17956bcc584eccf5818
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
   Flipper-DoubleConversion: 2dc99b02f658daf147069aad9dbd29d8feb06d30
@@ -710,7 +710,7 @@ SPEC CHECKSUMS:
   React-RCTSettings: 4b95d26ebc88bfd3b6535b2d7904914ff88dbfc2
   React-RCTText: ce4499e4f2d8f85dc4b93ff0559313a016c4f3e2
   React-RCTVibration: 45372e61b35e96d16893540958d156675afbeb63
-  React-rncore: 01008d5f22224e68abec3df5531410e986f62926
+  React-rncore: 817824610694a303e8f617273bb5730009f60551
   React-runtimeexecutor: 7e31e2bc6d0ecc83d4ba05eadc98401007abc10c
   React-runtimescheduler: cc32add98c45c5df18436a6a52a7e1f6edec102c
   React-utils: 7a9918a1ffdd39aba67835d42386f592ea3f8e76
