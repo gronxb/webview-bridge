@@ -7,15 +7,15 @@ This guide integrates the state declared in [Shared State in React Native](./rea
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @webview-bridge/react
+$ npm add @webview-bridge/react @webview-bridge/web
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @webview-bridge/react
+$ pnpm add @webview-bridge/react @webview-bridge/web
 ```
 
 ```sh [yarn]
-$ yarn add -D @webview-bridge/react
+$ yarn add @webview-bridge/react @webview-bridge/web
 ```
 
 :::

@@ -2,20 +2,21 @@
 
 This guide integrates the state declared in [Shared State in React Native](./react-native.md) with `vanilla` within a WebView.
 
+
 ## Installation
 
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @webview-bridge/web
+$ npm add @webview-bridge/web
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @webview-bridge/web
+$ pnpm add @webview-bridge/web
 ```
 
 ```sh [yarn]
-$ yarn add -D @webview-bridge/web
+$ yarn add @webview-bridge/web
 ```
 
 :::

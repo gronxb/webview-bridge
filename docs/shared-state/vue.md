@@ -7,19 +7,18 @@ This guide integrates the state declared in [Shared State in React Native](./rea
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @webview-bridge/vue
+$ npm add @webview-bridge/vue @webview-bridge/web
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @webview-bridge/vue
+$ pnpm add @webview-bridge/vue @webview-bridge/web
 ```
 
 ```sh [yarn]
-$ yarn add -D @webview-bridge/vue
+$ yarn add @webview-bridge/vue @webview-bridge/web
 ```
 
 :::
-
 ## linkBridge
 
 Use the `linkBridge` function to connect with the WebView as shown below.

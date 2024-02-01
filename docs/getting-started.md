@@ -7,15 +7,15 @@
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @webview-bridge/react-native react-native-webview
+$ npm add @webview-bridge/react-native react-native-webview
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @webview-bridge/react-native react-native-webview
+$ pnpm add @webview-bridge/react-native react-native-webview
 ```
 
 ```sh [yarn]
-$ yarn add -D @webview-bridge/react-native react-native-webview
+$ yarn add @webview-bridge/react-native react-native-webview
 ```
 
 :::
@@ -25,15 +25,15 @@ $ yarn add -D @webview-bridge/react-native react-native-webview
 ::: code-group
 
 ```sh [npm]
-$ npm add -D @webview-bridge/web
+$ npm add @webview-bridge/web
 ```
 
 ```sh [pnpm]
-$ pnpm add -D @webview-bridge/web
+$ pnpm add @webview-bridge/web
 ```
 
 ```sh [yarn]
-$ yarn add -D @webview-bridge/web
+$ yarn add @webview-bridge/web
 ```
 
 :::
