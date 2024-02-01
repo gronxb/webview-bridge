@@ -12,7 +12,6 @@ export function useBridge<T extends Bridge>(
 
   if (getCurrentInstance()) {
     onScopeDispose(() => {
-      console.log("unsubscribe");
       unsubscribe?.();
     });
   }
