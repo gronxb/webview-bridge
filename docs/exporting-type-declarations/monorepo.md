@@ -39,7 +39,7 @@ In your React Native project, here named `your-react-native-project`, redefine t
 {
   ...
   "name": "your-react-native-project",
-  "types": "./src/bridge.ts", // This file is where the bridge file is defined.
+  "types": "src/bridge.ts", // This file is where the bridge file is defined.
   ...
 }
 ```

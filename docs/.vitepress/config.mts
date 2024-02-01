@@ -29,6 +29,27 @@ export default defineConfig({
             link: "/using-a-native-method",
           },
           {
+            text: "Shared State",
+            items: [
+              {
+                text: "React Native",
+                link: "/shared-state/react-native",
+              },
+              {
+                text: "Vanilla (WebView only)",
+                link: "/shared-state/vanilla",
+              },
+              {
+                text: "React (WebView only)",
+                link: "/shared-state/react",
+              },
+              {
+                text: "Vue (WebView only)",
+                link: "/shared-state/vue",
+              },
+            ],
+          },
+          {
             text: "Using a Loose Native Method",
             link: "/using-a-loose-native-method",
           },
