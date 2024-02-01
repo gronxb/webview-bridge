@@ -1,0 +1,23 @@
+{
+  "name": "@webview-bridge-example-shared-state-integration-vue/vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@webview-bridge/vue": "workspace:^",
+    "@webview-bridge/web": "workspace:^",
+    "vue": "^3.3.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "@webview-bridge-example-shared-state-integration-vue/react-native": "workspace:^",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vue-tsc": "^1.8.25"
+  }
+}
