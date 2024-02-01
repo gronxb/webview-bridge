@@ -6,7 +6,7 @@ import type { AppBridge } from "@webview-bridge-example-native-method/react-nati
 const bridge = linkBridge<AppBridge>({
   throwOnError: true,
   onReady: () => {
-    console.log("nativeMethod is ready");
+    console.log("bridge is ready");
   },
 });
 

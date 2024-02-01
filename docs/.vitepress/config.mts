@@ -78,7 +78,7 @@ export default defineConfig({
             text: "Web",
             base: "/reference/web",
             items: [
-              { text: "linkNativeMethod", link: "/link-native-method" },
+              { text: "linkBridge", link: "/link-bridge" },
               { text: "registerWebMethod", link: "/register-web-method" },
             ],
           },

@@ -2,7 +2,7 @@
 
 Since a WebView is web-based, it can always be updated to the latest version upon deployment. In contrast, rolling out updates for a React Native app can take time.
 
-You can't always keep `nativeMethod` up-to-date on the web, as the app gets updated and deprecated methods may still exist.
+You can't always keep `bridge` up-to-date on the web, as the app gets updated and deprecated methods may still exist.
 
 For example, there might be methods that have been deleted or methods whose arguments have changed.
 
@@ -36,21 +36,21 @@ export const appBridge = bridge({
 
 ### loose
 
-Using the `loose` keyword in `nativeMethod`, It provides minimal type completion without throwing errors for unknown types.
+Using the `loose` keyword in `bridge`, It provides minimal type completion without throwing errors for unknown types.
 
 ```ts
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   throwOnError: true,
 });
 
-const version = await nativeMethod.getBridgeVersion();
+const version = await bridge.getBridgeVersion();
 if (version >= 2) {
-  const message = await nativeMethod.getMessage();
+  const message = await bridge.getMessage();
   console.log(message);
 } else {
   // Support for old native methods with `loose`
   const oldVersionMessage =
-  await nativeMethod.loose.getOldVersionMessage();
+  await bridge.loose.getOldVersionMessage();
   console.log(oldVersionMessage);
 }
 ```

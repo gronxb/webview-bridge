@@ -109,27 +109,27 @@ export default App;
 ### Web Part
 
 Now, let's setting up the web project that will be displayed in the WebView.
-Utilize the previously exported `AppBridge` as a generic in `linkNativeMethod`.
+Utilize the previously exported `AppBridge` as a generic in `linkBridge`.
 
 That's all there is to it!
 
-You can directly use `nativeMethod` as shown below and receive the results.
+You can directly use `bridge` as shown below and receive the results.
 
 ```tsx
-import { linkNativeMethod } from "@webview-bridge/web";
+import { linkBridge } from "@webview-bridge/web";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   onReady: async (method) => {
-    console.log("nativeMethod is ready");
+    console.log("bridge is ready");
     const version = await method.getBridgeVersion();
     console.log("currentBridgerVersion", version);
   },
 });
 
-nativeMethod.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
-nativeMethod.sum(1, 2).then((num) => console.log(num)); // Expecting 3
-nativeMethod.openInAppBrowser("https://google.com"); // Open google in the native inAppBrowser
+bridge.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
+bridge.sum(1, 2).then((num) => console.log(num)); // Expecting 3
+bridge.openInAppBrowser("https://google.com"); // Open google in the native inAppBrowser
 ```
 
 
@@ -140,8 +140,8 @@ You can also check for the availability of specific methods using `isNativeMetho
 This allows you to safely execute methods only when they are available. Here's how you can implement this:
 
 ```tsx
-if (nativeMethod.isNativeMethodAvailable("openInAppBrowser")) {
-    nativeMethod.openInAppBrowser();
+if (bridge.isNativeMethodAvailable("openInAppBrowser")) {
+    bridge.openInAppBrowser();
 } else {
     console.warn("openInAppBrowser method not supported");
 }
@@ -150,8 +150,8 @@ if (nativeMethod.isNativeMethodAvailable("openInAppBrowser")) {
 In addition, to check the general availability of the WebView bridge, you can use `isWebViewBridgeAvailable`:
 
 ```tsx
-if (nativeMethod.isWebViewBridgeAvailable) {
-    nativeMethod.openInAppBrowser();
+if (bridge.isWebViewBridgeAvailable) {
+    bridge.openInAppBrowser();
 } else {
     console.warn("native method not supported")
 }

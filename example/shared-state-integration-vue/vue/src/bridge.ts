@@ -8,7 +8,7 @@ export const bridge = linkBridge<AppBridge>({
   throwOnError: true,
   onReady: () => {
     isReady.value = true;
-    console.log("nativeMethod is ready");
+    console.log("bridge is ready");
   },
 });
 

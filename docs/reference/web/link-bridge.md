@@ -1,6 +1,6 @@
-# linkNativeMethod
+# linkBridge
 
-The `linkNativeMethod` is used to access methods set up in the React Native bridge.
+The `linkBridge` is used to access methods set up in the React Native bridge.
 
 ## Options 
 

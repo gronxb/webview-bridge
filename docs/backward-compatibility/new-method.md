@@ -12,10 +12,10 @@ However, if the React Native App is not the latest version, this may lead to err
 
 ### throwOnError
 
-On the web, methods registered above are retrieved through `linkNativeMethod`. If you set the `throwOnError` option to `true`, an error will be thrown when the method is absent.
+On the web, methods registered above are retrieved through `linkBridge`. If you set the `throwOnError` option to `true`, an error will be thrown when the method is absent.
 
 ```tsx
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   throwOnError: true,
 });
 ```
@@ -25,7 +25,7 @@ Handling can be done as follows:
 ```tsx
 <button
   onClick={() => {
-    nativeMethod
+    bridge
       .openInAppBrowser("https://github.com/gronxb/webview-bridge")
       .then(() => {
         console.log("Success");
@@ -55,12 +55,12 @@ Typically, to avoid halting app functionality, the default value for `throwOnErr
 
 ```javascript
 // Setting throwOnError globally
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   throwOnError: true,
 });
 
 // Selective error throwing using method names
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   throwOnError: ["openInAppBrowser", /* other method */],
 });
 ```
@@ -70,7 +70,7 @@ const nativeMethod = linkNativeMethod<AppBridge>({
 The `onFallback` method can be used for batch processing of errors. It's suitable for displaying messages like "Please update the app," or for handling all situations where native methods cannot be used.
 
 ```tsx
-const nativeMethod = linkNativeMethod<AppBridge>({
+const bridge = linkBridge<AppBridge>({
   onFallback: (method) => {
     Alert.alert("The app is outdated. Please update.");
   },
