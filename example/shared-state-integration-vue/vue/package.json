@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@webview-bridge/vue": "workspace:^",
     "@webview-bridge/web": "workspace:^",
     "vue": "^3.3.11"
   },

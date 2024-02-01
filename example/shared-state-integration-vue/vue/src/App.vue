@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { bridge, isWebViewBridgeAvailable } from "./bridge";
-import { useBridge } from "./useBridge";
+import { bridge, isReady } from "./bridge";
+import { useBridge } from "@webview-bridge/vue";
 
 const handleOpenInAppBrowser = () => {
   if (bridge.isNativeMethodAvailable("openInAppBrowser") === true) {
@@ -12,8 +12,8 @@ const bridgeStore = useBridge(bridge.store);
 </script>
 
 <template>
-  <div>
-    <div>isWebViewBridgeAvailable {{ isWebViewBridgeAvailable }}</div>
+  <div v-if="isReady">
+    <div>isReady {{ isReady }}</div>
     <h2>This is WebView</h2>
 
     <button @click="handleOpenInAppBrowser()">open InAppBrowser</button>
