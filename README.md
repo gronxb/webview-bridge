@@ -25,7 +25,7 @@ visit [Docs](https://gronxb.github.io/webview-bridge)
 
 ## Example
 
-visit [Example](https://github.com/gronxb/webview-bridge-example)
+visit [Example](https://github.com/gronxb/webview-bridge/tree/main/example)
 
 ## Exporting Type Declarations
 

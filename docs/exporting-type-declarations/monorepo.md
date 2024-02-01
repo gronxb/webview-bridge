@@ -68,5 +68,5 @@ That's all there is to it! To export types from the Web Project to the React Nat
 
 
 ::: tip NOTE
-You can explore a practical example and further understand the implementation by visiting the webview-bridge-example GitHub repository at https://github.com/gronxb/webview-bridge-example. This repository provides a hands-on demonstration of the concepts and steps outlined in this guide.
+You can explore a practical example and further understand the implementation by visiting the [example](https://github.com/gronxb/webview-bridge/tree/main/example) GitHub repository. This repository provides a hands-on demonstration of the concepts and steps outlined in this guide.
 :::
