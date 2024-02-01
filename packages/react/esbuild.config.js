@@ -2,17 +2,12 @@ import { build } from "esbuild";
 
 import packageJson from "./package.json" assert { type: "json" };
 
-const external = [
-  ...Object.keys(packageJson?.dependencies ?? {}),
-  ...Object.keys(packageJson?.peerDependencies ?? {}),
-];
-
 await Promise.all([
   build({
     entryPoints: ["src/index.ts"],
     bundle: true,
     minify: true,
-    external,
+    external: Object.keys(packageJson.dependencies),
     outfile: "dist/commonjs/index.cjs",
     platform: "node",
     format: "cjs",
@@ -21,7 +16,7 @@ await Promise.all([
     entryPoints: ["src/index.ts"],
     bundle: true,
     minify: true,
-    external,
+    external: Object.keys(packageJson.dependencies),
     outfile: "dist/module/index.mjs",
     platform: "browser",
     format: "esm",
