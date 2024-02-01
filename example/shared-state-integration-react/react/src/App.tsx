@@ -7,7 +7,7 @@ import type { AppBridge } from "@webview-bridge-example-shared-state-integration
 const bridge = linkBridge<AppBridge>({
   throwOnError: true,
   onReady: () => {
-    console.log("nativeMethod is ready");
+    console.log("bridge is ready");
   },
 });
 

@@ -40,19 +40,19 @@ export const { WebView } = createWebView({
 
 ```
 ## Web Part
-Declare `linkNativeMethod` and use it immediately with `.loose`.
+Declare `linkBridge` and use it immediately with `.loose`.
 
 Although it doesn't benefit from type assistance, it functions correctly at runtime.
 
 ```ts
-import { linkNativeMethod } from "@webview-bridge/web";
+import { linkBridge } from "@webview-bridge/web";
 
-const nativeMethod = linkNativeMethod();
+const bridge = linkBridge();
 
-nativeMethod.loose.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
-nativeMethod.loose.sum(1, 2).then((num) => console.log(num)); // Expecting 3
+bridge.loose.getMessage().then((message) => console.log(message)); // Expecting "Hello, I'm native"
+bridge.loose.sum(1, 2).then((num) => console.log(num)); // Expecting 3
 
-if (nativeMethod.isNativeMethodAvailable("openInAppBrowser")) {
-    nativeMethod.loose.openInAppBrowser("https://google.com"); // Open Google in the native inAppBrowser
+if (bridge.isNativeMethodAvailable("openInAppBrowser")) {
+    bridge.loose.openInAppBrowser("https://google.com"); // Open Google in the native inAppBrowser
 }
 ```

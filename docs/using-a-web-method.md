@@ -11,7 +11,7 @@ Maintaining a bidirectional bridge can become challenging due to the need for ex
 Define web-specific methods using `registerWebMethod`.
 
 ```tsx
-import { linkNativeMethod, registerWebMethod } from "@webview-bridge/web";
+import { registerWebMethod } from "@webview-bridge/web";
 
 // Register functions in the registerWebMethod object in your web code
 export const webBridge = registerWebMethod({

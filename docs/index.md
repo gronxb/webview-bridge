@@ -14,7 +14,7 @@ hero:
       link: https://github.com/gronxb/webview-bridge
     - theme: alt
       text: View on Example
-      link: https://github.com/gronxb/webview-bridge-example
+      link: https://github.com/gronxb/webview-bridge/tree/main/example
 
 features:
   - icon: ✅
@@ -30,7 +30,7 @@ features:
     details: Eliminates the need for app review processes due to the JavaScript-only implementation.
 
   - icon: 🛠️
-    title: Zero Dependencies
+    title: Lightweight Dependencies
     details: Operates with `react-native-webview` alone, ensuring simple and streamlined integration.
 ---
 
