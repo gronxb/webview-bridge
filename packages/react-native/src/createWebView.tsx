@@ -5,25 +5,25 @@ import type {
   Primitive,
 } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
-import {
+import React, {
   createRef,
   forwardRef,
   useImperativeHandle,
   useMemo,
   useRef,
 } from "react";
-import React from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
 
-import {
-  handleBridge,
-  handleLog,
-  INJECT_BRIDGE_METHODS,
-  INJECT_BRIDGE_STATE,
-  INJECT_DEBUG,
-  LogType,
-} from "./integrations";
+import
+  {
+    handleBridge,
+    handleLog,
+    INJECT_BRIDGE_METHODS,
+    INJECT_BRIDGE_STATE,
+    INJECT_DEBUG,
+    LogType,
+  } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
 
@@ -107,7 +107,7 @@ export const createWebView = <BridgeObject extends Bridge>({
           case "log": {
             const { method, args } = body as {
               method: LogType;
-              args: unknown[];
+              args: string;
             };
             debug && handleLog(method, args);
             return;
