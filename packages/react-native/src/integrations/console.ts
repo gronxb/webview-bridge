@@ -5,7 +5,7 @@ export const INJECT_DEBUG = `
   const originalConsoleWarn = console.warn;
 
   console.log = function() {
-    var message = Array.from(arguments).join(' ');
+    var message = JSON.stringify(Array.from(arguments));
     window.ReactNativeWebView?.postMessage(
       JSON.stringify({ type: "log", body: { method: "log", args: message } }),
     );
@@ -13,7 +13,7 @@ export const INJECT_DEBUG = `
   };
 
   console.error = function() {
-    var message = Array.from(arguments).join(' ');
+    var message = JSON.stringify(Array.from(arguments));
     window.ReactNativeWebView?.postMessage(
       JSON.stringify({ type: "log", body: { method: "error", args: message } }),
     );
@@ -21,7 +21,7 @@ export const INJECT_DEBUG = `
   };
 
   console.warn = function() {
-    var message = Array.from(arguments).join(' ');
+    var message = JSON.stringify(Array.from(arguments));
     window.ReactNativeWebView?.postMessage(
       JSON.stringify({ type: "log", body: { method: "warn", args: message } }),
     );
@@ -32,18 +32,19 @@ export const INJECT_DEBUG = `
 
 export type LogType = "log" | "error" | "warn";
 
-export const handleLog = (type: LogType, message?: unknown) => {
+export const handleLog = (type: LogType, message: string) => {
+  const parsedMessage = JSON.parse(message);
   switch (type) {
     case "log": {
-      console.log("(WebView)", message);
+      console.log("(WebView)", parsedMessage);
       break;
     }
     case "error": {
-      console.error("(WebView)", message);
+      console.error("(WebView)", parsedMessage);
       break;
     }
     case "warn": {
-      console.warn("(WebView)", message);
+      console.warn("(WebView)", parsedMessage);
       break;
     }
   }
