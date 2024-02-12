@@ -2,6 +2,8 @@
 
 [![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Freact-native/latest?label=%40webview-bridge%2Freact-native)](https://www.npmjs.com/package/@webview-bridge/react-native)
 [![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Fweb/latest?label=%40webview-bridge%2Fweb)](https://www.npmjs.com/package/@webview-bridge/web)
+[![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Freact/latest?label=%40webview-bridge%2Freact)](https://www.npmjs.com/package/@webview-bridge/react)
+[![NPM](https://img.shields.io/npm/v/%40webview-bridge%2Fvue/latest?label=%40webview-bridge%2Fvue)](https://www.npmjs.com/package/@webview-bridge/vue)
 
 **Fully Type-Safe Integration for React Native WebView and Web**
 
@@ -25,7 +27,7 @@ visit [Docs](https://gronxb.github.io/webview-bridge)
 
 ## Example
 
-visit [Example](https://github.com/gronxb/webview-bridge-example)
+visit [Example](https://github.com/gronxb/webview-bridge/tree/main/example)
 
 ## Exporting Type Declarations
 

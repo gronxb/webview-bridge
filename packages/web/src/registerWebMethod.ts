@@ -1,8 +1,8 @@
 import { createEvents } from "@webview-bridge/util";
 
-import type { Bridge } from "./types";
+import type { WebBridge } from "./types";
 
-export const registerWebMethod = <BridgeObject extends Bridge>(
+export const registerWebMethod = <BridgeObject extends WebBridge>(
   bridge: BridgeObject,
 ): BridgeObject => {
   if (!window.ReactNativeWebView) {
@@ -18,13 +18,22 @@ export const registerWebMethod = <BridgeObject extends Bridge>(
 
   for (const [funcName, func] of bridgeEntries) {
     const $func = async (eventId: string, args: unknown[]) => {
-      const value = await func(...args);
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({
-          type: "webMethodResponse",
-          body: { funcName, eventId, value },
-        }),
-      );
+      try {
+        const value = await func(...args);
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: "webMethodResponse",
+            body: { funcName, eventId, value },
+          }),
+        );
+      } catch (e) {
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: "webMethodError",
+            body: { funcName, eventId, error: JSON.stringify(e) },
+          }),
+        );
+      }
     };
 
     emitter.on(funcName, $func);

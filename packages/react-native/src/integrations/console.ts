@@ -1,4 +1,4 @@
-export const INTEGRATIONS_SCRIPTS_CONSOLE = `
+export const INJECT_DEBUG = `
 {
   const originalConsoleLog = console.log;
   const originalConsoleError = console.error;

@@ -1,12 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AsyncFunction = (...args: any[]) => Promise<any>;
+import { AsyncFunction } from "@webview-bridge/types";
 
-export type Bridge = Record<string, AsyncFunction>;
+export type WebBridge = Record<string, AsyncFunction>;
 
-export type NativeMethod<T> = {
+export type LinkBridge<T, U> = {
   isWebViewBridgeAvailable: boolean;
   isNativeMethodAvailable(method: keyof T): boolean;
   isNativeMethodAvailable(method: string): boolean;
+  store: U;
   loose: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [K in keyof T]: (...args: any[]) => Promise<any>;

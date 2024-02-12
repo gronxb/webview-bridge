@@ -88,7 +88,7 @@ In your web project, import the types as shown below:
 ```ts
 import { AppBridge } from "./output";
 
-const nativeMethod = linkNativeMethod<AppBridge>();
+const bridge = linkBridge<AppBridge>();
 ```
 
 By following these steps, you ensure that type consistency and interoperability are maintained across your React Native and web projects, even when they are housed in multi repositories.

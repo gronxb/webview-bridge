@@ -29,6 +29,31 @@ export default defineConfig({
             link: "/using-a-native-method",
           },
           {
+            text: "Shared State",
+            items: [
+              {
+                text: "React Native",
+                link: "/shared-state/react-native",
+              },
+              {
+                text: "Vanilla (WebView only)",
+                link: "/shared-state/vanilla",
+              },
+              {
+                text: "React (WebView only)",
+                link: "/shared-state/react",
+              },
+              {
+                text: "Vue (WebView only)",
+                link: "/shared-state/vue",
+              },
+            ],
+          },
+          {
+            text: "Using a Loose Native Method",
+            link: "/using-a-loose-native-method",
+          },
+          {
             text: "Using a Web Method",
             link: "/using-a-web-method",
           },
@@ -74,7 +99,7 @@ export default defineConfig({
             text: "Web",
             base: "/reference/web",
             items: [
-              { text: "linkNativeMethod", link: "/link-native-method" },
+              { text: "linkBridge", link: "/link-bridge" },
               { text: "registerWebMethod", link: "/register-web-method" },
             ],
           },
