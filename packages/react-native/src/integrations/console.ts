@@ -34,17 +34,26 @@ export type LogType = "log" | "error" | "warn";
 
 export const handleLog = (type: LogType, message: string) => {
   const parsedMessage = JSON.parse(message);
+  const webviewMark = "(WebView) ";
+  const webviewMarkedElement =
+    typeof parsedMessage[0] === "string"
+      ? [webviewMark + parsedMessage[0]]
+      : [webviewMark, parsedMessage[0]];
+  const webviewMarkedMessage = [
+    ...webviewMarkedElement,
+    ...parsedMessage.slice(1),
+  ];
   switch (type) {
     case "log": {
-      console.log("(WebView)", parsedMessage);
+      console.log(...webviewMarkedMessage);
       break;
     }
     case "error": {
-      console.error("(WebView)", parsedMessage);
+      console.error(...webviewMarkedMessage);
       break;
     }
     case "warn": {
-      console.warn("(WebView)", parsedMessage);
+      console.warn(...webviewMarkedMessage);
       break;
     }
   }
