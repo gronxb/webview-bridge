@@ -5,6 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "packages:publish": "pnpm clear && pnpm --filter './packages/**' publish",
     "build": "pnpm -r build",
     "test:type": "pnpm -r test:type",
     "docs:build": "pnpm -r docs:build",
