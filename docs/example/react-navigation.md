@@ -1,9 +1,7 @@
 # Example React Navigation
 This guide is about integrating WebView, the web, and React Navigation.
 
-<video width="320" height="240" muted autoplay loop>
-  <source src="/react-navigation.mp4" type="video/mp4">
-</video>
+<video src="/react-navigation.mp4" width="320" height="240" muted autoplay loop />
 
 Example: [react-navigation](https://github.com/gronxb/webview-bridge/tree/main/example/react-navigation)
 

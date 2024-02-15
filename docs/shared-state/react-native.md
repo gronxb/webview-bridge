@@ -2,9 +2,8 @@
 
 This guide covers how to declare state in React Native and share it with the web.
 
-<video width="320" height="240" muted autoplay loop>
-  <source src="/shared-state.mp4" type="video/mp4">
-</video>
+
+<video src="/shared-state.mp4" width="320" height="240" muted autoplay loop />
 
 Example: [shared-state-integration-react](https://github.com/gronxb/webview-bridge/tree/main/example/shared-state-integration-react)
 
