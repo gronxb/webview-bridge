@@ -88,6 +88,16 @@ export default defineConfig({
         ],
       },
       {
+        text: "Example Guide",
+        base: "/example",
+        items: [
+          {
+            text: "React Navigation",
+            link: "/react-navigation",
+          },
+        ],
+      },
+      {
         text: "API Reference",
         items: [
           {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import { linkBridge } from "@webview-bridge/web";
 import type { AppBridge } from "@webview-bridge-example-react-navigation/react-native";
