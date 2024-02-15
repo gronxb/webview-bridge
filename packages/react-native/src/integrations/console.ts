@@ -33,16 +33,13 @@ export const INJECT_DEBUG = `
 export type LogType = "log" | "error" | "warn";
 
 export const handleLog = (type: LogType, message: string) => {
-  const parsedMessage = JSON.parse(message);
+  const [formatMessage, ...parsedMessage] = JSON.parse(message);
   const webviewMark = "(WebView) ";
-  const webviewMarkedElement =
-    typeof parsedMessage[0] === "string"
-      ? [webviewMark + parsedMessage[0]]
-      : [webviewMark, parsedMessage[0]];
-  const webviewMarkedMessage = [
-    ...webviewMarkedElement,
-    ...parsedMessage.slice(1),
-  ];
+
+  const webviewMarkedMessage =
+    typeof formatMessage === "string"
+      ? [webviewMark + formatMessage, ...parsedMessage]
+      : [webviewMark, formatMessage, ...parsedMessage];
   switch (type) {
     case "log": {
       console.log(...webviewMarkedMessage);
