@@ -1,6 +1,5 @@
 # Example React Navigation
-
-This guide covers how to declare state in React Native and share it with the web.
+This guide is about integrating WebView, the web, and React Navigation.
 
 <video width="320" height="240" muted autoplay loop>
   <source src="/react-navigation.mp4" type="video/mp4">
