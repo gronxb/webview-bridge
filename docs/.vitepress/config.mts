@@ -1,4 +1,4 @@
-import { HeadConfig, defineConfig } from "vitepress";
+import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -25,7 +25,7 @@ export default defineConfig({
       "meta",
       {
         property: "og:image",
-        content: "/content.png",
+        content: "https://gronxb.github.io/webview-bridge/content.png",
       },
     ],
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
@@ -49,7 +49,7 @@ export default defineConfig({
       "meta",
       {
         name: "twitter:image",
-        content: "/content.png",
+        content: "https://gronxb.github.io/webview-bridge/content.png",
       },
     ],
     ["link", { rel: "icon", href: "/favicon.ico" }],
