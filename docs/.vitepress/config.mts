@@ -1,11 +1,60 @@
-import { defineConfig } from "vitepress";
+import { HeadConfig, defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "WebViewBridge",
   description: "Integration Web and React Native WebView",
+  head: [
+    [
+      "meta",
+      {
+        property: "og:url",
+        content: "https://gronxb.github.io/webview-bridge",
+      },
+    ],
+    ["meta", { property: "og:type", content: "website" }],
+    ["meta", { property: "og:title", content: "WebViewBridge" }],
+    [
+      "meta",
+      {
+        property: "og:description",
+        content: "Integration Web and React Native WebView",
+      },
+    ],
+    [
+      "meta",
+      {
+        property: "og:image",
+        content: "/content.png",
+      },
+    ],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    ["meta", { property: "twitter:domain", content: "gronxb.github.io" }],
+    [
+      "meta",
+      {
+        property: "twitter:url",
+        content: "https://gronxb.github.io/webview-bridge",
+      },
+    ],
+    ["meta", { name: "twitter:title", content: "WebViewBridge" }],
+    [
+      "meta",
+      {
+        name: "twitter:description",
+        content: "Integration Web and React Native WebView",
+      },
+    ],
+    [
+      "meta",
+      {
+        name: "twitter:image",
+        content: "/content.png",
+      },
+    ],
+    ["link", { rel: "icon", href: "/favicon.ico" }],
+  ],
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
       { text: "Guide", link: "/getting-started" },
