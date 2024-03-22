@@ -20,14 +20,9 @@
   "types": "dist/typescript/index.d.ts",
   "exports": {
     ".": {
-      "require": {
-        "default": "./dist/commonjs/index.cjs",
-        "types": "./dist/typescript/index.d.cts"
-      },
-      "import": {
-        "default": "./dist/module/index.mjs",
-        "types": "./dist/typescript/index.d.ts"
-      }
+      "types": "./dist/typescript/index.d.ts",
+      "import": "./dist/module/index.mjs",
+      "require": "./dist/commonjs/index.cjs"
     }
   },
   "scripts": {
