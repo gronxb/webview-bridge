@@ -1,5 +1,5 @@
 import type { Bridge, BridgeStore, ExtractStore } from "@webview-bridge/types";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
 export function useBridge<T extends Bridge>(
   store: BridgeStore<T>,
