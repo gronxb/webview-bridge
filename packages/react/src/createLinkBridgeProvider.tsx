@@ -54,14 +54,30 @@ export const createLinkBridgeProvider = <
       throw new Error(`useBridgeStatus must be used within a BridgeProvider`);
     }
 
-    const { isNativeMethodAvailable, isWebViewBridgeAvailable, loose } =
+    const { isNativeMethodAvailable, isWebViewBridgeAvailable } =
       bridgeStoreContext;
     return {
       isNativeMethodAvailable,
       isWebViewBridgeAvailable,
-      loose,
     };
   };
 
-  return { bridge, BridgeProvider, useBridgeStore, useBridgeStatus };
+  const useBridgeLoose = () => {
+    const bridgeStoreContext = useContext(BridgeContext);
+
+    if (!bridgeStoreContext) {
+      throw new Error(`useBridgeLoose must be used within a BridgeProvider`);
+    }
+
+    const { loose } = bridgeStoreContext;
+    return { loose };
+  };
+
+  return {
+    bridge,
+    BridgeProvider,
+    useBridgeStore,
+    useBridgeStatus,
+    useBridgeLoose,
+  };
 };
