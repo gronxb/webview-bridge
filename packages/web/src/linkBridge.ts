@@ -4,11 +4,16 @@ import type {
   ExcludePrimitive,
   ExtractStore,
 } from "@webview-bridge/types";
-import { createRandomId, createResolver, timeout } from "@webview-bridge/util";
+import {
+  createRandomId,
+  createResolver,
+  noop,
+  timeout,
+} from "@webview-bridge/util";
 
-import { emitter } from "./emitter";
 import { MethodNotFoundError, NativeMethodError } from "./error";
-import { linkBridgeStore } from "./linkBridgeStore";
+import { emitter } from "./internal/emitter";
+import { linkBridgeStore } from "./internal/linkBridgeStore";
 import { LinkBridge } from "./types";
 
 export interface LinkBridgeOptions<
@@ -60,13 +65,21 @@ export const linkBridge = <
     throwOnError: false,
   },
 ): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">> => {
+  if (typeof window === "undefined") {
+    return {
+      store: {
+        getState: () => ({}) as ExcludePrimitive<ExtractStore<T>>,
+        subscribe: noop,
+      } as unknown as Omit<T, "setState">,
+    } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>;
+  }
+
   const {
     timeout: timeoutMs = 2000,
     throwOnError = false,
     onFallback,
     onReady,
   } = options;
-
   if (!window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
   }

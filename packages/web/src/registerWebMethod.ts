@@ -5,7 +5,7 @@ import type { WebBridge } from "./types";
 export const registerWebMethod = <BridgeObject extends WebBridge>(
   bridge: BridgeObject,
 ): BridgeObject => {
-  if (!window.ReactNativeWebView) {
+  if (typeof window !== "undefined" && !window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
     return bridge;
   }
