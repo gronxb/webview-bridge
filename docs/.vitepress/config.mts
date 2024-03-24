@@ -120,6 +120,20 @@ export default defineConfig({
               },
             ],
           },
+          {
+            text: "SSR",
+            base: "/ssr",
+            items: [
+              {
+                text: "Next.js (App Router)",
+                link: "/next-js-app-router",
+              },
+              {
+                text: "Remix",
+                link: "/remix",
+              },
+            ],
+          },
         ],
       },
       {
