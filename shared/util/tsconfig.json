@@ -3,6 +3,7 @@
     "jsx": "react-native",
     "lib": ["esnext", "DOM"],
     "module": "esnext",
+    "moduleResolution": "Node",
     "strict": true,
     "target": "esnext"
   }
