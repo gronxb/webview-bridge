@@ -1,22 +1,14 @@
-import type { Bridge, BridgeStore, ExtractStore } from "@webview-bridge/web";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import type { Bridge, BridgeStore } from "@webview-bridge/web";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector.js";
 
-export function useBridge<T extends Bridge>(
+export const useBridge = <T extends Bridge, U>(
   store: Omit<BridgeStore<T>, "setState">,
-): ExtractStore<BridgeStore<T>>;
-
-export function useBridge<
-  T extends Bridge,
-  U extends ExtractStore<BridgeStore<T>>,
-  V,
->(store: Omit<BridgeStore<T>, "setState">, selector?: (state: U) => V): V;
-
-export function useBridge<
-  T extends Bridge,
-  U extends ExtractStore<BridgeStore<T>>,
-  V,
->(store: Omit<BridgeStore<T>, "setState">, selector?: (state: U) => V): V {
-  const getSnapshot = () =>
-    selector?.(store.getState() as U) ?? store.getState();
-  return useSyncExternalStore(store.subscribe, getSnapshot) as V;
-}
+  selector?: (state: T) => U,
+): U => {
+  return useSyncExternalStoreWithSelector(
+    store.subscribe,
+    store.getState,
+    store.getState,
+    selector ?? ((state: T) => state as unknown as U),
+  );
+};

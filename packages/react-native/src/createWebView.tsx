@@ -15,15 +15,14 @@ import React, {
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
 
-import
-  {
-    handleBridge,
-    handleLog,
-    INJECT_BRIDGE_METHODS,
-    INJECT_BRIDGE_STATE,
-    INJECT_DEBUG,
-    LogType,
-  } from "./integrations";
+import {
+  handleBridge,
+  handleLog,
+  INJECT_BRIDGE_METHODS,
+  INJECT_BRIDGE_STATE,
+  INJECT_DEBUG,
+  LogType,
+} from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
 
