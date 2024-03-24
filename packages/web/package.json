@@ -20,7 +20,7 @@
   "types": "dist/typescript/packages/web/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/typescript/packages/web/src/index.d.cts",
+      "types": "./dist/typescript/packages/web/src/index.d.ts",
       "import": "./dist/module/index.mjs",
       "require": "./dist/commonjs/index.cjs"
     }
