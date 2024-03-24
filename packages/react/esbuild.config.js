@@ -4,6 +4,7 @@ import packageJson from "./package.json" assert { type: "json" };
 
 const external = [
   ...Object.keys(packageJson?.dependencies ?? {}),
+  ...Object.keys(packageJson?.devDependencies ?? {}),
   ...Object.keys(packageJson?.peerDependencies ?? {}),
 ];
 
