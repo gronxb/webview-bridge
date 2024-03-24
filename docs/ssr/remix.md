@@ -22,10 +22,9 @@ $ yarn add @webview-bridge/react @webview-bridge/web
 
 :::
 
-### `createLinkBridgeProvider`
-
+## `createLinkBridgeProvider`
+### providers/BridgeProvider.ts
 ```tsx
-// This file is providers/BridgeProvider.ts
 import { createLinkBridgeProvider } from "@webview-bridge/react";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
@@ -81,9 +80,35 @@ Wrap the `BridgeProvider` around the children in the base code.
 
 
 ## Client Component
-### app/components/home.tsx
+### app/components/BridgeHome.tsx
 ```tsx
-export default function Home() {
+import { useBridgeStatus, useBridgeStore } from "@/providers/BridgeProvider";
+
+function Count() {
+  const count = useBridgeStore((state) => state.count);
+
+  return <p>Native Count: {count}</p>;
+}
+
+function DataText() {
+  const { text, setDataText } = useBridgeStore((state) => ({
+    text: state.data.text,
+    setDataText: state.setDataText,
+  }));
+
+  return (
+    <div>
+      <p>Native Data Text: {text}</p>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setDataText(e.target.value)}
+      />
+    </div>
+  );
+}
+
+export default function BridgeHome() {
   const { increase, openInAppBrowser } = useBridgeStore((state) => ({
     increase: state.increase,
     openInAppBrowser: state.openInAppBrowser,
@@ -115,7 +140,64 @@ export default function Home() {
     </div>
   );
 }
+import { useBridgeStatus, useBridgeStore } from "@/providers/BridgeProvider";
 
+function Count() {
+  const count = useBridgeStore((state) => state.count);
+
+  return <p>Native Count: {count}</p>;
+}
+
+function DataText() {
+  const { text, setDataText } = useBridgeStore((state) => ({
+    text: state.data.text,
+    setDataText: state.setDataText,
+  }));
+
+  return (
+    <div>
+      <p>Native Data Text: {text}</p>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setDataText(e.target.value)}
+      />
+    </div>
+  );
+}
+
+export default function BridgeHome() {
+  const { increase, openInAppBrowser } = useBridgeStore((state) => ({
+    increase: state.increase,
+    openInAppBrowser: state.openInAppBrowser,
+  }));
+  const { isNativeMethodAvailable, isWebViewBridgeAvailable } =
+    useBridgeStatus();
+
+  return (
+    <div>
+      <div>
+        {`isWebViewBridgeAvailable: ${String(isWebViewBridgeAvailable)}`}
+      </div>
+      <h2>This is WebView</h2>
+
+      <button
+        onClick={() => {
+          if (isNativeMethodAvailable("openInAppBrowser")) {
+            openInAppBrowser("https://github.com/gronxb/webview-bridge");
+          }
+        }}
+      >
+        open InAppBrowser
+      </button>
+
+      <Count />
+      <button onClick={() => increase()}>Increase from web</button>
+
+      <DataText />
+    </div>
+  );
+}
 ```
 
 Utilize hooks from `createLinkBridgeProvider` for client-side functionality as shown above.
@@ -125,7 +207,7 @@ Utilize hooks from `createLinkBridgeProvider` for client-side functionality as s
 
 ```tsx
 import type { MetaFunction } from "@remix-run/node";
-import Home from "~/components/home";
+import BridgeHome from "~/components/BridgeHome";
 
 export const meta: MetaFunction = () => {
   return [
@@ -139,7 +221,7 @@ export async function clientLoader() {
 }
 
 export default function Index() {
-  return <Home />;
+  return <BridgeHome />;
 }
 
 ```

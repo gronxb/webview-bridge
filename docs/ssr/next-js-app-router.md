@@ -27,10 +27,10 @@ $ yarn add @webview-bridge/react @webview-bridge/web
 
 :::
 
-### `createLinkBridgeProvider`
-
+## `createLinkBridgeProvider`
+### providers/BridgeProvider.ts
 ```tsx
-// This file is providers/BridgeProvider.ts
+"use client";
 import { createLinkBridgeProvider } from "@webview-bridge/react";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
@@ -71,6 +71,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        {/* Here */}
         <BridgeProvider>{children}</BridgeProvider>
       </body>
     </html>
@@ -82,9 +83,36 @@ export default function RootLayout({
 Wrap the `BridgeProvider` around the children in the base code.
 
 ## Client Component
-### app/components/home.tsx
+### app/components/BridgeHome.tsx
 ```tsx
-export default function Home() {
+"use client";
+import { useBridgeStatus, useBridgeStore } from "@/providers/BridgeProvider";
+
+function Count() {
+  const count = useBridgeStore((state) => state.count);
+
+  return <p>Native Count: {count}</p>;
+}
+
+function DataText() {
+  const { text, setDataText } = useBridgeStore((state) => ({
+    text: state.data.text,
+    setDataText: state.setDataText,
+  }));
+
+  return (
+    <div>
+      <p>Native Data Text: {text}</p>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setDataText(e.target.value)}
+      />
+    </div>
+  );
+}
+
+export default function BridgeHome() {
   const { increase, openInAppBrowser } = useBridgeStore((state) => ({
     increase: state.increase,
     openInAppBrowser: state.openInAppBrowser,
@@ -128,14 +156,14 @@ Utilize hooks from `createLinkBridgeProvider` for client-side functionality as s
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-const Home = dynamic(() => import("./home"), {
+const BridgeHome = dynamic(() => import("./BridgeHome"), {
   ssr: false,
 });
 
 const Page = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Home />
+      <BridgeHome />
     </Suspense>
   );
 };
