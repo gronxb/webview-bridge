@@ -15,7 +15,7 @@ import React, {
 } from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
-import type { AnyObject } from "yup";
+import type { AnySchema as YupTypeAny, InferType as yupInfer } from "yup";
 import type { infer as zodInfer, ZodTypeAny } from "zod";
 
 import {
@@ -29,15 +29,16 @@ import {
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
 
-export type PostMessageInputObject = Record<string, ZodTypeAny | AnyObject>;
+export type PostMessageInputObject = Record<string, ZodTypeAny | YupTypeAny>;
 export type Parser<Input, EventName> = Input extends undefined
   ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Record<string, Primitive> | Primitive
   : EventName extends keyof Input
   ? Input[EventName] extends ZodTypeAny
     ? zodInfer<Input[EventName]>
-    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      Record<string, Primitive> | Primitive
+    : Input[EventName] extends YupTypeAny
+    ? yupInfer<Input[EventName]> // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    : Record<string, Primitive> | Primitive
   : never;
 
 export type CreateWebViewArgs<
