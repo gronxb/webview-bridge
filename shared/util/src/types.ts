@@ -24,3 +24,5 @@ export type OnlyJSON<T> = {
 export type ExcludePrimitive<T> = {
   [P in keyof T as T[P] extends RawJSON ? never : P]: T[P];
 };
+
+export type KeyOfOrString<T> = T extends undefined ? string : keyof T;

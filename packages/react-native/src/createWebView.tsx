@@ -2,6 +2,7 @@ import type {
   AsyncFunction,
   Bridge,
   BridgeStore,
+  KeyOfOrString,
   Primitive,
 } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
@@ -14,6 +15,8 @@ import React, {
 } from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
+import type { AnyObject } from "yup";
+import type { infer as zodInfer, ZodTypeAny } from "zod";
 
 import {
   handleBridge,
@@ -26,10 +29,25 @@ import {
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
 
-export type CreateWebViewArgs<BridgeObject extends Bridge> = {
+export type PostMessageInputObject = Record<string, ZodTypeAny | AnyObject>;
+export type Parser<Input, EventName> = Input extends undefined
+  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Record<string, Primitive> | Primitive
+  : EventName extends keyof Input
+  ? Input[EventName] extends ZodTypeAny
+    ? zodInfer<Input[EventName]>
+    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Record<string, Primitive> | Primitive
+  : never;
+
+export type CreateWebViewArgs<
+  BridgeObject extends Bridge,
+  PostMessageInput extends PostMessageInputObject,
+> = {
   bridge: BridgeStore<BridgeObject>;
   debug?: boolean;
   responseTimeout?: number;
+  postMessageInput?: PostMessageInput;
   fallback?: (method: keyof BridgeObject) => void;
 };
 
@@ -37,12 +55,16 @@ export type WebMethod<T> = T & {
   isReady: boolean;
 };
 
-export const createWebView = <BridgeObject extends Bridge>({
+export const createWebView = <
+  BridgeObject extends Bridge,
+  PostMessageInput extends PostMessageInputObject,
+>({
   bridge,
   debug,
   responseTimeout = 2000,
+  postMessageInput,
   fallback,
-}: CreateWebViewArgs<BridgeObject>) => {
+}: CreateWebViewArgs<BridgeObject, PostMessageInput>) => {
   const WebMethod = {
     current: {
       isReady: false,
@@ -61,6 +83,15 @@ export const createWebView = <BridgeObject extends Bridge>({
   });
 
   return {
+    postMessage: <
+      EventName extends KeyOfOrString<PostMessageInput>,
+      Args extends Parser<PostMessageInput, EventName>,
+    >(
+      eventName: EventName,
+      args: Args,
+    ) => {
+      console.log(postMessageInput, eventName, args);
+    },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
 
