@@ -23,15 +23,12 @@ import {
 } from "./integrations/bridge";
 import { handleLog, INJECT_DEBUG, LogType } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import {
-  Parser,
-  PostMessageSchemaObject,
-} from "./integrations/postMessageSchema";
+import { Parser, ParserSchema } from "./integrations/postMessageSchema";
 import type { BridgeWebView } from "./types/webview";
 
 export type CreateWebViewArgs<
   BridgeObject extends Bridge,
-  PostMessageSchema extends PostMessageSchemaObject,
+  PostMessageSchema extends ParserSchema<any>,
 > = {
   bridge: BridgeStore<BridgeObject>;
   debug?: boolean;
@@ -46,7 +43,7 @@ export type WebMethod<T> = T & {
 
 export const createWebView = <
   BridgeObject extends Bridge,
-  PostMessageSchema extends PostMessageSchemaObject,
+  PostMessageSchema extends ParserSchema<any>,
 >({
   bridge,
   debug,
