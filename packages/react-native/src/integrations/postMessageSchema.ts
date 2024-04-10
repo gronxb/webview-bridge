@@ -5,20 +5,17 @@ import type { infer as zodInfer, ZodTypeAny } from "zod";
 
 export type PostMessageSchemaObject = Record<
   string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ZodTypeAny | YupTypeAny | Struct<any>
 >;
 export type Parser<Input, EventName> = Input extends undefined
-  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Record<string, Primitive> | Primitive
+  ? Record<string, Primitive> | Primitive
   : EventName extends keyof Input
   ? Input[EventName] extends ZodTypeAny
     ? zodInfer<Input[EventName]>
     : Input[EventName] extends YupTypeAny
     ? yupInfer<Input[EventName]>
-    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Input[EventName] extends Struct<any>
-    ? SupertructInfer<Input[EventName]> // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    : Input[EventName] extends Struct<any>
+    ? SupertructInfer<Input[EventName]>
     : Record<string, Primitive> | Primitive
   : never;
 
@@ -36,19 +33,44 @@ export const postMessageSchema = <T extends PostMessageSchemaObject>(
       ];
     }
 
-    // yup & superstruct
-    else if ("validate" in value && typeof value.validate === "function") {
+    // yup
+    else if (
+      "validateSync" in value &&
+      typeof value.validateSync === "function"
+    ) {
       return [
         key,
         {
-          parse: value.validate,
+          parse: (data: any) => {
+            value.validateSync(data, { abortEarly: true });
+          },
+        },
+      ];
+    }
+
+    // superstruct
+    else if (
+      "assert" in value &&
+      typeof value.assert === "function" &&
+      "validate" in value &&
+      typeof value.validate === "function"
+    ) {
+      return [
+        key,
+        {
+          parse: (data: any) => {
+            void value.assert(data);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [_, result] = value.validate(data);
+            return result;
+          },
         },
       ];
     }
     return [
       key,
       {
-        parse: () => {},
+        parse: (data: any) => data,
       },
     ];
   });
