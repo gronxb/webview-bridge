@@ -4,7 +4,13 @@ import type {
   LinkBridgeOptions,
 } from "@webview-bridge/web";
 import { linkBridge } from "@webview-bridge/web";
-import { createContext, type ReactNode, useContext, useRef } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 
 import { useBridge } from "./useBridge";
 
@@ -72,11 +78,28 @@ export const createLinkBridgeProvider = <
     return { loose };
   };
 
+  const useBridgeEventListener = (eventName: string, listener: () => void) => {
+    const bridgeStoreContext = useContext(BridgeContext);
+
+    if (!bridgeStoreContext) {
+      throw new Error(
+        `useBridgeEventListener must be used within a BridgeProvider`,
+      );
+    }
+
+    const { subscribe } = bridgeStoreContext;
+
+    useEffect(() => {
+      return subscribe(eventName, listener);
+    }, []);
+  };
+
   return {
     bridge,
     BridgeProvider,
     useBridgeStore,
     useBridgeStatus,
     useBridgeLoose,
+    useBridgeEventListener,
   };
 };

@@ -7,6 +7,7 @@ export type LinkBridge<T, U> = {
   isNativeMethodAvailable(method: keyof T): boolean;
   isNativeMethodAvailable(method: string): boolean;
   store: U;
+  subscribe: (eventName: string, listener: () => void) => () => void;
   loose: {
     [K in keyof T]: (...args: any[]) => Promise<any>;
   } & {

@@ -137,6 +137,9 @@ export const linkBridge = <T extends BridgeStore<T extends Bridge ? T : any>>(
         bridgeMethods.includes(methodName)
       );
     },
+    subscribe: (eventName: string, listener: (args: any) => void) => {
+      return emitter.on(`postMessage/${eventName}`, listener);
+    },
   });
   const proxy = new Proxy(target, {
     get: (target, methodName: string) => {
