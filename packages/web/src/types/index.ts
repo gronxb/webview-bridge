@@ -8,10 +8,8 @@ export type LinkBridge<T, U> = {
   isNativeMethodAvailable(method: string): boolean;
   store: U;
   loose: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [K in keyof T]: (...args: any[]) => Promise<any>;
   } & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: (...args: any[]) => Promise<any>;
   };
 } & T;

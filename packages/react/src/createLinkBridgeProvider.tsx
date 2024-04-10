@@ -13,7 +13,6 @@ export interface BridgeProviderProps {
 }
 
 export const createLinkBridgeProvider = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   options?: LinkBridgeOptions<T>,

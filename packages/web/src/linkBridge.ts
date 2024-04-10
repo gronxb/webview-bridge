@@ -17,7 +17,6 @@ import { linkBridgeStore } from "./internal/linkBridgeStore";
 import { LinkBridge } from "./types";
 
 export interface LinkBridgeOptions<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
 > {
   timeout?: number;
@@ -56,10 +55,7 @@ const createNativeMethod =
     ]);
   };
 
-export const linkBridge = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  T extends BridgeStore<T extends Bridge ? T : any>,
->(
+export const linkBridge = <T extends BridgeStore<T extends Bridge ? T : any>>(
   options: LinkBridgeOptions<T> = {
     timeout: 2000,
     throwOnError: false,

@@ -12,7 +12,6 @@ import { LinkBridge } from "./types";
  * @deprecated Use `linkBridge` instead. It's just renamed to `linkBridge`.
  */
 export const linkNativeMethod = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   options: LinkBridgeOptions<T> = {

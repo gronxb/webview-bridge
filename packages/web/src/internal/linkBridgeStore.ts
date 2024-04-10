@@ -7,13 +7,11 @@ export type Store<BridgeObject extends Bridge> = ({
   get,
   set,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: () => BridgeObject;
   set: (newState: Partial<OnlyJSON<BridgeObject>>) => void;
 }) => BridgeObject;
 
 export const linkBridgeStore = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   initialState: Partial<T> = {},
