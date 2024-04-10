@@ -3,6 +3,9 @@ import type {
   BridgeStore,
   ExcludePrimitive,
   ExtractStore,
+  KeyOfOrString,
+  Parser,
+  ParserSchema,
 } from "@webview-bridge/types";
 import {
   createRandomId,
@@ -18,12 +21,17 @@ import { LinkBridge } from "./types";
 
 export interface LinkBridgeOptions<
   T extends BridgeStore<T extends Bridge ? T : any>,
+  V extends ParserSchema<any>,
 > {
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string) => void;
   onReady?: (
-    method: LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>,
+    method: LinkBridge<
+      ExcludePrimitive<ExtractStore<T>>,
+      Omit<T, "setState">,
+      V
+    >,
   ) => void;
 }
 
@@ -55,19 +63,22 @@ const createNativeMethod =
     ]);
   };
 
-export const linkBridge = <T extends BridgeStore<T extends Bridge ? T : any>>(
-  options: LinkBridgeOptions<T> = {
+export const linkBridge = <
+  T extends BridgeStore<T extends Bridge ? T : any>,
+  V extends ParserSchema<any>,
+>(
+  options: LinkBridgeOptions<T, V> = {
     timeout: 2000,
     throwOnError: false,
   },
-): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">> => {
+): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> => {
   if (typeof window === "undefined") {
     return {
       store: {
         getState: () => ({}) as ExcludePrimitive<ExtractStore<T>>,
         subscribe: noop,
       } as unknown as Omit<T, "setState">,
-    } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>;
+    } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
   }
 
   const {
@@ -104,7 +115,7 @@ export const linkBridge = <T extends BridgeStore<T extends Bridge ? T : any>>(
         ),
       };
     },
-    {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">>,
+    {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
   );
 
   const loose = new Proxy(target, {
@@ -137,8 +148,11 @@ export const linkBridge = <T extends BridgeStore<T extends Bridge ? T : any>>(
         bridgeMethods.includes(methodName)
       );
     },
-    subscribe: (eventName: string, listener: (args: any) => void) => {
-      return emitter.on(`postMessage/${eventName}`, listener);
+    addEventListener: <EventName extends KeyOfOrString<V>>(
+      eventName: EventName,
+      listener: (args: Parser<V, EventName>) => void,
+    ) => {
+      return emitter.on(`postMessage/${String(eventName)}`, listener);
     },
   });
   const proxy = new Proxy(target, {

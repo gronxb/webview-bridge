@@ -3,6 +3,8 @@ import type {
   Bridge,
   BridgeStore,
   KeyOfOrString,
+  Parser,
+  ParserSchema,
   Primitive,
 } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
@@ -23,7 +25,6 @@ import {
 } from "./integrations/bridge";
 import { handleLog, INJECT_DEBUG, LogType } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
-import { Parser, ParserSchema } from "./integrations/postMessageSchema";
 import type { BridgeWebView } from "./types/webview";
 
 export type CreateWebViewArgs<

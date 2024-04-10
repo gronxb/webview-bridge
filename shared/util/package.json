@@ -4,5 +4,10 @@
   "version": "0.0.0",
   "scripts": {
     "test:type": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "superstruct": "^1.0.4",
+    "yup": "^1.4.0",
+    "zod": "^3.22.4"
   }
 }

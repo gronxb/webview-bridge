@@ -1,34 +1,4 @@
-import { Primitive } from "@webview-bridge/types";
-import type { Infer as SupertructInfer, Struct } from "superstruct";
-import type { AnySchema as YupTypeAny, InferType as yupInfer } from "yup";
-import type { infer as zodInfer, ZodTypeAny } from "zod";
-
-export type PostMessageSchemaObject = Record<
-  string,
-  ZodTypeAny | YupTypeAny | Struct<any>
->;
-
-export type ParserSchema<T> = {
-  [P in keyof T]: {
-    parse: (data: any) => any;
-    schema: T[P];
-  };
-};
-
-export type Parser<
-  Input extends ParserSchema<any>,
-  EventName,
-> = Input extends undefined
-  ? Record<string, Primitive> | Primitive
-  : EventName extends keyof Input
-  ? Input[EventName]["schema"] extends ZodTypeAny
-    ? zodInfer<Input[EventName]["schema"]>
-    : Input[EventName]["schema"] extends YupTypeAny
-    ? yupInfer<Input[EventName]["schema"]>
-    : Input[EventName]["schema"] extends Struct<any>
-    ? SupertructInfer<Input[EventName]["schema"]>
-    : Record<string, Primitive> | Primitive
-  : never;
+import { ParserSchema, PostMessageSchemaObject } from "@webview-bridge/types";
 
 export const postMessageSchema = <T extends PostMessageSchemaObject>(
   schema: T,

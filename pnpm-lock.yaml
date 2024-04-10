@@ -561,8 +561,27 @@ importers:
       esbuild:
         specifier: ^0.19.4
         version: 0.19.4
+      superstruct:
+        specifier: ^1.0.4
+        version: 1.0.4
+      yup:
+        specifier: ^1.4.0
+        version: 1.4.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
 
-  shared/util: {}
+  shared/util:
+    devDependencies:
+      superstruct:
+        specifier: ^1.0.4
+        version: 1.0.4
+      yup:
+        specifier: ^1.4.0
+        version: 1.4.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
 
 packages:
 

@@ -1,7 +1,10 @@
 import type {
   Bridge,
   BridgeStore,
+  KeyOfOrString,
   LinkBridgeOptions,
+  Parser,
+  ParserSchema,
 } from "@webview-bridge/web";
 import { linkBridge } from "@webview-bridge/web";
 import {
@@ -20,10 +23,11 @@ export interface BridgeProviderProps {
 
 export const createLinkBridgeProvider = <
   T extends BridgeStore<T extends Bridge ? T : any>,
+  V extends ParserSchema<any>,
 >(
-  options?: LinkBridgeOptions<T>,
+  options?: LinkBridgeOptions<T, V>,
 ) => {
-  const bridge = linkBridge<T>(options);
+  const bridge = linkBridge<T, V>(options);
   const BridgeContext = createContext<BridgeStore | null>(null);
 
   type BridgeStore = typeof bridge;
@@ -78,7 +82,10 @@ export const createLinkBridgeProvider = <
     return { loose };
   };
 
-  const useBridgeEventListener = (eventName: string, listener: () => void) => {
+  const useBridgeEventListener = <EventName extends KeyOfOrString<V>>(
+    eventName: EventName,
+    listener: (args: Parser<V, EventName>) => void,
+  ) => {
     const bridgeStoreContext = useContext(BridgeContext);
 
     if (!bridgeStoreContext) {
@@ -87,10 +94,10 @@ export const createLinkBridgeProvider = <
       );
     }
 
-    const { subscribe } = bridgeStoreContext;
+    const { addEventListener } = bridgeStoreContext;
 
     useEffect(() => {
-      return subscribe(eventName, listener);
+      return addEventListener(eventName, listener);
     }, []);
   };
 
