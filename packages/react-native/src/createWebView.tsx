@@ -15,40 +15,28 @@ import React, {
 } from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
-import type { AnySchema as YupTypeAny, InferType as yupInfer } from "yup";
-import type { infer as zodInfer, ZodTypeAny } from "zod";
 
 import {
   handleBridge,
-  handleLog,
   INJECT_BRIDGE_METHODS,
   INJECT_BRIDGE_STATE,
-  INJECT_DEBUG,
-  LogType,
-} from "./integrations";
+} from "./integrations/bridge";
+import { handleLog, INJECT_DEBUG, LogType } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
+import {
+  Parser,
+  PostMessageSchemaObject,
+} from "./integrations/postMessageSchema";
 import type { BridgeWebView } from "./types/webview";
-
-export type PostMessageInputObject = Record<string, ZodTypeAny | YupTypeAny>;
-export type Parser<Input, EventName> = Input extends undefined
-  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Record<string, Primitive> | Primitive
-  : EventName extends keyof Input
-  ? Input[EventName] extends ZodTypeAny
-    ? zodInfer<Input[EventName]>
-    : Input[EventName] extends YupTypeAny
-    ? yupInfer<Input[EventName]> // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    : Record<string, Primitive> | Primitive
-  : never;
 
 export type CreateWebViewArgs<
   BridgeObject extends Bridge,
-  PostMessageInput extends PostMessageInputObject,
+  PostMessageSchema extends PostMessageSchemaObject,
 > = {
   bridge: BridgeStore<BridgeObject>;
   debug?: boolean;
   responseTimeout?: number;
-  postMessageInput?: PostMessageInput;
+  postMessageSchema?: PostMessageSchema;
   fallback?: (method: keyof BridgeObject) => void;
 };
 
@@ -58,14 +46,14 @@ export type WebMethod<T> = T & {
 
 export const createWebView = <
   BridgeObject extends Bridge,
-  PostMessageInput extends PostMessageInputObject,
+  PostMessageSchema extends PostMessageSchemaObject,
 >({
   bridge,
   debug,
   responseTimeout = 2000,
-  postMessageInput,
+  postMessageSchema,
   fallback,
-}: CreateWebViewArgs<BridgeObject, PostMessageInput>) => {
+}: CreateWebViewArgs<BridgeObject, PostMessageSchema>) => {
   const WebMethod = {
     current: {
       isReady: false,
@@ -85,13 +73,13 @@ export const createWebView = <
 
   return {
     postMessage: <
-      EventName extends KeyOfOrString<PostMessageInput>,
-      Args extends Parser<PostMessageInput, EventName>,
+      EventName extends KeyOfOrString<PostMessageSchema>,
+      Args extends Parser<PostMessageSchema, EventName>,
     >(
       eventName: EventName,
       args: Args,
     ) => {
-      console.log(postMessageInput, eventName, args);
+      console.log(postMessageSchema, eventName, args);
     },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
@@ -236,6 +224,10 @@ export const createWebView = <
         />
       );
     }),
+    /**
+     * @deprecated Use `postMessage` instead.  And complete the type through the `postMessageSchema` option.
+     * @see https://gronxb.github.io/webview-bridge/postMessage-native-to-web.html
+     */
     linkWebMethod<T>() {
       return WebMethod as {
         current: WebMethod<T>;
