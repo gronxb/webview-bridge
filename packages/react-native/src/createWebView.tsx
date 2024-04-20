@@ -1,9 +1,4 @@
-import type {
-  AsyncFunction,
-  Bridge,
-  BridgeStore,
-  Primitive,
-} from "@webview-bridge/types";
+import type { Bridge, BridgeStore, Primitive } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
 import React, {
   createRef,
