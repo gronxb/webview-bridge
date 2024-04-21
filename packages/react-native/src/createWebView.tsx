@@ -1,5 +1,4 @@
 import type {
-  AsyncFunction,
   Bridge,
   BridgeStore,
   KeyOfOrString,
@@ -90,10 +89,10 @@ export const createWebView = <
 
       const bridgeNames = useMemo(
         () =>
-          Object.values(bridge.getState() ?? {})
-            .filter((bridge) => typeof bridge === "function")
-            .map((func) => {
-              return `'${(func as AsyncFunction).name}'`;
+          Object.entries(bridge.getState() ?? {})
+            .filter(([_, bridge]) => typeof bridge === "function")
+            .map(([name]) => {
+              return `'${name}'`;
             }),
         [],
       );
