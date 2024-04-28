@@ -22,23 +22,33 @@ export interface LinkBridgeOptions<
 > {
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
-  onFallback?: (methodName: string) => void;
+  onFallback?: (methodName: string, args: unknown[]) => void;
   onReady?: (
     method: LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>,
   ) => void;
 }
 
 const createNativeMethod =
-  (methodName: string, timeoutMs: number, throwOnError: boolean) =>
+  ({
+    methodName,
+    throwOnError,
+    timeoutMs,
+    onFallback,
+  }: {
+    methodName: string;
+    timeoutMs: number;
+    throwOnError: boolean;
+    onFallback?: (methodName: string, args: unknown[]) => void;
+  }) =>
   (...args: unknown[]) => {
     const eventId = createRandomId();
 
     return Promise.race([
-      createResolver(
+      createResolver({
         emitter,
         methodName,
         eventId,
-        () => {
+        evaluate: () => {
           window.ReactNativeWebView?.postMessage(
             JSON.stringify({
               type: "bridge",
@@ -50,8 +60,11 @@ const createNativeMethod =
             }),
           );
         },
-        throwOnError && new NativeMethodError(methodName),
-      ),
+        onFallback: () => {
+          onFallback?.(methodName, args);
+        },
+        failHandler: throwOnError && new NativeMethodError(methodName),
+      }),
       timeout(timeoutMs, throwOnError),
     ]);
   };
@@ -101,11 +114,12 @@ export const linkBridge = <
     (acc, methodName) => {
       return {
         ...acc,
-        [methodName]: createNativeMethod(
+        [methodName]: createNativeMethod({
           methodName,
           timeoutMs,
-          willMethodThrowOnError(methodName),
-        ),
+          throwOnError: willMethodThrowOnError(methodName),
+          onFallback,
+        }),
       };
     },
     {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">>,
@@ -121,11 +135,12 @@ export const linkBridge = <
       ) {
         return target[methodName];
       }
-      return createNativeMethod(
+      return createNativeMethod({
         methodName,
         timeoutMs,
-        willMethodThrowOnError(methodName),
-      );
+        throwOnError: willMethodThrowOnError(methodName),
+        onFallback,
+      });
     },
   });
 
@@ -156,10 +171,12 @@ export const linkBridge = <
           },
         }),
       );
-      onFallback?.(methodName);
 
       if (willMethodThrowOnError(methodName)) {
-        return () => Promise.reject(new MethodNotFoundError(methodName));
+        return (...args: unknown[]) => {
+          onFallback?.(methodName, args);
+          Promise.reject(new MethodNotFoundError(methodName));
+        };
       } else {
         console.warn(
           `[WebViewBridge] ${methodName} is not defined, using fallback.`,

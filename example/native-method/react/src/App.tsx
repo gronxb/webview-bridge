@@ -8,6 +8,9 @@ const bridge = linkBridge<AppBridge>({
   onReady: () => {
     console.log("bridge is ready");
   },
+  onFallback: (methodName, args) => {
+    console.log("fallback", methodName, args);
+  },
 });
 
 function App() {
