@@ -81,6 +81,17 @@ export const handleBridge = async ({
   const _bridge = bridge.getState();
 
   const _method = _bridge[method];
+  const handleThrow = () => {
+    webview.injectJavaScript(`
+    window.nativeEmitter.emit('${method}-${eventId}', {}, true);
+
+    true;
+  `);
+  };
+  if (!(method in _bridge)) {
+    handleThrow();
+    return;
+  }
   if (typeof _method !== "function") {
     return;
   }
@@ -96,12 +107,8 @@ export const handleBridge = async ({
     true;
   `);
   } catch (error) {
+    handleThrow();
     console.error(error);
-    webview.injectJavaScript(`
-    window.nativeEmitter.emit('${method}-${eventId}', {}, true);
-
-    true;
-  `);
   }
 };
 
