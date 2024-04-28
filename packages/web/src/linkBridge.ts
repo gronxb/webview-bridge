@@ -43,30 +43,32 @@ const createNativeMethod =
   (...args: unknown[]) => {
     const eventId = createRandomId();
 
-    return Promise.race([
-      createResolver({
-        emitter,
-        methodName,
-        eventId,
-        evaluate: () => {
-          window.ReactNativeWebView?.postMessage(
-            JSON.stringify({
-              type: "bridge",
-              body: {
-                method: methodName,
-                eventId,
-                args,
-              },
-            }),
-          );
-        },
-        onFallback: () => {
-          onFallback?.(methodName, args);
-        },
-        failHandler: throwOnError && new NativeMethodError(methodName),
-      }),
-      timeout(timeoutMs, throwOnError),
-    ]);
+    return Promise.race(
+      [
+        createResolver({
+          emitter,
+          methodName,
+          eventId,
+          evaluate: () => {
+            window.ReactNativeWebView?.postMessage(
+              JSON.stringify({
+                type: "bridge",
+                body: {
+                  method: methodName,
+                  eventId,
+                  args,
+                },
+              }),
+            );
+          },
+          onFallback: () => {
+            onFallback?.(methodName, args);
+          },
+          failHandler: throwOnError && new NativeMethodError(methodName),
+        }),
+        timeoutMs > 0 && timeout(timeoutMs, throwOnError),
+      ].filter(Boolean),
+    );
   };
 
 export const linkBridge = <
