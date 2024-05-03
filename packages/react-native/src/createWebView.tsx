@@ -52,6 +52,7 @@ export const createWebView = <BridgeObject extends Bridge>({
         window.nativeEmitter && window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
           state,
         )});
+        true;
     `);
   });
 
@@ -124,9 +125,10 @@ export const createWebView = <BridgeObject extends Bridge>({
           }
           case "getBridgeState": {
             _webviewRef.current?.injectJavaScript(`
-              window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
+              window.nativeEmitter && window.nativeEmitterwindow.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
                 bridge.getState(),
               )});
+              true;
             `);
             return;
           }
