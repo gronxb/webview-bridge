@@ -49,7 +49,7 @@ export const createWebView = <BridgeObject extends Bridge>({
 
   bridge.subscribe((state) => {
     _webviewRef.current?.injectJavaScript(`
-        window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
+        window.nativeEmitter && window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
           state,
         )});
     `);
