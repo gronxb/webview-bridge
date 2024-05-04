@@ -43,7 +43,6 @@ export const postMessageSchema = <T extends PostMessageSchemaObject>(
         {
           parse: (data: any) => {
             void value.assert(data);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [_, result] = value.validate(data);
             return result;
           },

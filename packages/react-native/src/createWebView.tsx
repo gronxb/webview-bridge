@@ -100,9 +100,9 @@ export const createWebView = <
       const initialState = useMemo(
         () =>
           Object.fromEntries(
-            Object.entries(bridge.getState() ?? {})
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              .filter(([_, value]) => typeof value !== "function"),
+            Object.entries(bridge.getState() ?? {}).filter(
+              ([_, value]) => typeof value !== "function",
+            ),
           ) as Record<string, Primitive>,
         [],
       );
