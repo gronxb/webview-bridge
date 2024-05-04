@@ -71,8 +71,13 @@ The `onFallback` method can be used for batch processing of errors. It's suitabl
 
 ```tsx
 const bridge = linkBridge<AppBridge>({
-  onFallback: (method) => {
-    Alert.alert("The app is outdated. Please update.");
+  onFallback: (methodName, args) => {
+    alert("The app is outdated. Please update.");
+
+    // Backward compatibility
+    if(methodName === "sum") {
+      bridge.loose.oldSum(...args);
+    }
   },
 });
 ```

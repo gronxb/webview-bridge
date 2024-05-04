@@ -20,11 +20,11 @@ export const handleRegisterWebMethod = (
       const eventId = createRandomId();
 
       return Promise.race([
-        createResolver(
+        createResolver({
           emitter,
           methodName,
           eventId,
-          () => {
+          evaluate: () => {
             webview.injectJavaScript(
               `
               window.webEmitter.emit('${methodName}', '${eventId}', ${JSON.stringify(
@@ -35,8 +35,8 @@ export const handleRegisterWebMethod = (
               `,
             );
           },
-          new WebMethodError(methodName),
-        ),
+          failHandler: new WebMethodError(methodName),
+        }),
         timeout(responseTimeout),
       ]);
     };

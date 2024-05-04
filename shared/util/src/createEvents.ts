@@ -35,13 +35,23 @@ export const createEvents = <
   },
 });
 
-export const createResolver = (
-  emitter: EventEmitter<DefaultEvents>,
-  methodName: string,
-  eventId: string,
-  evaluate: () => void,
-  failHandler: Error | false = false,
-) => {
+export interface CreateResolverOptions {
+  emitter: EventEmitter<DefaultEvents>;
+  evaluate: () => void;
+  eventId: string;
+  failHandler?: Error | false;
+  methodName: string;
+  onFallback?: () => void;
+}
+
+export const createResolver = ({
+  emitter,
+  evaluate,
+  eventId,
+  failHandler = false,
+  methodName,
+  onFallback,
+}: CreateResolverOptions) => {
   return new Promise((resolve, reject) => {
     const unbind = emitter.on(
       `${methodName}-${eventId}`,
@@ -50,6 +60,7 @@ export const createResolver = (
 
         if (throwOccurred) {
           if (failHandler instanceof Error) {
+            onFallback?.();
             reject(failHandler);
           } else {
             resolve(void 0);
