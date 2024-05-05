@@ -76,10 +76,15 @@ export const createWebView = <
       eventName: EventName,
       args: Args,
     ) => {
+      let _args = args;
+      if (postMessageSchema) {
+        _args = postMessageSchema[eventName].parse(args);
+      }
+
       _webviewRef.current?.injectJavaScript(`
         window.nativeEmitter.emit('postMessage/${String(
           eventName,
-        )}', ${JSON.stringify(args)});
+        )}', ${JSON.stringify(_args)});
     `);
     },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {

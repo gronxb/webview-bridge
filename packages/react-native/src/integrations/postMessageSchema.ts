@@ -24,7 +24,7 @@ export const postMessageSchema = <T extends PostMessageSchemaObject>(
         key,
         {
           parse: (data: any) => {
-            value.validateSync(data, { abortEarly: true });
+            return value.validateSync(data, { abortEarly: true });
           },
           schema: value,
         },
