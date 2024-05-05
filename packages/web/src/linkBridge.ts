@@ -80,7 +80,7 @@ const createNativeMethod =
 
 export const linkBridge = <
   T extends BridgeStore<T extends Bridge ? T : any>,
-  V extends ParserSchema<any>,
+  V extends ParserSchema<any> = ParserSchema<any>,
 >(
   options: LinkBridgeOptions<T, V> = {
     timeout: 2000,

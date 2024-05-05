@@ -81,8 +81,6 @@ export const createWebView = <
           eventName,
         )}', ${JSON.stringify(args)});
     `);
-
-      console.log(postMessageSchema, eventName, args);
     },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);

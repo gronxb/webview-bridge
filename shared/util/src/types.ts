@@ -35,7 +35,7 @@ export type PostMessageSchemaObject = Record<
   ZodTypeAny | YupTypeAny | Struct<any>
 >;
 
-export type ParserSchema<T> = {
+export type ParserSchema<T = object> = {
   [P in keyof T]: {
     parse: (data: any) => any;
     schema: T[P];
