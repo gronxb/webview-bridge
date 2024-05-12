@@ -17,6 +17,7 @@ import {
   INJECT_BRIDGE_STATE,
   INJECT_DEBUG,
   LogType,
+  SAFE_NATIVE_EVENT_EMIT,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
@@ -48,12 +49,9 @@ export const createWebView = <BridgeObject extends Bridge>({
   const emitter = createEvents();
 
   bridge.subscribe((state) => {
-    _webviewRef.current?.injectJavaScript(`
-        window.nativeEmitter && window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
-          state,
-        )});
-        true;
-    `);
+    _webviewRef.current?.injectJavaScript(
+      SAFE_NATIVE_EVENT_EMIT("bridgeStateChange", state),
+    );
   });
 
   return {
@@ -124,12 +122,9 @@ export const createWebView = <BridgeObject extends Bridge>({
             return;
           }
           case "getBridgeState": {
-            _webviewRef.current?.injectJavaScript(`
-              window.nativeEmitter && window.nativeEmitterwindow.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
-                bridge.getState(),
-              )});
-              true;
-            `);
+            _webviewRef.current?.injectJavaScript(
+              SAFE_NATIVE_EVENT_EMIT("bridgeStateChange", bridge.getState()),
+            );
             return;
           }
           case "registerWebMethod": {
@@ -192,7 +187,7 @@ export const createWebView = <BridgeObject extends Bridge>({
             .filter(Boolean)
             .join("\n")}
           injectedJavaScript={[
-            console && INJECT_DEBUG,
+            debug && INJECT_DEBUG,
             props.injectedJavaScript,
             "true;",
           ]
