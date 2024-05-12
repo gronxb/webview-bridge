@@ -114,15 +114,18 @@ export const INJECT_BRIDGE_STATE = (
     window.__bridgeInitialState__ = ${JSON.stringify(initialState)};
 `;
 
-export const SAFE_NATIVE_EMITTER_EMIT = (eventName: string, data: unknown) => `
+export const SAFE_NATIVE_EMITTER_EMIT = (eventName: string, data: unknown) => {
+  const dataString = JSON.stringify(data);
+  return `
 if (window.nativeEmitter) {
-  window.nativeEmitter.emit('${eventName}', ${JSON.stringify(data)});
+  window.nativeEmitter.emit('${eventName}', ${dataString});
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
-  window.nativeBatchedEvents.push(['${eventName}', ${JSON.stringify(data)}]);
+  window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
 }
 true;
 `;
+};
 
 export const SAFE_NATIVE_EMITTER_THROW = (eventName: string) => `
 if (window.nativeEmitter) {

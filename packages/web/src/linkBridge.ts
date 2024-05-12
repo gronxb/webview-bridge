@@ -188,10 +188,11 @@ export const linkBridge = <
     },
   });
 
-  onReady?.(proxy);
-
   for (const [eventName, ...args] of window.nativeBatchedEvents ?? []) {
     emitter.emit(eventName, ...args);
   }
+  window.nativeBatchedEvents = [];
+
+  onReady?.(proxy);
   return proxy;
 };
