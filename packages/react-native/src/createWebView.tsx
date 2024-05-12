@@ -17,6 +17,7 @@ import {
   INJECT_BRIDGE_STATE,
   INJECT_DEBUG,
   LogType,
+  SAFE_NATIVE_EMITTER_EMIT,
 } from "./integrations";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
@@ -48,11 +49,9 @@ export const createWebView = <BridgeObject extends Bridge>({
   const emitter = createEvents();
 
   bridge.subscribe((state) => {
-    _webviewRef.current?.injectJavaScript(`
-        window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
-          state,
-        )});
-    `);
+    _webviewRef.current?.injectJavaScript(
+      SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
+    );
   });
 
   return {
@@ -72,9 +71,9 @@ export const createWebView = <BridgeObject extends Bridge>({
       const initialState = useMemo(
         () =>
           Object.fromEntries(
-            Object.entries(bridge.getState() ?? {})
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              .filter(([_, value]) => typeof value !== "function"),
+            Object.entries(bridge.getState() ?? {}).filter(
+              ([_, value]) => typeof value !== "function",
+            ),
           ) as Record<string, Primitive>,
         [],
       );
@@ -123,11 +122,9 @@ export const createWebView = <BridgeObject extends Bridge>({
             return;
           }
           case "getBridgeState": {
-            _webviewRef.current?.injectJavaScript(`
-              window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
-                bridge.getState(),
-              )});
-            `);
+            _webviewRef.current?.injectJavaScript(
+              SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", bridge.getState()),
+            );
             return;
           }
           case "registerWebMethod": {
@@ -190,7 +187,7 @@ export const createWebView = <BridgeObject extends Bridge>({
             .filter(Boolean)
             .join("\n")}
           injectedJavaScript={[
-            console && INJECT_DEBUG,
+            debug && INJECT_DEBUG,
             props.injectedJavaScript,
             "true;",
           ]
