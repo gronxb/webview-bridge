@@ -1,9 +1,9 @@
 import type { Bridge, BridgeStore, Primitive } from "@webview-bridge/types";
-import { createEvents } from "@webview-bridge/util";
+import { createEvents, Stack } from "@webview-bridge/util";
 import React, {
-  createRef,
   forwardRef,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
@@ -45,18 +45,27 @@ export const createWebView = <BridgeObject extends Bridge>({
     },
   };
 
-  const _webviewRef = createRef<BridgeWebView>();
+  const _webviewRefStack = new Stack<React.RefObject<BridgeWebView>>();
   const emitter = createEvents();
 
   bridge.subscribe((state) => {
-    _webviewRef.current?.injectJavaScript(
-      SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
-    );
+    _webviewRefStack
+      .top()
+      ?.current?.injectJavaScript(
+        SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
+      );
   });
 
   return {
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
+
+      useLayoutEffect(() => {
+        _webviewRefStack.push(webviewRef);
+        return () => {
+          _webviewRefStack.pop();
+        };
+      }, []);
 
       const bridgeNames = useMemo(
         () =>
@@ -79,14 +88,6 @@ export const createWebView = <BridgeObject extends Bridge>({
       );
 
       useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
-
-      useImperativeHandle(
-        _webviewRef,
-        () => {
-          return webviewRef.current as BridgeWebView;
-        },
-        [],
-      );
 
       const handleMessage = async (event: WebViewMessageEvent) => {
         props.onMessage?.(event);
@@ -122,9 +123,14 @@ export const createWebView = <BridgeObject extends Bridge>({
             return;
           }
           case "getBridgeState": {
-            _webviewRef.current?.injectJavaScript(
-              SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", bridge.getState()),
-            );
+            _webviewRefStack
+              .top()
+              ?.current?.injectJavaScript(
+                SAFE_NATIVE_EMITTER_EMIT(
+                  "bridgeStateChange",
+                  bridge.getState(),
+                ),
+              );
             return;
           }
           case "registerWebMethod": {
