@@ -54,6 +54,17 @@ export const registerWebMethod = <BridgeObject extends WebBridge>(
     return bridge;
   }
 
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({
+          type: "registerWebMethod",
+          body: { bridgeNames },
+        }),
+      );
+    }
+  });
+
   register();
   return bridge;
 };
