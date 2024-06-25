@@ -61,15 +61,15 @@ function App(): JSX.Element {
       />
 
       <Button
-        title="Alert from web (zod)"
+        title="setWebMessage (zod)"
         onPress={() => postMessage("setWebMessage_zod", "zod !")}
       />
       <Button
-        title="Alert from web (yup)"
+        title="setWebMessage (yup)"
         onPress={() => postMessage("setWebMessage_yup", "yup !")}
       />
       <Button
-        title="Alert from web (superstruct)"
+        title="setWebMessage (superstruct)"
         onPress={() =>
           postMessage("setWebMessage_superstruct", "superstruct !")
         }
