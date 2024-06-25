@@ -234,8 +234,34 @@ export const createWebView = <
     }),
     /**
      * @deprecated Use `postMessage` instead.  And complete the type through the `postMessageSchema` option.
-     * @see https://gronxb.github.io/webview-bridge/postMessage-native-to-web.html
-     */
+     * @see https://gronxb.github.io/webview-bridge/using-a-post-message.html
+     * @example 
+      import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
+      import { z } from "zod";
+
+      const appPostMessageSchema = postMessageSchema({
+        eventName1: z.object({
+          message: z.string(),
+        }),
+        eventName2: z.string(),
+      });
+
+
+      // Export the event schema to be used in the web application
+      export type AppPostMessageSchema = typeof appPostMessageSchema;
+
+      // When you bridge a webview, a postMessage is extracted.
+      export const { postMessage } = createWebView({
+        postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
+        // ..
+      });
+
+      // usage
+      postMessage("eventName1", {
+        message: "test",
+      });
+      postMessage("eventName2", "test");
+    */
     linkWebMethod<T>() {
       return WebMethod as {
         current: WebMethod<T>;

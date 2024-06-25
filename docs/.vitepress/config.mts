@@ -103,6 +103,10 @@ export default defineConfig({
             link: "/using-a-loose-native-method",
           },
           {
+            text: "Using a PostMessage",
+            link: "/using-a-post-message",
+          },
+          {
             text: "Using a Web Method",
             link: "/using-a-web-method",
           },

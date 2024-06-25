@@ -2,6 +2,28 @@ import { createEvents } from "@webview-bridge/util";
 
 import type { WebBridge } from "./types";
 
+/**
+ * @deprecated Use `bridge.addEventListener` instead.
+ * @see https://gronxb.github.io/webview-bridge/using-a-post-message.html
+ * @example
+    import { linkBridge } from "@webview-bridge/web";
+    import type { AppBridge, AppPostMessageSchema } from ""; // Import the type 'appBridge' and 'appPostMessageSchema' declared in native
+
+    const bridge = linkBridge<AppBridge, AppPostMessageSchema>({
+      // ..
+    });
+
+    const unsubscribe = bridge.addEventListener("eventName1", (data) => {
+      window.alert(data.message);
+    });
+    unsubscribe(); // Unsubscribe from the event
+
+
+    const unsubscribe2 = bridge.addEventListener("eventName2", (message) => {
+      window.alert(message);
+    });
+    unsubscribe2(); // Unsubscribe from the event
+ */
 export const registerWebMethod = <BridgeObject extends WebBridge>(
   bridge: BridgeObject,
 ): BridgeObject => {

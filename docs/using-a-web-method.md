@@ -1,8 +1,15 @@
 # Using Web Methods in React Native
 
+::: danger IMPORTANT
+webMethod is deprecated. You can use postMessage to send events from native to web.
+
+you can check [Using a PostMessage](/using-a-post-message) document
+:::
+
+
 This is a guide on how to use methods declared in a web within React Native.
 
-::: warning IMPORTANT
+::: warning WARNING
 Maintaining a bidirectional bridge can become challenging due to the need for exporting types. Make sure to actively utilize the [Using a Native Method](/using-a-native-method) document, and thoroughly use the return values from the native methods. If you still face issues after these steps, then consider revisiting this page for further guidance.
 :::
 
