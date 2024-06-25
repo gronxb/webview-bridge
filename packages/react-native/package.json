@@ -27,11 +27,28 @@
     "@types/use-sync-external-store": "^0.0.6",
     "react": "^18.2.0",
     "react-native-webview": "^13.6.2",
-    "typescript": "^5.2.2"
+    "superstruct": "^1.0.4",
+    "typescript": "^5.2.2",
+    "yup": "^1.4.0",
+    "zod": "^3.23.8"
   },
   "peerDependencies": {
     "react": "*",
-    "react-native-webview": "*"
+    "react-native-webview": "*",
+    "superstruct": "*",
+    "yup": "*",
+    "zod": "*"
+  },
+  "peerDependenciesMeta": {
+    "superstruct": {
+      "optional": true
+    },
+    "yup": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    }
   },
   "dependencies": {
     "use-sync-external-store": "^1.2.0"

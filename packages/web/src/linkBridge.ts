@@ -3,6 +3,9 @@ import type {
   BridgeStore,
   ExcludePrimitive,
   ExtractStore,
+  KeyOfOrString,
+  Parser,
+  ParserSchema,
 } from "@webview-bridge/types";
 import {
   createRandomId,
@@ -17,14 +20,18 @@ import { linkBridgeStore } from "./internal/linkBridgeStore";
 import { LinkBridge } from "./types";
 
 export interface LinkBridgeOptions<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
+  V extends ParserSchema<any>,
 > {
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string, args: unknown[]) => void;
   onReady?: (
-    method: LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>,
+    method: LinkBridge<
+      ExcludePrimitive<ExtractStore<T>>,
+      Omit<T, "setState">,
+      V
+    >,
   ) => void;
 }
 
@@ -72,21 +79,21 @@ const createNativeMethod =
   };
 
 export const linkBridge = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends BridgeStore<T extends Bridge ? T : any>,
+  V extends ParserSchema<any> = ParserSchema<any>,
 >(
-  options: LinkBridgeOptions<T> = {
+  options: LinkBridgeOptions<T, V> = {
     timeout: 2000,
     throwOnError: false,
   },
-): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">> => {
+): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> => {
   if (typeof window === "undefined") {
     return {
       store: {
         getState: () => ({}) as ExcludePrimitive<ExtractStore<T>>,
         subscribe: noop,
       } as unknown as Omit<T, "setState">,
-    } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">>;
+    } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
   }
 
   const {
@@ -124,7 +131,7 @@ export const linkBridge = <
         }),
       };
     },
-    {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">>,
+    {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
   );
 
   const loose = new Proxy(target, {
@@ -157,6 +164,12 @@ export const linkBridge = <
         Boolean(window.ReactNativeWebView) &&
         bridgeMethods.includes(methodName)
       );
+    },
+    addEventListener: <EventName extends KeyOfOrString<V>>(
+      eventName: EventName,
+      listener: (args: Parser<V, EventName>) => void,
+    ) => {
+      return emitter.on(`postMessage/${String(eventName)}`, listener);
     },
   });
   const proxy = new Proxy(target, {
