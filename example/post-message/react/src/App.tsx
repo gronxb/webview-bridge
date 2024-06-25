@@ -4,7 +4,7 @@ import { linkBridge } from "@webview-bridge/web";
 import type {
   AppBridge,
   AppPostMessageSchema,
-} from "@webview-bridge-example-native-method/react-native";
+} from "@webview-bridge-example-post-message/react-native";
 
 const bridge = linkBridge<AppBridge, AppPostMessageSchema>({
   throwOnError: true,
