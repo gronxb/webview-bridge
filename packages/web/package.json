@@ -31,9 +31,6 @@
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
-    "esbuild": "^0.19.4",
-    "superstruct": "^1.0.4",
-    "yup": "^1.4.0",
-    "zod": "^3.23.8"
+    "esbuild": "^0.19.4"
   }
 }

@@ -38,7 +38,7 @@ const appSchema = postMessageSchema({
 export type AppBridge = typeof appBridge;
 export type AppPostMessageSchema = typeof appSchema;
 
-export const { WebView, linkWebMethod, postMessage } = createWebView({
+export const { WebView, postMessage } = createWebView({
   bridge: appBridge,
   postMessageSchema: appSchema,
   debug: true,
