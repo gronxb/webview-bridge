@@ -6,7 +6,7 @@
  */
 
 import React from "react";
-import { Button, SafeAreaView } from "react-native";
+import { Text, Button, SafeAreaView } from "react-native";
 import {
   createWebView,
   type BridgeWebView,
@@ -59,6 +59,10 @@ function App(): JSX.Element {
         }}
         style={{ height: "100%", flex: 1, width: "100%" }}
       />
+
+      <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "600" }}>
+        This is Native
+      </Text>
 
       <Button
         title="setWebMessage (zod)"

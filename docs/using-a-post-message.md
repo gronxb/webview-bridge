@@ -2,6 +2,9 @@
 
 This guide will teach you how to send events from React Native to web and subscribe to those events within the web.
 
+<video src="/post-message.mp4" width="320" height="240" muted autoplay loop />
+
+
 ## Installation
 
 You need additional libraries to define schemas.
