@@ -30,5 +30,5 @@
     "typescript": "^5.2.2",
     "typescript-transform-paths": "^3.4.6"
   },
-  "packageManager": "pnpm@9.0.6"
+  "packageManager": "pnpm@9.4.0"
 }

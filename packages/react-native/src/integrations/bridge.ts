@@ -82,11 +82,7 @@ export const handleBridge = async ({
 
   const _method = _bridge[method];
   const handleThrow = () => {
-    webview.injectJavaScript(`
-    window.nativeEmitter.emit('${method}-${eventId}', {}, true);
-
-    true;
-  `);
+    webview.injectJavaScript(SAFE_NATIVE_EMITTER_THROW(`${method}-${eventId}`));
   };
   if (!(method in _bridge)) {
     handleThrow();
@@ -99,13 +95,9 @@ export const handleBridge = async ({
   try {
     const response = await _method?.(...(args ?? []));
 
-    webview.injectJavaScript(`
-    window.nativeEmitter.emit('${method}-${eventId}',${JSON.stringify(
-      response,
-    )});
-  
-    true;
-  `);
+    webview.injectJavaScript(
+      SAFE_NATIVE_EMITTER_EMIT(`${method}-${eventId}`, response),
+    );
   } catch (error) {
     handleThrow();
     console.error(error);
@@ -120,4 +112,27 @@ export const INJECT_BRIDGE_STATE = (
   initialState: Record<string, Primitive>,
 ) => `
     window.__bridgeInitialState__ = ${JSON.stringify(initialState)};
+`;
+
+export const SAFE_NATIVE_EMITTER_EMIT = (eventName: string, data: unknown) => {
+  const dataString = JSON.stringify(data);
+  return `
+if (window.nativeEmitter) {
+  window.nativeEmitter.emit('${eventName}', ${dataString});
+} else {
+  window.nativeBatchedEvents = window.nativeBatchedEvents || [];
+  window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
+}
+true;
+`;
+};
+
+export const SAFE_NATIVE_EMITTER_THROW = (eventName: string) => `
+if (window.nativeEmitter) {
+  window.nativeEmitter.emit('${eventName}', {}, true);
+} else {
+  window.nativeBatchedEvents = window.nativeBatchedEvents || [];
+  window.nativeBatchedEvents.push(['${eventName}', {}, true]);
+}
+true;
 `;

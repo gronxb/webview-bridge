@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/react",
   "type": "module",
-  "version": "1.4.2",
+  "version": "1.4.7",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"

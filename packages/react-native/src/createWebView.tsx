@@ -8,9 +8,9 @@ import type {
 } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/util";
 import React, {
-  createRef,
   forwardRef,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
@@ -21,6 +21,7 @@ import {
   handleBridge,
   INJECT_BRIDGE_METHODS,
   INJECT_BRIDGE_STATE,
+  SAFE_NATIVE_EMITTER_EMIT,
 } from "./integrations/bridge";
 import { handleLog, INJECT_DEBUG, LogType } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
@@ -57,15 +58,15 @@ export const createWebView = <
     },
   };
 
-  const _webviewRef = createRef<BridgeWebView>();
+  const webviewRefList: React.RefObject<BridgeWebView>[] = [];
   const emitter = createEvents();
 
   bridge.subscribe((state) => {
-    _webviewRef.current?.injectJavaScript(`
-        window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
-          state,
-        )});
-    `);
+    for (const ref of webviewRefList) {
+      ref?.current?.injectJavaScript(
+        SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
+      );
+    }
   });
 
   return {
@@ -81,15 +82,21 @@ export const createWebView = <
         _args = postMessageSchema[eventName].parse(args);
       }
 
-      _webviewRef.current?.injectJavaScript(`
-        window.nativeEmitter.emit('postMessage/${String(
-          eventName,
-        )}', ${JSON.stringify(_args)});
-    `);
+      for (const ref of webviewRefList) {
+        ref?.current?.injectJavaScript(
+          SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+        );
+      }
     },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
 
+      useLayoutEffect(() => {
+        webviewRefList.push(webviewRef);
+        return () => {
+          webviewRefList.pop();
+        };
+      }, []);
       const bridgeNames = useMemo(
         () =>
           Object.entries(bridge.getState() ?? {})
@@ -111,14 +118,6 @@ export const createWebView = <
       );
 
       useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
-
-      useImperativeHandle(
-        _webviewRef,
-        () => {
-          return webviewRef.current as BridgeWebView;
-        },
-        [],
-      );
 
       const handleMessage = async (event: WebViewMessageEvent) => {
         props.onMessage?.(event);
@@ -154,11 +153,14 @@ export const createWebView = <
             return;
           }
           case "getBridgeState": {
-            _webviewRef.current?.injectJavaScript(`
-              window.nativeEmitter.emit('bridgeStateChange', ${JSON.stringify(
-                bridge.getState(),
-              )});
-            `);
+            for (const ref of webviewRefList) {
+              ref?.current?.injectJavaScript(
+                SAFE_NATIVE_EMITTER_EMIT(
+                  "bridgeStateChange",
+                  bridge.getState(),
+                ),
+              );
+            }
             return;
           }
           case "registerWebMethod": {
@@ -221,7 +223,7 @@ export const createWebView = <
             .filter(Boolean)
             .join("\n")}
           injectedJavaScript={[
-            console && INJECT_DEBUG,
+            debug && INJECT_DEBUG,
             props.injectedJavaScript,
             "true;",
           ]

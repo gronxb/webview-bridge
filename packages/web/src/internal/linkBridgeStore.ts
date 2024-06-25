@@ -45,6 +45,16 @@ export const linkBridgeStore = <
     setState(data);
   });
 
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({
+          type: "getBridgeState",
+        }),
+      );
+    }
+  });
+
   window.ReactNativeWebView?.postMessage(
     JSON.stringify({
       type: "getBridgeState",
