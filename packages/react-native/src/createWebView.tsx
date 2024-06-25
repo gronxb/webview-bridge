@@ -1,5 +1,5 @@
 import type { Bridge, BridgeStore, Primitive } from "@webview-bridge/types";
-import { createEvents, Stack } from "@webview-bridge/util";
+import { createEvents } from "@webview-bridge/util";
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -45,15 +45,15 @@ export const createWebView = <BridgeObject extends Bridge>({
     },
   };
 
-  const _webviewRefStack = new Stack<React.RefObject<BridgeWebView>>();
+  const webviewRefList: React.RefObject<BridgeWebView>[] = [];
   const emitter = createEvents();
 
   bridge.subscribe((state) => {
-    _webviewRefStack
-      .top()
-      ?.current?.injectJavaScript(
+    for (const ref of webviewRefList) {
+      ref?.current?.injectJavaScript(
         SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
       );
+    }
   });
 
   return {
@@ -61,12 +61,11 @@ export const createWebView = <BridgeObject extends Bridge>({
       const webviewRef = useRef<WebView>(null);
 
       useLayoutEffect(() => {
-        _webviewRefStack.push(webviewRef);
+        webviewRefList.push(webviewRef);
         return () => {
-          _webviewRefStack.pop();
+          webviewRefList.pop();
         };
       }, []);
-
       const bridgeNames = useMemo(
         () =>
           Object.entries(bridge.getState() ?? {})
@@ -123,14 +122,14 @@ export const createWebView = <BridgeObject extends Bridge>({
             return;
           }
           case "getBridgeState": {
-            _webviewRefStack
-              .top()
-              ?.current?.injectJavaScript(
+            for (const ref of webviewRefList) {
+              ref?.current?.injectJavaScript(
                 SAFE_NATIVE_EMITTER_EMIT(
                   "bridgeStateChange",
                   bridge.getState(),
                 ),
               );
+            }
             return;
           }
           case "registerWebMethod": {
