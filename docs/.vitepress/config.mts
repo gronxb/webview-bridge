@@ -152,6 +152,10 @@ export default defineConfig({
             text: "Custom Declaration File",
             link: "/custom-declaration-file",
           },
+          {
+            text: "Generate Declaration File",
+            link: "/generate-declaration-file",
+          },
         ],
       },
       {

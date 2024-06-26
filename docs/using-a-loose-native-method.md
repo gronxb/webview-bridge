@@ -6,7 +6,8 @@ This guide covers how to use native methods in a web environment without strict 
 There is a way to export types to other projects using `dts-bundle-generator`.
 
 **For detailed guides, visit:**   
-Custom declaration file: [Exporting Type Declarations with a Custom Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/custom-declaration-file.html)
+Custom declaration file: [Exporting Type Declarations with a Custom Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/custom-declaration-file.html)  
+Generate declaration file: [Exporting Type Declarations with a Generate Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/generate-declaration-type.html)
 :::
 
 ## React Native Part

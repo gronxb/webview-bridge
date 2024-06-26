@@ -51,7 +51,8 @@ You need to export the created `typeof appBridge` and share its type with the we
 
 **For detailed guides, visit:**   
 Monorepo setup: [Exporting Type Declarations in a Monorepo](https://gronxb.github.io/webview-bridge/exporting-type-declarations/monorepo.html)  
-Custom declaration file: [Exporting Type Declarations with a Custom Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/custom-declaration-file.html)
+Custom declaration file: [Exporting Type Declarations with a Custom Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/custom-declaration-file.html)  
+Generate declaration file: [Exporting Type Declarations with a Generate Declaration File](https://gronxb.github.io/webview-bridge/exporting-type-declarations/generate-declaration-type.html)
 :::
 
 ```tsx
