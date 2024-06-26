@@ -2,6 +2,7 @@ import { build } from "esbuild";
 
 await Promise.all([
   build({
+    target: "es2015",
     entryPoints: ["src/index.ts"],
     bundle: true,
     outfile: "dist/commonjs/index.cjs",
@@ -9,6 +10,7 @@ await Promise.all([
     format: "cjs",
   }),
   build({
+    target: "es2015",
     entryPoints: ["src/index.ts"],
     bundle: true,
     outfile: "dist/module/index.mjs",
