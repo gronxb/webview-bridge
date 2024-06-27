@@ -1,7 +1,9 @@
 import { Bridge, BridgeStore, OnlyJSON } from "@webview-bridge/types";
-import { equals, removeUndefinedKeys } from "@webview-bridge/util";
-
-import { emitter } from "./emitter";
+import {
+  DefaultEmitter,
+  equals,
+  removeUndefinedKeys,
+} from "@webview-bridge/util";
 
 export type Store<BridgeObject extends Bridge> = ({
   get,
@@ -14,16 +16,10 @@ export type Store<BridgeObject extends Bridge> = ({
 export const linkBridgeStore = <
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
+  emitter: DefaultEmitter,
   initialState: Partial<T> = {},
+  nativeInitialState: Partial<T> = {},
 ): Omit<T, "setState"> => {
-  if (!window.ReactNativeWebView) {
-    console.warn("[WebViewBridge] Not in a WebView environment");
-  }
-
-  if (!window.nativeEmitter) {
-    window.nativeEmitter = emitter;
-  }
-
   const getState = () => state;
 
   const setState = (newState: Partial<OnlyJSON<T>>) => {
@@ -45,23 +41,7 @@ export const linkBridgeStore = <
     setState(data);
   });
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({
-          type: "getBridgeState",
-        }),
-      );
-    }
-  });
-
-  window.ReactNativeWebView?.postMessage(
-    JSON.stringify({
-      type: "getBridgeState",
-    }),
-  );
-
-  let state: T = { ...initialState, ...window.__bridgeInitialState__ } as T;
+  let state: T = { ...initialState, ...nativeInitialState } as T;
 
   const listeners = new Set<(newState: T, prevState: T) => void>();
 
