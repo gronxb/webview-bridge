@@ -24,34 +24,8 @@ export class BridgeInstance<
   T extends BridgeStore<T extends Bridge ? T : any>,
   V extends ParserSchema<any> = ParserSchema<any>,
 > {
-  private static instance: BridgeInstance<any, any>;
-
-  public static getInstance<
-    T extends BridgeStore<T extends Bridge ? T : any>,
-    V extends ParserSchema<any> = ParserSchema<any>,
-  >(
-    options: LinkBridgeOptions<T, V>,
-    emitter: DefaultEmitter,
-    bridgeMethods: string[],
-    nativeInitialState: PrimitiveObject,
-  ): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> {
-    if (!BridgeInstance.instance) {
-      BridgeInstance.instance = new BridgeInstance<T, V>(
-        options,
-        emitter,
-        bridgeMethods,
-        nativeInitialState,
-      );
-    }
-    return BridgeInstance.instance.proxy as LinkBridge<
-      ExcludePrimitive<ExtractStore<T>>,
-      Omit<T, "setState">,
-      V
-    >;
-  }
-
   private defaultTimeoutMs = 2000;
-  private proxy: LinkBridge<
+  private $proxy: LinkBridge<
     ExcludePrimitive<ExtractStore<T>>,
     Omit<T, "setState">,
     V
@@ -64,7 +38,7 @@ export class BridgeInstance<
     public bridgeMethods: string[],
     public nativeInitialState: PrimitiveObject,
   ) {
-    this.proxy = this.hydrate(bridgeMethods, nativeInitialState);
+    this.$proxy = this.hydrate(bridgeMethods, nativeInitialState);
   }
 
   private postMessage(type: string, body?: unknown) {
@@ -239,7 +213,11 @@ export class BridgeInstance<
     window.nativeBatchedEvents = [];
 
     onReady?.(proxy);
-    this.proxy = proxy;
+    this.$proxy = proxy;
     return proxy;
+  }
+
+  get proxy() {
+    return this.$proxy;
   }
 }

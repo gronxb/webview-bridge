@@ -62,7 +62,7 @@ export const linkBridge = <
   const bridgeMethods = window.__bridgeMethods__ ?? [];
   const nativeInitialState = window.__bridgeInitialState__ ?? {};
 
-  const instance = BridgeInstance.getInstance(
+  const instance = new BridgeInstance(
     options,
     emitter,
     bridgeMethods,
@@ -74,13 +74,10 @@ export const linkBridge = <
       "hydrate",
       ({ bridgeMethods, nativeInitialState }: HydrateEventPayload) => {
         alert("hydrating");
-        BridgeInstance.hydrate(bridgeMethods, nativeInitialState);
+        instance.hydrate(bridgeMethods, nativeInitialState);
         unsubscribe();
       },
     );
   }
-
-  BridgeInstance.hydrate(bridgeMethods);
-
-  return instance;
+  return instance.proxy; // to only expose instance;
 };
