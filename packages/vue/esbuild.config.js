@@ -9,6 +9,7 @@ const external = [
 
 await Promise.all([
   build({
+    target: "es2015",
     entryPoints: ["src/index.ts"],
     bundle: true,
     minify: true,
@@ -18,6 +19,7 @@ await Promise.all([
     format: "cjs",
   }),
   build({
+    target: "es2015",
     entryPoints: ["src/index.ts"],
     bundle: true,
     minify: true,
