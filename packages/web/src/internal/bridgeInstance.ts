@@ -147,19 +147,27 @@ export class BridgeInstance<
     this._bridgeMethods = bridgeMethods;
     this._nativeInitialState = nativeInitialState;
 
+    if (bridgeMethods.length === 0) {
+      return false;
+    }
+
     const { timeout: timeoutMs = this.defaultTimeoutMs, onFallback } =
       this.options;
 
     const initialState = bridgeMethods.reduce(
       (acc, methodName) => {
+        const nativeMethod = this._createNativeMethod(
+          methodName,
+          this._willMethodThrowOnError(methodName),
+          timeoutMs,
+          onFallback,
+        );
+
+        (this as any)[methodName] = nativeMethod;
+
         return {
           ...acc,
-          [methodName]: this._createNativeMethod(
-            methodName,
-            this._willMethodThrowOnError(methodName),
-            timeoutMs,
-            onFallback,
-          ),
+          [methodName]: nativeMethod,
         };
       },
       {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
@@ -186,5 +194,6 @@ export class BridgeInstance<
       this._emitter.emit(eventName, ...args);
     }
     window.nativeBatchedEvents = [];
+    return true;
   }
 }

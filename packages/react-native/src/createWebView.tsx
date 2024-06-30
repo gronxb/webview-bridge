@@ -102,9 +102,7 @@ export const createWebView = <
       const initData = useMemo(() => {
         const bridgeMethods = Object.entries(bridge.getState() ?? {})
           .filter(([_, bridge]) => typeof bridge === "function")
-          .map(([name]) => {
-            return `'${name}'`;
-          });
+          .map(([name]) => name);
         const initialState = Object.fromEntries(
           Object.entries(bridge.getState() ?? {}).filter(
             ([_, value]) => typeof value !== "function",
