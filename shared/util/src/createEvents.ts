@@ -17,6 +17,8 @@ export interface EventEmitter<Events extends EventsMap = DefaultEvents> {
   on<K extends keyof Events>(this: this, event: K, cb: Events[K]): () => void;
 }
 
+export type DefaultEmitter = EventEmitter<DefaultEvents>;
+
 export const createEvents = <
   Events extends EventsMap = DefaultEvents,
 >(): EventEmitter<Events> => ({
@@ -36,7 +38,7 @@ export const createEvents = <
 });
 
 export interface CreateResolverOptions {
-  emitter: EventEmitter<DefaultEvents>;
+  emitter: DefaultEmitter;
   evaluate: () => void;
   eventId: string;
   failHandler?: Error | false;

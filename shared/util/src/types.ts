@@ -5,6 +5,7 @@ import type { infer as zodInfer, ZodTypeAny } from "zod";
 export type AsyncFunction = (...args: any[]) => Promise<any>;
 
 export type Primitive = string | number | boolean | null | undefined;
+export type PrimitiveObject = Record<string, Primitive>;
 
 export type RawJSON = Primitive | { [key: string]: RawJSON } | RawJSONArray;
 

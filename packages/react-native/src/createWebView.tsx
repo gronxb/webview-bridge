@@ -9,6 +9,7 @@ import type {
 import { createEvents } from "@webview-bridge/util";
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
@@ -97,25 +98,24 @@ export const createWebView = <
           webviewRefList.pop();
         };
       }, []);
-      const bridgeNames = useMemo(
-        () =>
-          Object.entries(bridge.getState() ?? {})
-            .filter(([_, bridge]) => typeof bridge === "function")
-            .map(([name]) => {
-              return `'${name}'`;
-            }),
-        [],
-      );
 
-      const initialState = useMemo(
-        () =>
-          Object.fromEntries(
-            Object.entries(bridge.getState() ?? {}).filter(
-              ([_, value]) => typeof value !== "function",
-            ),
-          ) as Record<string, Primitive>,
-        [],
-      );
+      const initData = useMemo(() => {
+        const bridgeMethods = Object.entries(bridge.getState() ?? {})
+          .filter(([_, bridge]) => typeof bridge === "function")
+          .map(([name]) => name);
+        const initialState = Object.fromEntries(
+          Object.entries(bridge.getState() ?? {}).filter(
+            ([_, value]) => typeof value !== "function",
+          ),
+        ) as Record<string, Primitive>;
+        return { bridgeMethods, initialState };
+      }, []);
+
+      useEffect(() => {
+        webviewRef.current?.injectJavaScript(
+          SAFE_NATIVE_EMITTER_EMIT("hydrate", initData),
+        );
+      }, [initData]);
 
       useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
 
@@ -215,8 +215,8 @@ export const createWebView = <
           ref={webviewRef}
           onMessage={handleMessage}
           injectedJavaScriptBeforeContentLoaded={[
-            INJECT_BRIDGE_METHODS(bridgeNames),
-            INJECT_BRIDGE_STATE(initialState),
+            INJECT_BRIDGE_METHODS(initData.bridgeMethods),
+            INJECT_BRIDGE_STATE(initData.initialState),
             props.injectedJavaScriptBeforeContentLoaded,
             "true;",
           ]

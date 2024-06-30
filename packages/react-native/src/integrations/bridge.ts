@@ -105,7 +105,7 @@ export const handleBridge = async ({
 };
 
 export const INJECT_BRIDGE_METHODS = (bridgeNames: string[]) => `
-    window.__bridgeMethods__ = [${bridgeNames.join(", ")}];
+    window.__bridgeMethods__ = ${JSON.stringify(bridgeNames)};
 `;
 
 export const INJECT_BRIDGE_STATE = (
