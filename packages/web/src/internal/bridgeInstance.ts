@@ -31,7 +31,7 @@ export class BridgeInstance<
     private _bridgeMethods: string[],
     public _nativeInitialState: PrimitiveObject,
   ) {
-    this.hydrate(_bridgeMethods, _nativeInitialState);
+    this._hydrate(_bridgeMethods, _nativeInitialState);
   }
 
   private defaultTimeoutMs = 2000;
@@ -140,7 +140,7 @@ export class BridgeInstance<
     });
   }
 
-  public hydrate(
+  public _hydrate(
     bridgeMethods: string[],
     nativeInitialState: PrimitiveObject = {},
   ) {

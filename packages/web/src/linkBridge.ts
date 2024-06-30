@@ -74,7 +74,7 @@ export const linkBridge = <
     const unsubscribe = emitter.on(
       "hydrate",
       ({ bridgeMethods, nativeInitialState }: HydrateEventPayload) => {
-        instance.hydrate(bridgeMethods, nativeInitialState);
+        instance._hydrate(bridgeMethods, nativeInitialState);
         unsubscribe();
       },
     );
