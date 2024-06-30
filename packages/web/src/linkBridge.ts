@@ -8,6 +8,7 @@ import type {
 } from "@webview-bridge/types";
 import { createEvents, noop } from "@webview-bridge/util";
 
+import { MethodNotFoundError } from "./error";
 import { BridgeInstance } from "./internal/bridgeInstance";
 import { LinkBridge } from "./types";
 
@@ -73,11 +74,38 @@ export const linkBridge = <
     const unsubscribe = emitter.on(
       "hydrate",
       ({ bridgeMethods, nativeInitialState }: HydrateEventPayload) => {
-        alert("hydrating");
         instance.hydrate(bridgeMethods, nativeInitialState);
         unsubscribe();
       },
     );
   }
-  return instance.proxy; // to only expose instance;
+
+  const { onFallback, onReady } = options;
+
+  const proxy = new Proxy(instance, {
+    get: (target: any, methodName: string, proxy) => {
+      if (methodName in target) {
+        return target[methodName];
+      }
+
+      proxy._postMessage("fallback", {
+        method: methodName,
+      });
+
+      if (proxy._willMethodThrowOnError(methodName)) {
+        return (...args: unknown[]) => {
+          onFallback?.(methodName, args);
+          return Promise.reject(new MethodNotFoundError(methodName));
+        };
+      } else {
+        console.warn(
+          `[WebViewBridge] ${methodName} is not defined, using fallback.`,
+        );
+      }
+      return () => Promise.resolve();
+    },
+  }) as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
+
+  onReady?.(proxy);
+  return proxy;
 };
