@@ -1,6 +1,7 @@
 import type {
   Bridge,
   BridgeStore,
+  ExcludePrimitive,
   ExtractStore,
   KeyOfOrString,
   Parser,
@@ -11,6 +12,7 @@ import {
   createRandomId,
   createResolver,
   DefaultEmitter,
+  noop,
   timeout,
 } from "@webview-bridge/util";
 
@@ -36,9 +38,14 @@ export class BridgeInstance<
 
   private defaultTimeoutMs = 2000;
 
-  public store: Omit<T, "setState"> = {} as Omit<T, "setState">;
+  public store: Omit<T, "setState"> = {
+    getState: () => ({}) as ExcludePrimitive<ExtractStore<T>>,
+    subscribe: noop,
+  } as unknown as Omit<T, "setState">;
 
-  public isWebViewBridgeAvailable = Boolean(window.ReactNativeWebView);
+  get isWebViewBridgeAvailable() {
+    return Boolean(window.ReactNativeWebView) && this._bridgeMethods.length > 0;
+  }
 
   public isNativeMethodAvailable(methodName: string) {
     return (
@@ -180,8 +187,6 @@ export class BridgeInstance<
       initialState,
       nativeInitialState as ExtractStore<T>,
     );
-    this.isWebViewBridgeAvailable =
-      Boolean(window.ReactNativeWebView) && bridgeMethods.length > 0;
 
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
