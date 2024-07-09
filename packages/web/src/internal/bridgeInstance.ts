@@ -1,7 +1,6 @@
 import type {
   Bridge,
   BridgeStore,
-  ExcludePrimitive,
   ExtractStore,
   KeyOfOrString,
   Parser,
@@ -12,7 +11,6 @@ import {
   createRandomId,
   createResolver,
   DefaultEmitter,
-  noop,
   timeout,
 } from "@webview-bridge/util";
 
@@ -21,6 +19,7 @@ import { LinkBridgeOptions } from "../linkBridge";
 import { LinkBridge } from "../types";
 import { createPromiseProxy } from "./createPromiseProxy";
 import { linkBridgeStore } from "./linkBridgeStore";
+import { mockStore } from "./mockStore";
 
 export class BridgeInstance<
   T extends BridgeStore<T extends Bridge ? T : any>,
@@ -38,10 +37,10 @@ export class BridgeInstance<
 
   private defaultTimeoutMs = 2000;
 
-  public store: Omit<T, "setState"> = {
-    getState: () => ({}) as ExcludePrimitive<ExtractStore<T>>,
-    subscribe: noop,
-  } as unknown as Omit<T, "setState">;
+  public store: Omit<T, "setState"> = mockStore() as unknown as Omit<
+    T,
+    "setState"
+  >;
 
   get isWebViewBridgeAvailable() {
     return Boolean(window.ReactNativeWebView) && this._bridgeMethods.length > 0;
@@ -153,10 +152,6 @@ export class BridgeInstance<
   ) {
     this._bridgeMethods = bridgeMethods;
     this._nativeInitialState = nativeInitialState;
-
-    if (bridgeMethods.length === 0) {
-      return false;
-    }
 
     const { timeout: timeoutMs = this.defaultTimeoutMs, onFallback } =
       this.options;

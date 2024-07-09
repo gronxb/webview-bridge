@@ -6,10 +6,11 @@ import type {
   ParserSchema,
   PrimitiveObject,
 } from "@webview-bridge/types";
-import { createEvents, noop } from "@webview-bridge/util";
+import { createEvents } from "@webview-bridge/util";
 
 import { MethodNotFoundError } from "./error";
 import { BridgeInstance } from "./internal/bridgeInstance";
+import { mockStore } from "./internal/mockStore";
 import { LinkBridge } from "./types";
 
 export interface LinkBridgeOptions<
@@ -44,10 +45,7 @@ export const linkBridge = <
 ): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> => {
   if (typeof window === "undefined") {
     return {
-      store: {
-        getState: () => ({}) as ExcludePrimitive<ExtractStore<T>>,
-        subscribe: noop,
-      } as unknown as Omit<T, "setState">,
+      store: mockStore() as unknown as Omit<T, "setState">,
     } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
   }
 
