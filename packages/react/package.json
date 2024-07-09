@@ -38,7 +38,7 @@
     "react": "^18.2.0"
   },
   "dependencies": {
-    "use-sync-external-store": "^1.2.0"
+    "use-sync-external-store": "^1.2.2"
   },
   "peerDependencies": {
     "@webview-bridge/web": ">=1.2.0",
