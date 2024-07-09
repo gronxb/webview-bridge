@@ -23,7 +23,7 @@ export interface BridgeProviderProps {
 
 export const createLinkBridgeProvider = <
   T extends BridgeStore<T extends Bridge ? T : any>,
-  V extends ParserSchema<any>,
+  V extends ParserSchema<any> = ParserSchema<any>,
 >(
   options?: LinkBridgeOptions<T, V>,
 ) => {
