@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/vue",
   "type": "module",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"
@@ -36,7 +36,7 @@
     "vue": "^3.3.11"
   },
   "peerDependencies": {
-    "@webview-bridge/web": ">=1.2.0",
+    "@webview-bridge/web": "*",
     "vue": ">=2.7"
   }
 }

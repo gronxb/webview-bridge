@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/react",
   "type": "module",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"
@@ -41,7 +41,7 @@
     "use-sync-external-store": "^1.2.2"
   },
   "peerDependencies": {
-    "@webview-bridge/web": ">=1.2.0",
+    "@webview-bridge/web": "*",
     "react": ">=16.8"
   },
   "peerDependenciesMeta": {
