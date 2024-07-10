@@ -54,9 +54,7 @@ export class BridgeInstance<
 
   public isNativeMethodAvailable(methodName: string) {
     return (
-      typeof methodName === "string" &&
-      Boolean(window.ReactNativeWebView) &&
-      this._bridgeMethods.includes(methodName)
+      typeof methodName === "string" && this._bridgeMethods.includes(methodName)
     );
   }
 
