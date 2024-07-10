@@ -63,10 +63,9 @@ function App() {
       <h2>This is WebView</h2>
       <button
         onClick={() => {
-          console.log(bridge);
-          // if (bridge.isNativeMethodAvailable("openInAppBrowser") === true) {
-          bridge.openInAppBrowser("https://github.com/gronxb/webview-bridge");
-          // }
+          if (bridge.isNativeMethodAvailable("openInAppBrowser") === true) {
+            bridge.openInAppBrowser("https://github.com/gronxb/webview-bridge");
+          }
         }}
       >
         open InAppBrowser
