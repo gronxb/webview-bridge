@@ -18,7 +18,6 @@ export const linkBridgeStore = <
 >(
   emitter: DefaultEmitter,
   initialState: Partial<T> = {},
-  nativeInitialState: Partial<T> = {},
 ): Omit<T, "setState"> => {
   const getState = () => state;
 
@@ -41,7 +40,7 @@ export const linkBridgeStore = <
     setState(data);
   });
 
-  let state: T = { ...initialState, ...nativeInitialState } as T;
+  let state: T = { ...initialState } as T;
 
   const listeners = new Set<(newState: T, prevState: T) => void>();
 

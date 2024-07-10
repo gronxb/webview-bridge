@@ -6,6 +6,24 @@ import type { AppBridge } from "@webview-bridge-example-shared-state-integration
 
 const bridge = linkBridge<AppBridge>({
   throwOnError: true,
+  initialBridge: {
+    count: 10,
+    data: {
+      text: "Test",
+    },
+    increase: async () => {
+      alert("not support increase");
+    },
+    openInAppBrowser: async (url) => {
+      alert("not support openInAppBrowser: " + url);
+    },
+    setDataText: async (text) => {
+      alert("not support setDataText: " + text);
+    },
+    getMessage: async () => {
+      return "mocking message";
+    },
+  },
   onReady: () => {
     console.log("bridge is ready");
   },
@@ -43,7 +61,6 @@ function App() {
         {`isWebViewBridgeAvailable: ${String(bridge.isWebViewBridgeAvailable)}`}
       </div>
       <h2>This is WebView</h2>
-
       <button
         onClick={() => {
           if (bridge.isNativeMethodAvailable("openInAppBrowser") === true) {

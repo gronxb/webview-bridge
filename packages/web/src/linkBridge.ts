@@ -17,6 +17,7 @@ export interface LinkBridgeOptions<
   T extends BridgeStore<T extends Bridge ? T : any>,
   V extends ParserSchema<any>,
 > {
+  initialBridge?: Partial<ExtractStore<T>>;
   timeout?: number;
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
   onFallback?: (methodName: string, args: unknown[]) => void;
@@ -45,7 +46,10 @@ export const linkBridge = <
 ): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> => {
   if (typeof window === "undefined") {
     return {
-      store: mockStore() as unknown as Omit<T, "setState">,
+      store: mockStore(options?.initialBridge) as unknown as Omit<
+        T,
+        "setState"
+      >,
     } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
   }
 
