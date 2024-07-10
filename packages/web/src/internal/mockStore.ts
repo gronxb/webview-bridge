@@ -1,9 +1,12 @@
-export const mockStore = () => ({
-  state: {},
-  getState() {
-    return this.state;
-  },
-  subscribe() {
-    return () => {};
-  },
-});
+import { PrimitiveObject } from "@webview-bridge/types";
+
+export const mockStore = (initialState: PrimitiveObject = {}) =>
+  ({
+    state: initialState,
+    getState() {
+      return this.state;
+    },
+    subscribe() {
+      return () => {};
+    },
+  }) as const;

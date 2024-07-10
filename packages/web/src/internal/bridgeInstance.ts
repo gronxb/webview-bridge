@@ -26,7 +26,7 @@ export class BridgeInstance<
   V extends ParserSchema<any> = ParserSchema<any>,
 > {
   constructor(
-    private options: LinkBridgeOptions<T, V>,
+    private _options: LinkBridgeOptions<T, V>,
 
     private _emitter: DefaultEmitter,
     private _bridgeMethods: string[],
@@ -35,15 +35,21 @@ export class BridgeInstance<
     this._hydrate(_bridgeMethods, _nativeInitialState);
   }
 
-  private defaultTimeoutMs = 2000;
+  private _defaultTimeoutMs = 2000;
+
+  private _isListenerRegistered = false;
 
   public store: Omit<T, "setState"> = mockStore() as unknown as Omit<
     T,
     "setState"
   >;
 
+  get isReactNativeWebView() {
+    return Boolean(window.ReactNativeWebView);
+  }
+
   get isWebViewBridgeAvailable() {
-    return Boolean(window.ReactNativeWebView) && this._bridgeMethods.length > 0;
+    return this._bridgeMethods.length > 0;
   }
 
   public isNativeMethodAvailable(methodName: string) {
@@ -113,7 +119,7 @@ export class BridgeInstance<
   }
 
   private _willMethodThrowOnError(methodName: string) {
-    const { throwOnError } = this.options;
+    const { throwOnError } = this._options;
     return (
       throwOnError === true ||
       (Array.isArray(throwOnError) && throwOnError.includes(methodName))
@@ -123,8 +129,8 @@ export class BridgeInstance<
   private _createLoose(
     initialState: LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
   ) {
-    const { timeout: timeoutMs = this.defaultTimeoutMs, onFallback } =
-      this.options;
+    const { timeout: timeoutMs = this._defaultTimeoutMs, onFallback } =
+      this._options;
 
     return new Proxy(initialState, {
       get: (target, methodName: string) => {
@@ -150,14 +156,43 @@ export class BridgeInstance<
     bridgeMethods: string[],
     nativeInitialState: PrimitiveObject = {},
   ) {
-    this._bridgeMethods = bridgeMethods;
+    const {
+      timeout: timeoutMs = this._defaultTimeoutMs,
+      onFallback,
+      initialBridge = {},
+    } = this._options;
+
+    const initialMethods = Object.entries(initialBridge).filter(
+      ([_, bridge]) => typeof bridge === "function",
+    );
+    const initialBridgeMethodNames = initialMethods.map(
+      ([methodName]) => methodName,
+    );
+
+    Object.defineProperties(
+      this,
+      Object.fromEntries(
+        initialMethods.map(([methodName, value]) => {
+          return [
+            methodName,
+            {
+              value,
+              writable: true,
+            },
+          ];
+        }),
+      ),
+    );
+
+    this._bridgeMethods = [...bridgeMethods, ...initialBridgeMethodNames];
     this._nativeInitialState = nativeInitialState;
 
-    const { timeout: timeoutMs = this.defaultTimeoutMs, onFallback } =
-      this.options;
-
-    const initialState = bridgeMethods.reduce(
+    const nativeMethods = bridgeMethods.reduce(
       (acc, methodName) => {
+        if (!this.isReactNativeWebView) {
+          return acc;
+        }
+
         const nativeMethod = this._createNativeMethod(
           methodName,
           this._willMethodThrowOnError(methodName),
@@ -165,29 +200,35 @@ export class BridgeInstance<
           onFallback,
         );
 
-        (this as any)[methodName] = nativeMethod;
+        Object.defineProperty(this, methodName, {
+          value: nativeMethod,
+          writable: false,
+        });
 
         return {
           ...acc,
           [methodName]: nativeMethod,
         };
       },
-      {} as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
+      initialBridge as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
     );
 
-    this.loose = this._createLoose(initialState);
-
-    this.store = linkBridgeStore<T>(
-      this._emitter,
-      initialState,
-      nativeInitialState as ExtractStore<T>,
-    );
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        this._postMessage("getBridgeState");
-      }
+    this.loose = this._createLoose(nativeMethods);
+    this.store = linkBridgeStore<T>(this._emitter, {
+      ...nativeMethods,
+      ...nativeInitialState,
     });
+
+    if (!this._isListenerRegistered) {
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "visible") {
+          this._postMessage("getBridgeState");
+        }
+      };
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      this._isListenerRegistered = true;
+    }
+
     this._postMessage("getBridgeState");
 
     for (const [eventName, ...args] of window.nativeBatchedEvents ?? []) {
