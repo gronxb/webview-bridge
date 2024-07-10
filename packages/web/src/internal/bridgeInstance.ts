@@ -29,7 +29,7 @@ export class BridgeInstance<
     private _options: LinkBridgeOptions<T, V>,
 
     private _emitter: DefaultEmitter,
-    private _bridgeMethods: string[],
+    private _bridgeMethods: string[] = [],
     public _nativeInitialState: PrimitiveObject,
   ) {
     this._hydrate(_bridgeMethods, _nativeInitialState);
