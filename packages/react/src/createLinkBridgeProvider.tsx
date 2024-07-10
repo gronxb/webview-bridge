@@ -1,6 +1,8 @@
 import type {
   Bridge,
   BridgeStore,
+  ExcludePrimitive,
+  ExtractStore,
   KeyOfOrString,
   LinkBridgeOptions,
   Parser,
@@ -63,11 +65,11 @@ export const createLinkBridgeProvider = <
       throw new Error(`useBridgeStatus must be used within a BridgeProvider`);
     }
 
-    const { isNativeMethodAvailable, isWebViewBridgeAvailable } =
-      bridgeStoreContext;
     return {
-      isNativeMethodAvailable,
-      isWebViewBridgeAvailable,
+      isNativeMethodAvailable: (
+        method: keyof ExcludePrimitive<ExtractStore<T>>,
+      ) => bridgeStoreContext.isNativeMethodAvailable(method),
+      isWebViewBridgeAvailable: bridgeStoreContext.isWebViewBridgeAvailable,
     };
   };
 
@@ -78,8 +80,7 @@ export const createLinkBridgeProvider = <
       throw new Error(`useBridgeLoose must be used within a BridgeProvider`);
     }
 
-    const { loose } = bridgeStoreContext;
-    return { loose };
+    return { loose: bridgeStoreContext.loose };
   };
 
   const useBridgeEventListener = <EventName extends KeyOfOrString<V>>(
@@ -93,11 +94,8 @@ export const createLinkBridgeProvider = <
         `useBridgeEventListener must be used within a BridgeProvider`,
       );
     }
-
-    const { addEventListener } = bridgeStoreContext;
-
     useEffect(() => {
-      return addEventListener(eventName, listener);
+      return bridgeStoreContext.addEventListener(eventName, listener);
     }, []);
   };
 
