@@ -75,6 +75,10 @@ export type CreateWebViewArgs<
    * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
    */
   postMessageSchema?: PostMessageSchema;
+  /**
+   * Callback function when a method that is not defined in the bridge is called.
+   * @link https://gronxb.github.io/webview-bridge/backward-compatibility/new-method.html#react-native-part
+   */
   fallback?: (method: keyof BridgeObject) => void;
 };
 
