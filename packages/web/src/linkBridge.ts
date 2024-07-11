@@ -45,7 +45,19 @@ export const linkBridge = <
   },
 ): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> => {
   if (typeof window === "undefined") {
+    const initialBridge = options?.initialBridge ?? {};
+    const initialMethods = Object.entries(initialBridge).filter(
+      ([_, bridge]) => typeof bridge === "function",
+    );
+    const initialBridgeMethodNames = initialMethods.map(
+      ([methodName]) => methodName,
+    );
     return {
+      addEventListener: (_eventName, _listener) => () => {},
+      loose: {},
+      isWebViewBridgeAvailable: initialBridgeMethodNames.length > 0,
+      isNativeMethodAvailable: (method: string) =>
+        initialBridgeMethodNames.includes(method),
       store: mockStore(options?.initialBridge) as unknown as Omit<
         T,
         "setState"
