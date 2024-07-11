@@ -54,3 +54,25 @@ if (version >= 2) {
   console.log(oldVersionMessage);
 }
 ```
+
+### Using onFallback for Fallback Logic
+
+The `onFallback` option allows you to execute alternative code if a call to a React Native method fails.
+
+For example, in the code below, if calling `bridge.getMessage()` from the native side fails, it will use onFallback to call `bridge.loose.getOldVersionMessage()` instead.
+```tsx
+const bridge = linkBridge<AppBridge>({
+  throwOnError: true,
+   onFallback: (methodName, args) => {
+    switch(methodName) {
+      case 'getMessage': {
+        bridge.loose.getOldVersionMessage();
+        break;
+      }
+    }
+  }
+});
+
+// If calling getMessage() from the native side fails, onFallback will execute getOldVersionMessage() instead.
+bridge.getMessage(); 
+```

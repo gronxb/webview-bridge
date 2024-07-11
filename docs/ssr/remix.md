@@ -25,12 +25,20 @@ $ yarn add @webview-bridge/react @webview-bridge/web
 ## `createLinkBridgeProvider`
 ### providers/BridgeProvider.ts
 ```tsx
+"use client";
 import { createLinkBridgeProvider } from "@webview-bridge/react";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
-export const { BridgeProvider, useBridgeStore, useBridgeStatus, useBridgeLoose } =
+export const { BridgeProvider, useBridgeStore, useBridgeStatus, useBridgeLoose, useBridgeEventListener } =
   createLinkBridgeProvider<AppBridge>({
     throwOnError: true,
+    // For proper hydration, it is advisable to set up an `initialBridge`. This step can be omitted if necessary.
+    initialBridge: {
+      token: '',
+      openInAppBrowser: async (url) => {
+        alert('mocking: ' + url)
+      }
+    },
     onReady: () => {
       console.log("bridge is ready");
     },

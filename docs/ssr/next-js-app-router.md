@@ -1,5 +1,5 @@
 
-# Setup with Remix
+# Setup with Next.js (App Router)
 This guide provides instructions on how to use `webview-bridge` in Next.js (App Router) applications.
 
 ::: tip Page Router
@@ -34,9 +34,16 @@ $ yarn add @webview-bridge/react @webview-bridge/web
 import { createLinkBridgeProvider } from "@webview-bridge/react";
 import type { AppBridge } from ""; // Import the type 'appBridge' declared in native
 
-export const { BridgeProvider, useBridgeStore, useBridgeStatus, useBridgeLoose } =
+export const { BridgeProvider, useBridgeStore, useBridgeStatus, useBridgeLoose, useBridgeEventListener } =
   createLinkBridgeProvider<AppBridge>({
     throwOnError: true,
+    // For proper hydration, it is advisable to set up an `initialBridge`. This step can be omitted if necessary.
+    initialBridge: {
+      token: '',
+      openInAppBrowser: async (url) => {
+        alert('mocking: ' + url)
+      }
+    },
     onReady: () => {
       console.log("bridge is ready");
     },
@@ -155,10 +162,7 @@ Utilize hooks from `createLinkBridgeProvider` for client-side functionality as s
 ```tsx
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-
-const BridgeHome = dynamic(() => import("./BridgeHome"), {
-  ssr: false,
-});
+import BridgeHome from "./BridgeHome";
 
 const Page = () => {
   return (
@@ -171,5 +175,3 @@ const Page = () => {
 export default Page;
 
 ```
-
-Use `dynamic` to load components using the bridge on the client side, with the primary goal of avoiding the hydration process.
