@@ -32,9 +32,48 @@ export type CreateWebViewArgs<
   BridgeObject extends Bridge,
   PostMessageSchema extends ParserSchema<any>,
 > = {
+  /**
+   * The bridge object to be used in the WebView.
+  * @example
+    import { createWebView, bridge } from "@webview-bridge/react-native";
+    import InAppBrowser from "react-native-inappbrowser-reborn";
+
+    // Register functions in the bridge object in your React Native code
+    export const appBridge = bridge({
+      async getMessage() {
+        return "Hello, I'm native";
+      },
+      async sum(a: number, b: number) {
+        return a + b;
+      },
+      async openInAppBrowser(url: string) {
+        if (await InAppBrowser.isAvailable()) {
+          await InAppBrowser.open(url);
+        }
+      },
+      // ... Add more functions as needed
+    });
+
+    export const { WebView } = createWebView({
+      bridge: appBridge,
+      debug: true, // Enable console.log visibility in the native WebView
+    });
+    */
   bridge: BridgeStore<BridgeObject>;
+  /**
+   * If `true`, the console.log visibility in the WebView is enabled.
+   * @default false
+   */
   debug?: boolean;
+  /**
+   * Set the timeout in milliseconds for the response from the web method.
+   * @default 2000
+   */
   responseTimeout?: number;
+  /**
+   * The schema for the postMessage method.
+   * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
+   */
   postMessageSchema?: PostMessageSchema;
   fallback?: (method: keyof BridgeObject) => void;
 };
@@ -43,6 +82,34 @@ export type WebMethod<T> = T & {
   isReady: boolean;
 };
 
+/**
+ * Create a WebView component that can communicate with the bridge.
+ * @link https://gronxb.github.io/webview-bridge/getting-started.html
+ * @example
+    import { createWebView, bridge } from "@webview-bridge/react-native";
+    import InAppBrowser from "react-native-inappbrowser-reborn";
+
+    // Register functions in the bridge object in your React Native code
+    export const appBridge = bridge({
+      async getMessage() {
+        return "Hello, I'm native";
+      },
+      async sum(a: number, b: number) {
+        return a + b;
+      },
+      async openInAppBrowser(url: string) {
+        if (await InAppBrowser.isAvailable()) {
+          await InAppBrowser.open(url);
+        }
+      },
+      // ... Add more functions as needed
+    });
+
+    export const { WebView } = createWebView({
+      bridge: appBridge,
+      debug: true, // Enable console.log visibility in the native WebView
+    });
+ */
 export const createWebView = <
   BridgeObject extends Bridge,
   PostMessageSchema extends ParserSchema<any>,
@@ -71,6 +138,10 @@ export const createWebView = <
   });
 
   return {
+    /**
+     * Sends an event from React Native to the Web.
+     * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
+     */
     postMessage: <
       EventName extends KeyOfOrString<PostMessageSchema>,
       Args extends Parser<PostMessageSchema, EventName>,

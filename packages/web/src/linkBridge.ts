@@ -17,10 +17,29 @@ export interface LinkBridgeOptions<
   T extends BridgeStore<T extends Bridge ? T : any>,
   V extends ParserSchema<any>,
 > {
+  /**
+   * It is possible to configure `initialBridge` to operate in a non-React Native environment.
+   * Prioritize applying the bridge of the React Native WebView, and if it is unavailable, apply the `initialBridge`.
+   * Therefore, if `initialBridge` is configured, `bridge.isWebViewBridgeAvailable` should be true even in environments that are not React Native.
+   * @link https://gronxb.github.io/webview-bridge/non-react-native-environment.html
+   */
   initialBridge?: Partial<ExtractStore<T>>;
+  /**
+   * Set the timeout in milliseconds after calling the native method.
+   * @default 2000
+   */
   timeout?: number;
+  /**
+   * If `true`, an error will be thrown when calling a method that is not defined in the bridge.
+   */
   throwOnError?: boolean | (keyof ExtractStore<T>)[] | string[];
+  /**
+   * Callback function when a method that is not defined in the bridge is called.
+   */
   onFallback?: (methodName: string, args: unknown[]) => void;
+  /**
+   * Callback function when the bridge is ready.
+   */
   onReady?: (
     method: LinkBridge<
       ExcludePrimitive<ExtractStore<T>>,
@@ -35,6 +54,10 @@ type HydrateEventPayload = {
   nativeInitialState: PrimitiveObject;
 };
 
+/**
+ * Create a link to the bridge connected to the React Native WebView.
+ * @link https://gronxb.github.io/webview-bridge/getting-started.html
+ */
 export const linkBridge = <
   T extends BridgeStore<T extends Bridge ? T : any>,
   V extends ParserSchema<any> = ParserSchema<any>,
