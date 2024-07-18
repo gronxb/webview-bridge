@@ -18,10 +18,14 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     </div>
 `;
 
-document.getElementById("btn")!.addEventListener("click", async () => {
-  if (bridge.isNativeMethodAvailable("openInAppBrowser")) {
-    await bridge.openInAppBrowser("https://github.com/gronxb/webview-bridge");
-  }
-});
+const run = async () => {
+  document.getElementById("btn")!.addEventListener("click", async () => {
+    if (bridge.isNativeMethodAvailable("openInAppBrowser")) {
+      await bridge.openInAppBrowser("https://github.com/gronxb/webview-bridge");
+    }
+  });
 
-document.getElementById("message")!.innerText = await bridge.getMessage();
+  document.getElementById("message")!.innerText = await bridge.getMessage();
+};
+
+run();
