@@ -24,7 +24,7 @@ Inspired by the functionality of `tRPC`, `webview-bridge` simplifies the communi
 - No App Review Needed
 - Shared State
 
-![webview-bridge](https://github.com/gronxb/webview-bridge/assets/41789633/a93e6439-f410-42ac-bc4b-b8f32213a537)
+![webview-bridge](https://raw.githubusercontent.com/gronxb/webview-bridge/main/demo.gif)
 
 ## Documentation
 
