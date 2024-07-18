@@ -24,4 +24,4 @@ document.getElementById("btn")!.addEventListener("click", async () => {
   }
 });
 
-document.getElementById("message")!.innerText = await bridge.getHelloWorld();
+document.getElementById("message")!.innerText = await bridge.getMessage();
