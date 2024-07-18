@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from "react";
 import { SafeAreaView } from "react-native";
 import {
@@ -28,7 +21,7 @@ export const appBridge = bridge({
 // It is exported via the package.json type field.
 export type AppBridge = typeof appBridge;
 
-export const { WebView, linkWebMethod } = createWebView({
+export const { WebView } = createWebView({
   bridge: appBridge,
   debug: true,
   fallback: (method) => {
