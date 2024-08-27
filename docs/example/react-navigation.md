@@ -9,6 +9,18 @@ Example: [react-navigation](https://github.com/gronxb/webview-bridge/tree/main/e
 ## React Native Part
 
 ```tsx
+// This file is src/navigation.ts
+
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+export type RootStackParamList = {
+  Home: undefined;
+  Profile: { userId: string };
+  Feed: { sort: 'latest' | 'top' } | undefined;
+};
+```
+
+```tsx
 // This file is src/bridge.ts
 
 import {
@@ -20,6 +32,15 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 import { RootStackParamList } from "./navigation";
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
+
+const existsScreen = (name: string): boolean => {
+  return Boolean(
+    navigationRef.current?.isReady() &&
+      navigationRef.current
+        .getState()
+        .routeNames.find((routeName) => routeName === name),
+  );
+};
 
 export const appBridge = bridge({
   async getMessage() {
@@ -45,6 +66,9 @@ export const appBridge = bridge({
     params: RootStackParamList[RouteName],
   ) {
     if (navigationRef.current?.isReady()) {
+      if (!existsScreen(name)) {
+        throw new Error(`Screen ${name} not found`);
+      }
       navigationRef.current.navigate(name as any, params as any);
     }
   },
@@ -53,6 +77,9 @@ export const appBridge = bridge({
     params: RootStackParamList[RouteName],
   ) {
     if (navigationRef.current?.isReady()) {
+      if (!existsScreen(name)) {
+        throw new Error(`Screen ${name} not found`);
+      }
       navigationRef.current.dispatch(StackActions.push(name, params));
     }
   },
@@ -61,6 +88,9 @@ export const appBridge = bridge({
     params: RootStackParamList[RouteName],
   ) {
     if (navigationRef.current?.isReady()) {
+      if (!existsScreen(name)) {
+        throw new Error(`Screen ${name} not found`);
+      }
       navigationRef.current.dispatch(StackActions.replace(name, params));
     }
   },
