@@ -30,8 +30,8 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit"
   },
-  "devDependencies": {
-    "@webview-bridge/utils": "workspace:^",
-    "@webview-bridge/types": "workspace:^"
+  "dependencies": {
+    "@webview-bridge/utils": "1.6.2",
+    "@webview-bridge/types": "1.6.2"
   }
 }

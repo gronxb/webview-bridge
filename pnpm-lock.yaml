@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@webview-bridge/types': workspace:*
+  '@webview-bridge/utils': workspace:*
+
 importers:
 
   .:
@@ -721,6 +725,9 @@ importers:
 
   packages/react:
     dependencies:
+      '@webview-bridge/types':
+        specifier: workspace:*
+        version: link:../../shared/types
       use-sync-external-store:
         specifier: ^1.2.2
         version: 1.2.2(react@18.2.0)
@@ -731,9 +738,6 @@ importers:
       '@types/use-sync-external-store':
         specifier: ^0.0.6
         version: 0.0.6
-      '@webview-bridge/types':
-        specifier: workspace:^
-        version: link:../../shared/types
       '@webview-bridge/web':
         specifier: workspace:^
         version: link:../web
@@ -743,6 +747,12 @@ importers:
 
   packages/react-native:
     dependencies:
+      '@webview-bridge/types':
+        specifier: workspace:*
+        version: link:../../shared/types
+      '@webview-bridge/utils':
+        specifier: workspace:*
+        version: link:../../shared/utils
       use-sync-external-store:
         specifier: ^1.2.0
         version: 1.2.0(react@18.2.0)
@@ -753,12 +763,6 @@ importers:
       '@types/use-sync-external-store':
         specifier: ^0.0.6
         version: 0.0.6
-      '@webview-bridge/types':
-        specifier: workspace:^
-        version: link:../../shared/types
-      '@webview-bridge/utils':
-        specifier: workspace:^
-        version: link:../../shared/utils
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -770,12 +774,12 @@ importers:
         version: 5.6.3
 
   packages/web:
-    devDependencies:
+    dependencies:
       '@webview-bridge/types':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../shared/types
       '@webview-bridge/utils':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../shared/utils
 
   shared/types: {}

@@ -1,6 +1,5 @@
 {
   "name": "@webview-bridge/utils",
-  "private": true,
   "type": "module",
   "version": "1.6.2",
   "files": [
@@ -14,6 +13,14 @@
       "require": "./dist/index.cjs"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gronxb/webview-bridge.git"
+  },
+  "license": "MIT",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit"

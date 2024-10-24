@@ -1,6 +1,5 @@
 {
   "name": "@webview-bridge/types",
-  "private": true,
   "type": "module",
   "version": "1.6.2",
   "files": [
@@ -17,6 +16,14 @@
       "require": "./src/index.ts"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gronxb/webview-bridge.git"
+  },
+  "license": "MIT",
   "scripts": {
     "build": "tsup src/index.ts --dts",
     "test:type": "tsc --noEmit"
