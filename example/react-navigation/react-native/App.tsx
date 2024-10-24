@@ -18,6 +18,7 @@ function WebViewHomeScreen() {
   return (
     <View style={{ height: "100%" }}>
       <WebView
+      allowsBackForwardNavigationGestures
         source={{
           uri: "http://localhost:5173",
         }}

@@ -1,4 +1,4 @@
 export type RootStackParamList = {
   WebViewHome: undefined;
-  UserInfo: { userId: string };
+  UserInfo: {userId: string};
 };

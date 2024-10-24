@@ -1,10 +1,10 @@
 import {
   StackActions,
   createNavigationContainerRef,
-} from "@react-navigation/native";
-import { createWebView, bridge } from "@webview-bridge/react-native";
-import InAppBrowser from "react-native-inappbrowser-reborn";
-import { RootStackParamList } from "./navigation";
+} from '@react-navigation/native';
+import {createWebView, bridge} from '@webview-bridge/react-native';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
+import {RootStackParamList} from './navigation';
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
@@ -61,10 +61,10 @@ export const appBridge = bridge({
 // It is exported via the package.json type field.
 export type AppBridge = typeof appBridge;
 
-export const { WebView, linkWebMethod } = createWebView({
+export const {WebView, linkWebMethod} = createWebView({
   bridge: appBridge,
   debug: true,
-  fallback: (method) => {
+  fallback: method => {
     console.warn(`Method '${method}' not found in native`);
   },
 });
