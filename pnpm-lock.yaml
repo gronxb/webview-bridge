@@ -693,9 +693,6 @@ importers:
 
   example/shared-state-integration-vue/vue:
     dependencies:
-      '@webview-bridge/vue':
-        specifier: workspace:^
-        version: link:../../../packages/vue
       '@webview-bridge/web':
         specifier: workspace:^
         version: link:../../../packages/web
@@ -771,18 +768,6 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.23.8
-
-  packages/vue:
-    devDependencies:
-      '@webview-bridge/web':
-        specifier: workspace:^
-        version: link:../web
-      esbuild:
-        specifier: ^0.19.4
-        version: 0.19.4
-      vue:
-        specifier: ^3.3.11
-        version: 3.4.7(typescript@5.6.3)
 
   packages/web:
     devDependencies:
