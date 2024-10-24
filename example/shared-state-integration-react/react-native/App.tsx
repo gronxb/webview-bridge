@@ -12,10 +12,11 @@ import {
   type BridgeWebView,
   bridge,
   useBridge,
+  type Bridge,
 } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
-type AppBridgeState = {
+interface AppBridgeState extends Bridge {
   getMessage(): Promise<string>;
   openInAppBrowser(url: string): Promise<void>;
   count: number;
@@ -54,8 +55,6 @@ export const appBridge = bridge<AppBridgeState>(({ get, set }) => ({
   },
 }));
 
-// It is exported via the package.json type field.
-export type AppBridge = typeof appBridge;
 
 export const { WebView, linkWebMethod } = createWebView({
   bridge: appBridge,

@@ -1,7 +1,9 @@
 {
   "name": "@webview-bridge-example-react-navigation/react-native",
   "version": "0.0.1",
-  "types": "src/bridge.ts",
+  "exports": {
+    "./types": "./src/bridge.ts"
+  },
   "private": true,
   "scripts": {
     "android": "react-native run-android",

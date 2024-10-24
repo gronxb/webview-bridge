@@ -14,7 +14,7 @@ The declaration should coexist with native methods, and its usage is similar to 
 :::
 
 
-To declare state, you first need to define a basic type like `type AppBridgeState` 
+To declare state, you first need to define a basic type like `interface AppBridgeState` 
 Then, this type is inserted into the generic of `bridge`
 
 The bridge arguments utilize `callback` that can `get()` and `set()` values.
@@ -22,9 +22,9 @@ The bridge arguments utilize `callback` that can `get()` and `set()` values.
 You can retrieve the current value with `get()` and modify it using `set()`
 
 ```tsx
-import { bridge } from "@webview-bridge/react-native";
+import { bridge, type Bridge } from "@webview-bridge/react-native";
 
-type AppBridgeState = {
+interface AppBridgeState extends Bridge {
   count: number;
   increase(): Promise<void>;
 };

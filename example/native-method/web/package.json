@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@webview-bridge-example-native-method/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,11 +9,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^5.3.4",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.9",
     "@webview-bridge-example-native-method/react-native": "workspace:^"
-  },
-  "dependencies": {
-    "@webview-bridge/web": "^1.6.2"
   }
 }

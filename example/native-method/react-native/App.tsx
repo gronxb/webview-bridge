@@ -18,8 +18,6 @@ export const appBridge = bridge({
   },
 });
 
-// It is exported via the package.json type field.
-export type AppBridge = typeof appBridge;
 
 export const { WebView } = createWebView({
   bridge: appBridge,

@@ -28,9 +28,9 @@ Assume `AppBridge`, used as a generic, is declared in React Native with the foll
 ### React Native Part
 ```tsx
 // React Native sample
-import { bridge } from "@webview-bridge/react-native";
+import { bridge, type Bridge } from "@webview-bridge/react-native";
 
-type AppBridgeState = {
+interface AppBridgeState extends Bridge {
   count: number;
   increase(): Promise<void>;
 };

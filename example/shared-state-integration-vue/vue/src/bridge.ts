@@ -1,5 +1,5 @@
 import { linkBridge } from "@webview-bridge/web";
-import type { AppBridge } from "@webview-bridge-example-shared-state-integration-vue/react-native";
+import type { AppBridge } from "@webview-bridge-example-shared-state-integration-vue/react-native/types";
 import { ref } from "vue";
 
 export const isReady = ref(false);
