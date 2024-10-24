@@ -17,6 +17,7 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 import { z } from "zod";
 import * as yup from "yup";
 import * as superstruct from "superstruct";
+
 export const appBridge = bridge({
   async getMessage() {
     return "I'm from native" as const;
@@ -28,15 +29,12 @@ export const appBridge = bridge({
   },
 });
 
-const appSchema = postMessageSchema({
+export const appSchema = postMessageSchema({
   setWebMessage_zod: z.string(),
   setWebMessage_yup: yup.string().required(),
   setWebMessage_superstruct: superstruct.string(),
 });
 
-// It is exported via the package.json type field.
-export type AppBridge = typeof appBridge;
-export type AppPostMessageSchema = typeof appSchema;
 
 export const { WebView, postMessage } = createWebView({
   bridge: appBridge,

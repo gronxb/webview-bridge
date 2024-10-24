@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { linkBridge } from "@webview-bridge/web";
-import type { AppBridge } from "@webview-bridge-example-native-method/react-native";
+import type { AppBridge } from "@webview-bridge-example-native-method/react-native/types";
 
 const bridge = linkBridge<AppBridge>({
   throwOnError: true,

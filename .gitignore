@@ -65,3 +65,5 @@ vendor/bundle/
 dist
 cache
 temp
+
+*.tsbuildinfo
