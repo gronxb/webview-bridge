@@ -7,8 +7,8 @@
   "scripts": {
     "packages:publish": "pnpm clear && pnpm --filter './packages/**' publish",
     "build": "nx run-many --target=build --projects=packages/*",
-    "test:type": "pnpm -r test:type",
-    "docs:build": "pnpm -r docs:build",
+    "test:type": "nx run-many --target=test:type --all",
+    "docs:build": "nx docs:build @webview-bridge/docs",
     "clear": "rimraf --glob **/dist"
   },
   "keywords": [],
