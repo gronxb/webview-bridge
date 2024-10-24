@@ -7,15 +7,15 @@ This guide integrates the state declared in [Shared State in React Native](./rea
 ::: code-group
 
 ```sh [npm]
-$ npm add @webview-bridge/vue @webview-bridge/web
+$ npm add @webview-bridge/web
 ```
 
 ```sh [pnpm]
-$ pnpm add @webview-bridge/vue @webview-bridge/web
+$ pnpm add @webview-bridge/web
 ```
 
 ```sh [yarn]
-$ yarn add @webview-bridge/vue @webview-bridge/web
+$ yarn add @webview-bridge/web
 ```
 
 :::
@@ -51,18 +51,41 @@ export type AppBridge = typeof appBridge;
 ### Web Part
 ```tsx
 // This file is src/bridge.ts
+import type { Bridge, BridgeStore } from "@webview-bridge/web";
+import { getCurrentInstance, onScopeDispose, ref } from "vue";
+
 import { linkBridge } from "@webview-bridge/web";
-import { ref } from "vue";
+import type { AppBridge } from "";
 
 export const isReady = ref(false);
 
 export const bridge = linkBridge<AppBridge>({
   throwOnError: true,
   onReady: () => {
-    console.log("bridge is ready");
     isReady.value = true;
+    console.log("bridge is ready");
   },
 });
+
+export const bridgeStore = bridge.store;
+
+export function useBridge<T extends Bridge>(
+  store: Omit<BridgeStore<T>, "setState">,
+) {
+  const state = ref(store.getState());
+
+  const unsubscribe = store.subscribe((newState) => {
+    state.value = newState;
+  });
+
+  if (getCurrentInstance()) {
+    onScopeDispose(() => {
+      unsubscribe?.();
+    });
+  }
+
+  return state;
+}
 
 ```
 
@@ -73,8 +96,7 @@ Insert the previously `bridge.store` as the first argument.
 
 ```vue
 <script setup lang="ts">
-import { bridge, isReady } from "./bridge";
-import { useBridge } from "@webview-bridge/vue";
+import { bridge, isReady, useBridge } from "./bridge";
 
 const bridgeStore = useBridge(bridge.store);
 </script>

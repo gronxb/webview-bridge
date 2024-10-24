@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { bridge, isReady } from "./bridge";
-import { useBridge } from "@webview-bridge/vue";
+import { bridge, isReady, useBridge } from "./bridge";
 
 const handleOpenInAppBrowser = () => {
   if (bridge.isNativeMethodAvailable("openInAppBrowser") === true) {
