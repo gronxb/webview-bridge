@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "packages:publish": "pnpm clear && pnpm --filter './packages/**' publish",
-    "build": "nx build && echo 'Build complete'",
+    "build": "nx run-many --target=build --projects=packages/*",
     "test:type": "pnpm -r test:type",
     "docs:build": "pnpm -r docs:build",
     "clear": "rimraf --glob **/dist"
