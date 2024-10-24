@@ -15,8 +15,8 @@
     "dist",
     "package.json"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.cjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
@@ -34,7 +34,7 @@
     "@types/react": "^18.2.69",
     "@types/use-sync-external-store": "^0.0.6",
     "@webview-bridge/web": "workspace:^",
-    "esbuild": "^0.19.4",
+    "@webview-bridge/types": "workspace:^",
     "react": "^18.2.0"
   },
   "dependencies": {

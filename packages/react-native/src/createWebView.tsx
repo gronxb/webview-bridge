@@ -1,3 +1,4 @@
+import { createEvents } from "@webview-bridge/utils";
 import type {
   Bridge,
   BridgeStore,
@@ -6,7 +7,6 @@ import type {
   ParserSchema,
   Primitive,
 } from "@webview-bridge/types";
-import { createEvents } from "@webview-bridge/util";
 import React, {
   forwardRef,
   useEffect,

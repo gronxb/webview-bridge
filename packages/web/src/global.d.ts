@@ -1,4 +1,4 @@
-import type { DefaultEmitter } from "@webview-bridge/util";
+import type { DefaultEmitter } from "@webview-bridge/utils";
 
 import { Primitive } from ".";
 

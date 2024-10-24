@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "jsx": "react-native",
+    "lib": ["esnext", "DOM"],
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "target": "esnext"
+  }
+}

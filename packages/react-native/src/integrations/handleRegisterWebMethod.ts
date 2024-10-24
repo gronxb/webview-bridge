@@ -1,10 +1,5 @@
-import { Bridge } from "@webview-bridge/types";
-import {
-  createRandomId,
-  createResolver,
-  type EventEmitter,
-  timeout,
-} from "@webview-bridge/util";
+import type { Bridge, EventEmitter } from "@webview-bridge/utils";
+import { createRandomId, createResolver, timeout } from "@webview-bridge/utils";
 import WebView from "react-native-webview";
 
 import { WebMethodError } from "../error";

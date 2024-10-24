@@ -32,6 +32,8 @@
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
+    "@webview-bridge/utils": "workspace:^",
+    "@webview-bridge/types": "workspace:^",
     "@types/react": "^18.2.25",
     "@types/use-sync-external-store": "^0.0.6",
     "react": "^18.2.0",

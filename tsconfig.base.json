@@ -1,9 +1,1 @@
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@webview-bridge/util": ["shared/util/src"],
-      "@webview-bridge/types": ["shared/util/src/types"]
-    }
-  }
-}
+{}

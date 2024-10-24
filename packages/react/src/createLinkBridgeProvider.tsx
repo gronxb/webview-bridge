@@ -4,10 +4,10 @@ import type {
   ExcludePrimitive,
   ExtractStore,
   KeyOfOrString,
-  LinkBridgeOptions,
   Parser,
   ParserSchema,
-} from "@webview-bridge/web";
+} from "@webview-bridge/types";
+import type { LinkBridgeOptions } from "@webview-bridge/web";
 import { linkBridge } from "@webview-bridge/web";
 import {
   createContext,

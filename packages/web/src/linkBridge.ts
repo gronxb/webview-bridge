@@ -6,7 +6,7 @@ import type {
   ParserSchema,
   PrimitiveObject,
 } from "@webview-bridge/types";
-import { createEvents } from "@webview-bridge/util";
+import { createEvents } from "@webview-bridge/utils";
 
 import { MethodNotFoundError } from "./error";
 import { BridgeInstance } from "./internal/bridgeInstance";

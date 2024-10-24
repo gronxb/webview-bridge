@@ -6,9 +6,8 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-native",
     "lib": ["esnext"],
-    "module": "CommonJS",
-
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,

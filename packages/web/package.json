@@ -15,8 +15,8 @@
     "dist",
     "package.json"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.cjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
@@ -31,6 +31,7 @@
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
-    "esbuild": "^0.19.4"
+    "@webview-bridge/utils": "workspace:^",
+    "@webview-bridge/types": "workspace:^"
   }
 }

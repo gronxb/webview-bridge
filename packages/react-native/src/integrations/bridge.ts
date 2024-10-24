@@ -1,10 +1,10 @@
+import { equals, removeUndefinedKeys } from "@webview-bridge/utils";
 import type {
   Bridge,
   BridgeStore,
   OnlyJSON,
   Primitive,
 } from "@webview-bridge/types";
-import { equals, removeUndefinedKeys } from "@webview-bridge/util";
 import WebView from "react-native-webview";
 
 export type StoreCallback<T> = ({
