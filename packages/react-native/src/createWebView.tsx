@@ -153,9 +153,9 @@ export const createWebView = <
       eventName: EventName,
       args: Args,
     ) => {
-      let _args = args;
+      let _args: any = args;
       if (postMessageSchema) {
-        _args = postMessageSchema[eventName].parse(args);
+        _args = postMessageSchema[eventName].validate(args);
       }
 
       for (const ref of webviewRefList) {

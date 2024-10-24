@@ -6,14 +6,12 @@ This guide will teach you how to send events from React Native to web and subscr
 
 
 ## Installation
+If you want, additional libraries are needed to define schemas.
 
-You need additional libraries to define schemas.
-Supported schema libraries:
+Suggested schema libraries:
 
 * [zod](https://github.com/colinhacks/zod)
-* [yup](https://github.com/jquense/yup)
-* [superstruct](https://github.com/ianstormtaylor/superstruct)
-
+* [valibot](https://github.com/fabian-hiller/valibot)
 
 Please choose and use the library you prefer.
 
@@ -22,27 +20,15 @@ Follow the guidelines of each library for schema definition.
 ::: code-group
 
 ```sh [npm]
-$ npm add @webview-bridge/web zod
-# or 
-$ npm add @webview-bridge/web yup
-# or 
-$ npm add @webview-bridge/web superstruct
+$ npm add @webview-bridge/web
 ```
 
 ```sh [pnpm]
 $ pnpm add @webview-bridge/web zod
-# or 
-$ pnpm add @webview-bridge/web yup
-# or 
-$ pnpm add @webview-bridge/web superstruct
 ```
 
 ```sh [yarn]
 $ yarn add @webview-bridge/web zod
-# or 
-$ yarn add @webview-bridge/web yup
-# or 
-$ yarn add @webview-bridge/web superstruct
 ```
 
 :::
@@ -60,17 +46,51 @@ Even if you don't define the event schema, you can use postMessage loosely. If t
 
 ::: code-group
 
+```tsx [only type]
+
+import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
+
+const appPostMessageSchema = postMessageSchema({
+  eventName1: {
+    validate: (data) => data as string, // This is not recommended; please use validation libraries like zod or valibot.
+
+  },
+  eventName2: {
+    validate: (value) => data as { message: string },  // This is not recommended; please use validation libraries like zod or valibot.
+  },
+});
+
+// Export the event schema to be used in the web application
+export type AppPostMessageSchema = typeof appPostMessageSchema;
+
+// When you bridge a webview, a postMessage is extracted.
+export const { postMessage } = createWebView({
+  postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
+  // ..
+});
+
+
+// usage
+postMessage("eventName1", "test");
+postMessage("eventName2", {
+  message: "test",
+});
+```
+
 ```tsx [zod]
 import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
 import { z } from "zod";
 
 const appPostMessageSchema = postMessageSchema({
-  eventName1: z.object({
-    message: z.string(),
-  }),
-  eventName2: z.string(),
+  eventName1: {
+    validate: (data) => z.string().parse(data),
+  },
+  eventName2: {
+    validate: (value) => {
+      return z.object({ message: z.string() }).parse(value);
+    },
+  },
 });
-
 
 // Export the event schema to be used in the web application
 export type AppPostMessageSchema = typeof appPostMessageSchema;
@@ -83,21 +103,27 @@ export const { postMessage } = createWebView({
 
 
 // usage
-postMessage("eventName1", {
+postMessage("eventName1", "test");
+postMessage("eventName2", {
   message: "test",
 });
-postMessage("eventName2", "test");
 ```
 
-```tsx [yup]
+```tsx [valibot]
 import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
-import { string, object } from "yup";
+import * as v from "valibot";
 
 const appPostMessageSchema = postMessageSchema({
-  eventName1: object({
-    message: string().required(),
-  }),
-  eventName2: string().required(),
+  eventName1: {
+    validate: (data) => {
+      return v.parse(v.string(), value);
+    }
+  },
+  eventName2: {
+    validate: (value) => {
+      return v.parse(v.object({ message: v.string() }), value);
+    },
+  }
 });
 
 
@@ -109,34 +135,6 @@ export const { postMessage } = createWebView({
   // ..
   postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
 });
-
-// usage
-postMessage("eventName1", {
-  message: "test",
-});
-postMessage("eventName2", "test");
-```
-
-```tsx [superstruct]
-import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
-import { string, object } from "superstruct";
-
-const appPostMessageSchema = postMessageSchema({
-  eventName1: object({
-    message: string(),
-  }),
-  eventName2: string(),
-});
-
-// Export the event schema to be used in the web application
-export type AppPostMessageSchema = typeof appPostMessageSchema;
-
-// When you bridge a webview, a postMessage is extracted.
-export const { postMessage } = createWebView({
-  // ..
-  postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
-});
-
 
 // usage
 postMessage("eventName1", {
