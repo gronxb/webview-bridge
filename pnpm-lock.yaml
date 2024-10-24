@@ -760,8 +760,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
       react-native-webview:
-        specifier: ^13.6.2
-        version: 13.6.2(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0)
+        specifier: ^13.12.0
+        version: 13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0)
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -5262,12 +5262,6 @@ packages:
 
   react-native-webview@13.12.0:
     resolution: {integrity: sha512-4Dg2BiUfbfePAWUzIgB7yZjEQR3u9MxgxeR0sj1E/i7AKWhRfl/WHscXIgejrv6sEieVrEzq+iJlNb0O7Zra4Q==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-
-  react-native-webview@13.6.2:
-    resolution: {integrity: sha512-QzhQ5JCU+Nf2W285DtvCZOVQy/MkJXMwNDYPZvOWQbAOgxJMSSO+BtqXTMA1UPugDsko6PxJ0TxSlUwIwJijDg==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -11737,6 +11731,13 @@ snapshots:
       react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.3.12)(react@18.3.1)
       warn-once: 0.1.1
 
+  react-native-webview@13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      escape-string-regexp: 4.0.0
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0)
+
   react-native-webview@13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.69)(react@18.3.1))(react@18.3.1):
     dependencies:
       escape-string-regexp: 4.0.0
@@ -11750,13 +11751,6 @@ snapshots:
       invariant: 2.2.4
       react: 18.3.1
       react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.3.12)(react@18.3.1)
-
-  react-native-webview@13.6.2(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0):
-    dependencies:
-      escape-string-regexp: 2.0.0
-      invariant: 2.2.4
-      react: 18.2.0
-      react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0)
 
   react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0):
     dependencies:
