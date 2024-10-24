@@ -30,21 +30,14 @@ function App() {
 
   useEffect(() => {
     // Subscribe to events from react native.
-    return bridge.addEventListener("setWebMessage_zod", (message) => {
+    return bridge.addEventListener("setWebMessage_zod", ({message}) => {
       setMessage(message);
     });
   }, []);
 
   useEffect(() => {
     // Subscribe to events from react native.
-    return bridge.addEventListener("setWebMessage_yup", (message) => {
-      setMessage(message);
-    });
-  }, []);
-
-  useEffect(() => {
-    // Subscribe to events from react native.
-    return bridge.addEventListener("setWebMessage_superstruct", (message) => {
+    return bridge.addEventListener("setWebMessage_valibot", ({message}) => {
       setMessage(message);
     });
   }, []);

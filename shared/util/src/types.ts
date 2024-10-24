@@ -1,7 +1,3 @@
-import type { Infer as SupertructInfer, Struct } from "superstruct";
-import type { AnySchema as YupTypeAny, InferType as yupInfer } from "yup";
-import type { infer as zodInfer, ZodTypeAny } from "zod";
-
 export type AsyncFunction = (...args: any[]) => Promise<any>;
 
 export type Primitive = string | number | boolean | null | undefined;
@@ -32,14 +28,15 @@ export type ExcludePrimitive<T> = {
 export type KeyOfOrString<T> = T extends undefined ? string : keyof T;
 
 export type PostMessageSchemaObject = Record<
-  string,
-  ZodTypeAny | YupTypeAny | Struct<any>
+  string | number | symbol,
+  {
+    validate: (value: unknown) => unknown;
+  }
 >;
 
 export type ParserSchema<T = object> = {
   [P in keyof T]: {
-    parse: (data: any) => any;
-    schema: T[P];
+    validate: (data: unknown) => unknown;
   };
 };
 
@@ -49,11 +46,7 @@ export type Parser<
 > = Input extends undefined
   ? Record<string, Primitive> | Primitive
   : EventName extends keyof Input
-  ? Input[EventName]["schema"] extends ZodTypeAny
-    ? zodInfer<Input[EventName]["schema"]>
-    : Input[EventName]["schema"] extends YupTypeAny
-    ? yupInfer<Input[EventName]["schema"]>
-    : Input[EventName]["schema"] extends Struct<any>
-    ? SupertructInfer<Input[EventName]["schema"]>
+  ? Input[EventName]["validate"] extends (data: unknown) => unknown
+    ? ReturnType<Input[EventName]["validate"]>
     : Record<string, Primitive> | Primitive
   : never;

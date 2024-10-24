@@ -14,10 +14,9 @@ import {
   postMessageSchema,
 } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
-import { z } from "zod";
-import * as yup from "yup";
-import * as superstruct from "superstruct";
 
+import { z } from "zod";
+import * as v from "valibot";
 export const appBridge = bridge({
   async getMessage() {
     return "I'm from native" as const;
@@ -30,9 +29,16 @@ export const appBridge = bridge({
 });
 
 export const appSchema = postMessageSchema({
-  setWebMessage_zod: z.string(),
-  setWebMessage_yup: yup.string().required(),
-  setWebMessage_superstruct: superstruct.string(),
+  setWebMessage_zod: {
+    validate: (value) => {
+      return z.object({ message: z.string() }).parse(value);
+    },
+  },
+  setWebMessage_valibot: {
+    validate: (value) => {
+      return v.parse(v.object({ message: v.string() }), value);
+    },
+  },
 });
 
 
@@ -44,6 +50,7 @@ export const { WebView, postMessage } = createWebView({
     console.warn(`Method '${method}' not found in native`);
   },
 });
+
 
 function App(): JSX.Element {
   const webviewRef = React.useRef<BridgeWebView>(null);
@@ -64,17 +71,11 @@ function App(): JSX.Element {
 
       <Button
         title="setWebMessage (zod)"
-        onPress={() => postMessage("setWebMessage_zod", "zod !")}
+        onPress={() => postMessage("setWebMessage_zod", { message: "zod !" })}
       />
       <Button
-        title="setWebMessage (yup)"
-        onPress={() => postMessage("setWebMessage_yup", "yup !")}
-      />
-      <Button
-        title="setWebMessage (superstruct)"
-        onPress={() =>
-          postMessage("setWebMessage_superstruct", "superstruct !")
-        }
+        title="setWebMessage (valibot)" 
+        onPress={() => postMessage("setWebMessage_valibot", { message: "valibot !" })}
       />
     </SafeAreaView>
   );
