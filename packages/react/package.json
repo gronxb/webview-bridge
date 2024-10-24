@@ -15,19 +15,19 @@
     "dist",
     "package.json"
   ],
-  "main": "dist/commonjs/index.cjs",
-  "module": "dist/module/index.mjs",
-  "types": "dist/typescript/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/typescript/index.d.ts",
-      "import": "./dist/module/index.mjs",
-      "require": "./dist/commonjs/index.cjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.cjs",
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
     "prepare": "pnpm build",
-    "build": "node esbuild.config.js && tspc --emitDeclarationOnly",
+    "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
