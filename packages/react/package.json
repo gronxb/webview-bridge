@@ -26,14 +26,13 @@
     }
   },
   "scripts": {
-    "prepare": "pnpm build",
     "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/react": "^18.2.69",
     "@types/use-sync-external-store": "^0.0.6",
-    "@webview-bridge/web": "workspace:^",
+    "@webview-bridge/web": "1.6.2",
     "react": "^18.2.0"
   },
   "dependencies": {

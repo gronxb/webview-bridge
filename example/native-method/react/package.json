@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@webview-bridge/web": "workspace:^",
+    "@webview-bridge/web": "1.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

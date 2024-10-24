@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@webview-bridge/web": "workspace:^"
+    "@webview-bridge/web": "1.6.2"
   },
   "devDependencies": {
     "typescript": "^5.6.2",

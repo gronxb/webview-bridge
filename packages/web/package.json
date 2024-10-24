@@ -26,7 +26,6 @@
     }
   },
   "scripts": {
-    "prepare": "pnpm build",
     "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit"
   },

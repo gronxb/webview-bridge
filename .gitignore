@@ -67,3 +67,7 @@ cache
 temp
 
 *.tsbuildinfo
+
+
+.nx/cache
+.nx/workspace-data

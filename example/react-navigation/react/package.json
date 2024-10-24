@@ -12,7 +12,7 @@
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "@webview-bridge/web": "workspace:^"
+    "@webview-bridge/web": "1.6.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
