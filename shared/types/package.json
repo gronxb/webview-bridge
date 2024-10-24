@@ -27,5 +27,8 @@
   "scripts": {
     "build": "tsup src/index.ts --dts",
     "test:type": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.9"
   }
 }

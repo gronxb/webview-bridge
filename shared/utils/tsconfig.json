@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
-    "jsx": "react-native",
+    "jsx": "preserve",
     "lib": ["esnext", "DOM"],
+    "skipLibCheck": true,
     "module": "esnext",
     "moduleResolution": "Bundler",
     "strict": true,
     "target": "esnext"
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
