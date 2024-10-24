@@ -1,9 +1,9 @@
-import { Bridge, BridgeStore, OnlyJSON } from "@webview-bridge/types";
+import type { Bridge, BridgeStore, OnlyJSON } from "@webview-bridge/types";
 import {
   DefaultEmitter,
   equals,
   removeUndefinedKeys,
-} from "@webview-bridge/util";
+} from "@webview-bridge/utils";
 
 export type Store<BridgeObject extends Bridge> = ({
   get,

@@ -3,8 +3,17 @@
   "version": "1.6.2",
   "type": "module",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
-  "main": "dist/packages/react-native/src/index.js",
-  "types": "dist/packages/react-native/src/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.cjs",
+  "types": "dist/index.d.ts",
+  "react-native": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -18,8 +27,7 @@
     "package.json"
   ],
   "scripts": {
-    "prepare": "pnpm build",
-    "build": "tspc",
+    "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit"
   },
   "devDependencies": {
@@ -27,13 +35,15 @@
     "@types/use-sync-external-store": "^0.0.6",
     "react": "^18.2.0",
     "react-native-webview": "^13.12.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.6.2"
   },
   "peerDependencies": {
     "react": "*",
     "react-native-webview": "*"
   },
   "dependencies": {
+    "@webview-bridge/utils": "1.6.2",
+    "@webview-bridge/types": "1.6.2",
     "use-sync-external-store": "^1.2.0"
   }
 }

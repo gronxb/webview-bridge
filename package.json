@@ -6,19 +6,18 @@
   "main": "index.js",
   "scripts": {
     "packages:publish": "pnpm clear && pnpm --filter './packages/**' publish",
-    "build": "pnpm -r build",
-    "test:type": "pnpm -r test:type",
-    "docs:build": "pnpm -r docs:build",
+    "build": "nx run-many --target=build --projects=packages/*",
+    "test:type": "nx run-many --target=test:type --all",
+    "docs:build": "nx docs:build @webview-bridge/docs",
     "clear": "rimraf --glob **/dist"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@babel/runtime": "^7.20.0",
+    "@babel/runtime": "^7.25.0",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
-    "esbuild": "^0.19.4",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -26,9 +25,18 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
-    "ts-patch": "^3.0.2",
-    "typescript": "^5.2.2",
-    "typescript-transform-paths": "^3.4.6"
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2",
+    "nx": "20.0.5"
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.12.2",
+  "pnpm": {
+    "overrides": {
+      "@webview-bridge/types": "workspace:*",
+      "@webview-bridge/utils": "workspace:*",
+      "@webview-bridge/web": "workspace:*",
+      "@webview-bridge/react": "workspace:*",
+      "@webview-bridge/react-native": "workspace:*"
+    }
+  }
 }

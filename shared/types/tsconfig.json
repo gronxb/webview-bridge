@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext", "DOM"],
+    "module": "esnext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "target": "esnext"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

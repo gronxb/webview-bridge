@@ -3,12 +3,11 @@
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "declaration": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "outDir": "dist/typescript",
 
     /* Linting */
     "strict": true,

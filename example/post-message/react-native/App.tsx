@@ -17,6 +17,7 @@ import InAppBrowser from "react-native-inappbrowser-reborn";
 
 import { z } from "zod";
 import * as v from "valibot";
+
 export const appBridge = bridge({
   async getMessage() {
     return "I'm from native" as const;
