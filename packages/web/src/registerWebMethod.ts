@@ -1,4 +1,4 @@
-import { createEvents } from "@webview-bridge/utils";
+import { createEvents } from "../../utils/dist";
 
 import type { WebBridge } from "./types";
 

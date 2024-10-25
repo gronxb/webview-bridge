@@ -3,7 +3,7 @@ import {
   DefaultEmitter,
   equals,
   removeUndefinedKeys,
-} from "@webview-bridge/utils";
+} from "../../../utils/dist";
 
 export type Store<BridgeObject extends Bridge> = ({
   get,
