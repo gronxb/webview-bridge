@@ -13,6 +13,7 @@ If the files in `packages/*` have changed, you will need to do `pnpm -w build`.
 ```sh
 $ corepack enable
 $ pnpm install
+$ pnpm build:dev
 ```
 
 ## React Native (iOS) Start

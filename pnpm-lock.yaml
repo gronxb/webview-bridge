@@ -730,7 +730,7 @@ importers:
     dependencies:
       '@webview-bridge/types':
         specifier: workspace:*
-        version: link:../../shared/types
+        version: link:../types
       use-sync-external-store:
         specifier: ^1.2.2
         version: 1.2.2(react@18.2.0)
@@ -752,10 +752,10 @@ importers:
     dependencies:
       '@webview-bridge/types':
         specifier: workspace:*
-        version: link:../../shared/types
+        version: link:../types
       '@webview-bridge/utils':
         specifier: workspace:*
-        version: link:../../shared/utils
+        version: link:../utils
       use-sync-external-store:
         specifier: ^1.2.0
         version: 1.2.0(react@18.2.0)
@@ -776,26 +776,26 @@ importers:
         specifier: ^5.6.2
         version: 5.6.3
 
+  packages/types:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.9
+        version: 22.7.9
+
+  packages/utils:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.7.9
+        version: 22.7.9
+
   packages/web:
     dependencies:
       '@webview-bridge/types':
         specifier: workspace:*
-        version: link:../../shared/types
+        version: link:../types
       '@webview-bridge/utils':
         specifier: workspace:*
-        version: link:../../shared/utils
-
-  shared/types:
-    devDependencies:
-      '@types/node':
-        specifier: ^22.7.9
-        version: 22.7.9
-
-  shared/utils:
-    devDependencies:
-      '@types/node':
-        specifier: ^22.7.9
-        version: 22.7.9
+        version: link:../utils
 
 packages:
 

@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "packages:publish": "pnpm clear && pnpm --filter './packages/**' publish",
-    "build": "nx run-many --target=build --projects=packages/*",
+    "build": "nx run-many --target=build --projects=packages/*,shared/*",
+    "build:dev": "nx run-many --target=build --projects=packages/*,shared/* --watch",
     "test:type": "nx run-many --target=test:type --all",
     "docs:build": "nx docs:build @webview-bridge/docs",
     "clear": "rimraf --glob **/dist"
