@@ -12,7 +12,8 @@
     "docs:build": "nx docs:build @webview-bridge/docs",
     "clear": "rimraf --glob **/dist",
     "release:test": "nx release --dry-run",
-    "release": "pnpm clear && pnpm build && nx release"
+    "release": "pnpm clear && pnpm build && nx release",
+    "release:rc": "pnpm clear && pnpm build && nx release --git-tag rc"
   },
   "keywords": [],
   "author": "",
