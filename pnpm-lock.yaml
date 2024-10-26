@@ -733,7 +733,7 @@ importers:
         version: link:../types
       use-sync-external-store:
         specifier: ^1.2.2
-        version: 1.2.2(react@18.2.0)
+        version: 1.2.2(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.2.69
@@ -745,8 +745,8 @@ importers:
         specifier: workspace:*
         version: link:../web
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
 
   packages/react-native:
     dependencies:
@@ -758,7 +758,7 @@ importers:
         version: link:../utils
       use-sync-external-store:
         specifier: ^1.2.0
-        version: 1.2.0(react@18.2.0)
+        version: 1.2.0(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.2.25
@@ -767,11 +767,11 @@ importers:
         specifier: ^0.0.6
         version: 0.0.6
       react:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-native-webview:
         specifier: ^13.12.0
-        version: 13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0)
+        version: 13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1))(react@18.3.1)
       typescript:
         specifier: ^5.6.2
         version: 5.6.3
@@ -5587,10 +5587,6 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  react@18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
-    engines: {node: '>=0.10.0'}
-
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
@@ -8529,12 +8525,12 @@ snapshots:
 
   '@react-native/typescript-config@0.76.0': {}
 
-  '@react-native/virtualized-lists@0.76.0(@types/react@18.2.25)(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0)':
+  '@react-native/virtualized-lists@0.76.0(@types/react@18.2.25)(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1))(react@18.3.1)':
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react: 18.2.0
-      react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0)
+      react: 18.3.1
+      react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.2.25
 
@@ -12329,12 +12325,12 @@ snapshots:
       react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.3.12)(react@18.3.1)
       warn-once: 0.1.1
 
-  react-native-webview@13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0):
+  react-native-webview@13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1))(react@18.3.1):
     dependencies:
       escape-string-regexp: 4.0.0
       invariant: 2.2.4
-      react: 18.2.0
-      react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0)
+      react: 18.3.1
+      react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1)
 
   react-native-webview@13.12.0(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.69)(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -12350,7 +12346,7 @@ snapshots:
       react: 18.3.1
       react-native: 0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.3.12)(react@18.3.1)
 
-  react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0):
+  react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.76.0
@@ -12359,7 +12355,7 @@ snapshots:
       '@react-native/gradle-plugin': 0.76.0
       '@react-native/js-polyfills': 0.76.0
       '@react-native/normalize-colors': 0.76.0
-      '@react-native/virtualized-lists': 0.76.0(@types/react@18.2.25)(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.2.0))(react@18.2.0)
+      '@react-native/virtualized-lists': 0.76.0(@types/react@18.2.25)(react-native@0.76.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@react-native-community/cli-server-api@13.6.9)(@types/react@18.2.25)(react@18.3.1))(react@18.3.1)
       abort-controller: 3.0.0
       anser: 1.4.10
       ansi-regex: 5.0.1
@@ -12381,7 +12377,7 @@ snapshots:
       nullthrows: 1.1.1
       pretty-format: 29.7.0
       promise: 8.3.0
-      react: 18.2.0
+      react: 18.3.1
       react-devtools-core: 5.3.2
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
@@ -12522,10 +12518,6 @@ snapshots:
       react-is: 18.3.1
       react-shallow-renderer: 16.15.0(react@18.3.1)
       scheduler: 0.23.2
-
-  react@18.2.0:
-    dependencies:
-      loose-envify: 1.4.0
 
   react@18.3.1:
     dependencies:
@@ -13257,13 +13249,13 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  use-sync-external-store@1.2.0(react@18.2.0):
+  use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
-  use-sync-external-store@1.2.2(react@18.2.0):
+  use-sync-external-store@1.2.2(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
   util-deprecate@1.0.2: {}
 
