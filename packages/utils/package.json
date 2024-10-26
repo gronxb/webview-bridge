@@ -4,6 +4,7 @@
   "version": "1.7.0-rc.0",
   "files": [
     "dist",
+    "src",
     "package.json"
   ],
   "react-native": "src/index.ts",
