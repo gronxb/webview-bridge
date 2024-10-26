@@ -12,7 +12,7 @@ import {
   createResolver,
   DefaultEmitter,
   timeout,
-} from "../../../utils/dist";
+} from "@webview-bridge/utils";
 
 import { NativeMethodError } from "../error";
 import { LinkBridgeOptions } from "../linkBridge";
