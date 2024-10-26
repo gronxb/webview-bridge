@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/web",
   "type": "module",
-  "version": "1.7.0-rc.0",
+  "version": "1.7.0-rc.1",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"
@@ -30,7 +30,7 @@
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
-    "@webview-bridge/utils": "1.7.0-rc.0",
-    "@webview-bridge/types": "1.7.0-rc.0"
+    "@webview-bridge/utils": "1.7.0-rc.1",
+    "@webview-bridge/types": "1.7.0-rc.1"
   }
 }

@@ -1,3 +1,13 @@
+## 1.7.0-rc.1 (2024-10-26)
+
+### 🩹 Fixes
+
+- files ([bae47e3](https://github.com/gronxb/webview-bridge/commit/bae47e3))
+
+### ❤️  Thank You
+
+- Sungyu Kang @gronxb
+
 ## 1.7.0-rc.0 (2024-10-26)
 
 ### 🚀 Features

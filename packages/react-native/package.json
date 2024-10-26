@@ -1,6 +1,6 @@
 {
   "name": "@webview-bridge/react-native",
-  "version": "1.7.0-rc.0",
+  "version": "1.7.0-rc.1",
   "type": "module",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "main": "dist/index.js",
@@ -43,8 +43,8 @@
     "react-native-webview": "*"
   },
   "dependencies": {
-    "@webview-bridge/utils": "1.7.0-rc.0",
-    "@webview-bridge/types": "1.7.0-rc.0",
+    "@webview-bridge/utils": "1.7.0-rc.1",
+    "@webview-bridge/types": "1.7.0-rc.1",
     "use-sync-external-store": "^1.2.0"
   }
 }

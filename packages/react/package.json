@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/react",
   "type": "module",
-  "version": "1.7.0-rc.0",
+  "version": "1.7.0-rc.1",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"
@@ -32,11 +32,11 @@
   "devDependencies": {
     "@types/react": "^18.2.69",
     "@types/use-sync-external-store": "^0.0.6",
-    "@webview-bridge/web": "1.7.0-rc.0",
+    "@webview-bridge/web": "1.7.0-rc.1",
     "react": "^18.3.1"
   },
   "dependencies": {
-    "@webview-bridge/types": "1.7.0-rc.0",
+    "@webview-bridge/types": "1.7.0-rc.1",
     "use-sync-external-store": "^1.2.2"
   },
   "peerDependencies": {
