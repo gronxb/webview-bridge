@@ -1,24 +1,19 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "release": {
+    "projects": ["*", "!@webview-bridge/docs", "!example/**/*"]
+  },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ],
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"],
       "cache": true
     },
     "test": {
-      "dependsOn": [
-        "^test"
-      ]
+      "dependsOn": ["^test"]
     },
     "test:type": {
-      "dependsOn": [
-        "^test:type"
-      ]
+      "dependsOn": ["^test:type"]
     }
   },
   "defaultBase": "main"

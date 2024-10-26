@@ -10,7 +10,9 @@
     "build:dev": "nx run-many --target=build --projects=packages/* --watch",
     "test:type": "nx run-many --target=test:type --all",
     "docs:build": "nx docs:build @webview-bridge/docs",
-    "clear": "rimraf --glob **/dist"
+    "clear": "rimraf --glob **/dist",
+    "release:test": "nx release --dry-run",
+    "release": "pnpm clear && pnpm build && nx release"
   },
   "keywords": [],
   "author": "",
