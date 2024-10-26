@@ -1,3 +1,7 @@
+## 1.7.0 (2024-10-26)
+
+This was a version bump only, there were no code changes.
+
 ## 1.7.0-rc.1 (2024-10-26)
 
 ### 🩹 Fixes
