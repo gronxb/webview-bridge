@@ -1,3 +1,13 @@
+## 1.7.1 (2024-10-28)
+
+### 🚀 Features
+
+- **react-native:** postMessage broadcast options ([#75](https://github.com/gronxb/webview-bridge/pull/75))
+
+### ❤️  Thank You
+
+- Sungyu Kang @gronxb
+
 ## 1.7.0 (2024-10-26)
 
 This was a version bump only, there were no code changes.
