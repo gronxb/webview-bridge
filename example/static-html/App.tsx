@@ -105,7 +105,7 @@ function App(): JSX.Element {
             ? {
                 uri: 'http://localhost:5173',
               }
-            : require('./web/index.html')
+            : require('./web/dist/index.html')
         }
         style={{height: '50%', width: '100%'}}
       />
