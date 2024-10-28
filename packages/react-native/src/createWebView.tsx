@@ -166,19 +166,19 @@ export const createWebView = <
       if (postMessageSchema) {
         _args = postMessageSchema[eventName].validate(args);
       }
-
       if (options.broadcast) {
         for (const ref of webviewRefList) {
           ref?.current?.injectJavaScript(
             SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
           );
         }
-      } else {
-        const lastRef = webviewRefList[webviewRefList.length - 1];
-        lastRef?.current?.injectJavaScript(
-          SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
-        );
+        return;
       }
+
+      const lastRef = webviewRefList[webviewRefList.length - 1];
+      lastRef?.current?.injectJavaScript(
+        SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+      );
     },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
       const webviewRef = useRef<WebView>(null);
