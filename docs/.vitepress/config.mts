@@ -125,6 +125,10 @@ export default defineConfig({
             ],
           },
           {
+            text: "Static HTML",
+            link: "/static-html",
+          },
+          {
             text: "SSR",
             base: "/ssr",
             items: [
