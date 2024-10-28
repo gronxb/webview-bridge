@@ -179,11 +179,12 @@ Due to React Navigation and other factors, there can be multiple instances of a 
 
 To send a message to all WebView instances:
 ```ts
-postMessage(..., ..., { broadcast: true }); // Default is true
+postMessage(..., ...); // Default is true
+// or
+postMessage(..., ..., { broadcast: true });
 ```
 
 To send a message only to the last WebView instance:
-postMessage(..., ..., { broadcast: false }); // Default is false
+```ts
+postMessage(..., ..., { broadcast: false });
 ```
-
-This structure makes it clear and concise for developers to understand the usage of the broadcast option. Let me know if you’d like further adjustments!
