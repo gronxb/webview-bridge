@@ -152,14 +152,34 @@ export const createWebView = <
     >(
       eventName: EventName,
       args: Args,
+      options: {
+        /**
+         * If `true`, the message will be broadcasted to all webviews.
+         * @default true
+         */
+        broadcast: boolean;
+        /**
+         * The id of the target webview.
+         */
+        targetWebviewId?: string;
+      } = {
+        broadcast: true,
+      },
     ) => {
       let _args: any = args;
       if (postMessageSchema) {
         _args = postMessageSchema[eventName].validate(args);
       }
 
-      for (const ref of webviewRefList) {
-        ref?.current?.injectJavaScript(
+      if (options.broadcast) {
+        for (const ref of webviewRefList) {
+          ref?.current?.injectJavaScript(
+            SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+          );
+        }
+      } else {
+        const lastRef = webviewRefList[webviewRefList.length - 1];
+        lastRef?.current?.injectJavaScript(
           SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
         );
       }
