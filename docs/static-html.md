@@ -103,6 +103,8 @@ export default defineConfig({
 }
 ```
 
+During development, use `dev:web`, and before deploying to production, generate static HTML code with `build:web`.
+
 ## Setting Up the Bridge
 
 ### React Native Part
