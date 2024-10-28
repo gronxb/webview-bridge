@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:type": "tsc --noEmit"
   },
   "dependencies": {
     "@webview-bridge/web": "1.7.1"
