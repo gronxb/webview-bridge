@@ -4,7 +4,7 @@
  *
  * @format
  */
-
+import html from './web/dist.ts';
 import React from 'react';
 import {Button, Text, SafeAreaView, TextInput, View} from 'react-native';
 import {
@@ -105,7 +105,9 @@ function App(): JSX.Element {
             ? {
                 uri: 'http://localhost:5173',
               }
-            : require('./web/dist/index.html')
+            : {
+                html,
+              }
         }
         style={{height: '50%', width: '100%'}}
       />
@@ -117,7 +119,7 @@ function App(): JSX.Element {
           height: '50%',
         }}>
         <Text style={{fontSize: 20, fontWeight: '700', marginBottom: 10}}>
-          This is Native
+          This is Native {__DEV__ ? 'DEV' : 'PROD'}
         </Text>
 
         <Count />

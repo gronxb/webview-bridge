@@ -831,6 +831,9 @@ importers:
       typescript:
         specifier: ^5.6.2
         version: 5.6.3
+      vite-plugin-html-stringify:
+        specifier: ^0.1.1
+        version: 0.1.1
       vite-plugin-singlefile:
         specifier: ^2.0.2
         version: 2.0.2(rollup@4.24.0)(vite@5.4.10(@types/node@22.7.9)(terser@5.31.3))
@@ -6628,6 +6631,9 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  vite-plugin-html-stringify@0.1.1:
+    resolution: {integrity: sha512-LG8lT+0T8+1LoVbx7hKSjhcNxUQi3cqggQctkI3DUzKLuGvpzMu+1AXqSvCSzvONFuubBkPtUn1nLFpSPKADfg==}
 
   vite-plugin-singlefile@2.0.2:
     resolution: {integrity: sha512-Z2ou6HcvED5CF0hM+vcFSaFa+klyS8RyyLxW0PbMRLnMbvzTI6ueWyxdYNFhpuXZgz/aj6+E/dHFTdEcw6gb9w==}
@@ -13911,6 +13917,8 @@ snapshots:
   validate-npm-package-name@5.0.1: {}
 
   vary@1.1.2: {}
+
+  vite-plugin-html-stringify@0.1.1: {}
 
   vite-plugin-singlefile@2.0.2(rollup@4.24.0)(vite@5.4.10(@types/node@22.7.9)(terser@5.31.3)):
     dependencies:
