@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@webview-bridge/web": "1.6.2",
+    "@webview-bridge/web": "1.7.1",
     "vue": "^3.5.12"
   },
   "devDependencies": {
