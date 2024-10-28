@@ -171,3 +171,19 @@ const unsubscribe2 = bridge.addEventListener("eventName2", (message) => {
 });
 unsubscribe2(); // Unsubscribe from the event
 ```
+
+
+# Broadcast
+
+Due to React Navigation and other factors, there can be multiple instances of a WebView. Sometimes, you may want to send messages to all WebView instances, while at other times, you may only want to target the last WebView instance (e.g., the top of the React Navigation stack).
+
+To send a message to all WebView instances:
+```ts
+postMessage(..., ..., { broadcast: true }); // Default is true
+```
+
+To send a message only to the last WebView instance:
+postMessage(..., ..., { broadcast: false }); // Default is false
+```
+
+This structure makes it clear and concise for developers to understand the usage of the broadcast option. Let me know if you’d like further adjustments!

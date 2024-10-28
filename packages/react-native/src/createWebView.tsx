@@ -158,10 +158,6 @@ export const createWebView = <
          * @default true
          */
         broadcast: boolean;
-        /**
-         * The id of the target webview.
-         */
-        targetWebviewId?: string;
       } = {
         broadcast: true,
       },
