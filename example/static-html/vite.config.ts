@@ -12,7 +12,7 @@ export default defineConfig({
       removeViteModuleLoader: true,
     }),
     viteHtmlStringify({
-      output: './web/dist.ts',
+      output: './web/html.ts',
     }),
   ],
 });

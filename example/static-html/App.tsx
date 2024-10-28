@@ -4,7 +4,7 @@
  *
  * @format
  */
-import html from './web/dist.ts';
+import html from './web/html.ts';
 import React from 'react';
 import {Button, Text, SafeAreaView, TextInput, View} from 'react-native';
 import {
