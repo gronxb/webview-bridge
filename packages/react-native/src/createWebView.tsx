@@ -155,7 +155,7 @@ export const createWebView = <
       options: {
         /**
          * If `true`, the message will be broadcasted to all webviews.
-         * @default true
+         * @default false
          */
         broadcast: boolean;
       } = {

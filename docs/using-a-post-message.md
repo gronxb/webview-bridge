@@ -179,12 +179,12 @@ Due to React Navigation and other factors, there can be multiple instances of a 
 
 To send a message to all WebView instances:
 ```ts
-postMessage(..., ...); // Default is true
-// or
 postMessage(..., ..., { broadcast: true });
 ```
 
 To send a message only to the last WebView instance:
 ```ts
+postMessage(..., ...); // @default false
+// or 
 postMessage(..., ..., { broadcast: false });
 ```
