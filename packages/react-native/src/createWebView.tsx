@@ -159,7 +159,7 @@ export const createWebView = <
          */
         broadcast: boolean;
       } = {
-        broadcast: true,
+        broadcast: false,
       },
     ) => {
       let _args: any = args;
