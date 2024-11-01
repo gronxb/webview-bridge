@@ -45,6 +45,6 @@
   "dependencies": {
     "@webview-bridge/utils": "1.7.1",
     "@webview-bridge/types": "1.7.1",
-    "use-sync-external-store": "^1.2.0"
+    "use-sync-external-store": "^1.2.2"
   }
 }

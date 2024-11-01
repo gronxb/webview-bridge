@@ -872,8 +872,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.2.0(react@18.3.1)
+        specifier: ^1.2.2
+        version: 1.2.2(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.2.25
@@ -6594,11 +6594,6 @@ packages:
     resolution: {integrity: sha512-QWlq8Is8BGWBf883QOEQP5HWYX/kMI+JTbJ5rdtvJLmXTIh9XoHIO3PQcmQl8BU44VKxow1kbQUHa6mQSMALDQ==}
     peerDependencies:
       react: '>=16.8'
-
-  use-sync-external-store@1.2.0:
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   use-sync-external-store@1.2.2:
     resolution: {integrity: sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==}
@@ -13890,10 +13885,6 @@ snapshots:
       punycode: 2.3.0
 
   use-latest-callback@0.2.1(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-
-  use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
