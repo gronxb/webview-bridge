@@ -2,8 +2,6 @@
   "name": "@webview-bridge/root",
   "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "packages:publish": "pnpm clear && pnpm --filter './packages/**' publish",
     "build": "nx run-many --target=build --projects=packages/*",
