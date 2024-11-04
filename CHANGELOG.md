@@ -1,3 +1,13 @@
+## 1.7.2 (2024-11-04)
+
+### 🩹 Fixes
+
+- correct module and main entry points in package.json ([79510ad](https://github.com/gronxb/webview-bridge/commit/79510ad))
+
+### ❤️  Thank You
+
+- Sungyu Kang @gronxb
+
 ## 1.7.1 (2024-10-28)
 
 ### 🚀 Features
