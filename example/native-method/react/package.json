@@ -11,7 +11,7 @@
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
-    "@webview-bridge/web": "1.7.1",
+    "@webview-bridge/web": "1.7.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
