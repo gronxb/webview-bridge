@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "release": {
-    "projects": ["*", "!@webview-bridge/docs", "!example/**/*"]
+    "projects": ["*", "!@webview-bridge/docs"]
   },
   "targetDefaults": {
     "build": {
