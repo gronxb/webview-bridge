@@ -130,13 +130,14 @@ export const createWebView = <
     },
   };
 
+  let bridgeId: string;
   const webviewRefList: React.RefObject<BridgeWebView>[] = [];
   const emitter = createEvents();
 
   bridge.subscribe((state) => {
     for (const ref of webviewRefList) {
       ref?.current?.injectJavaScript(
-        SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
+        SAFE_NATIVE_EMITTER_EMIT(bridgeId, "bridgeStateChange", state),
       );
     }
   });
@@ -169,7 +170,7 @@ export const createWebView = <
       if (options.broadcast) {
         for (const ref of webviewRefList) {
           ref?.current?.injectJavaScript(
-            SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+            SAFE_NATIVE_EMITTER_EMIT(bridgeId, `postMessage/${String(eventName)}`, _args),
           );
         }
         return;
@@ -177,7 +178,7 @@ export const createWebView = <
 
       const lastRef = webviewRefList[webviewRefList.length - 1];
       lastRef?.current?.injectJavaScript(
-        SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+        SAFE_NATIVE_EMITTER_EMIT(bridgeId, `postMessage/${String(eventName)}`, _args),
       );
     },
     WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
@@ -203,8 +204,9 @@ export const createWebView = <
       }, []);
 
       useEffect(() => {
+        // lazy initialize the bridgeId
         webviewRef.current?.injectJavaScript(
-          SAFE_NATIVE_EMITTER_EMIT("hydrate", initData),
+          SAFE_NATIVE_EMITTER_EMIT(bridgeId, "hydrate", initData),
         );
       }, [initData]);
 
@@ -227,6 +229,13 @@ export const createWebView = <
             debug && handleLog(method, args);
             return;
           }
+          case "registerBridgeId": {
+            bridgeId = (body as {
+              bridgeId: 
+              string;
+            }).bridgeId;
+            return;
+          }
           case "bridge": {
             const { method, args, eventId } = body as {
               method: string;
@@ -235,6 +244,7 @@ export const createWebView = <
             };
 
             handleBridge({
+              bridgeId,
               bridge,
               method,
               args,
@@ -247,6 +257,7 @@ export const createWebView = <
             for (const ref of webviewRefList) {
               ref?.current?.injectJavaScript(
                 SAFE_NATIVE_EMITTER_EMIT(
+                  bridgeId,
                   "bridgeStateChange",
                   bridge.getState(),
                 ),

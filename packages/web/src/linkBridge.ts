@@ -6,7 +6,7 @@ import type {
   ParserSchema,
   PrimitiveObject,
 } from "@webview-bridge/types";
-import { createEvents } from "@webview-bridge/utils";
+import { createEvents, createRandomId } from "@webview-bridge/utils";
 
 import { MethodNotFoundError } from "./error";
 import { BridgeInstance } from "./internal/bridgeInstance";
@@ -92,15 +92,20 @@ export const linkBridge = <
     console.warn("[WebViewBridge] Not in a WebView environment");
   }
 
+  const bridgeId = createRandomId();
   const emitter = createEvents();
   if (!window.nativeEmitter) {
-    window.nativeEmitter = emitter;
+    window.nativeEmitter = {
+      ...(window.nativeEmitter || {}),
+      [bridgeId]: emitter,
+    };
   }
 
   const bridgeMethods = window.__bridgeMethods__ ?? [];
   const nativeInitialState = window.__bridgeInitialState__ ?? {};
 
   const instance = new BridgeInstance(
+    bridgeId,
     options,
     emitter,
     bridgeMethods,

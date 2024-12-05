@@ -69,6 +69,7 @@ type HandleBridgeArgs<ArgType = unknown> = {
   args?: ArgType[];
   webview: WebView;
   eventId: string;
+  bridgeId: string;
 };
 
 export const handleBridge = async ({
@@ -77,12 +78,13 @@ export const handleBridge = async ({
   args,
   webview,
   eventId,
+  bridgeId,
 }: HandleBridgeArgs) => {
   const _bridge = bridge.getState();
 
   const _method = _bridge[method];
   const handleThrow = () => {
-    webview.injectJavaScript(SAFE_NATIVE_EMITTER_THROW(`${method}-${eventId}`));
+    webview.injectJavaScript(SAFE_NATIVE_EMITTER_THROW(bridgeId, `${method}-${eventId}`));
   };
   if (!(method in _bridge)) {
     handleThrow();
@@ -96,7 +98,7 @@ export const handleBridge = async ({
     const response = await _method?.(...(args ?? []));
 
     webview.injectJavaScript(
-      SAFE_NATIVE_EMITTER_EMIT(`${method}-${eventId}`, response),
+      SAFE_NATIVE_EMITTER_EMIT(bridgeId, `${method}-${eventId}`, response),
     );
   } catch (error) {
     handleThrow();
@@ -114,11 +116,11 @@ export const INJECT_BRIDGE_STATE = (
     window.__bridgeInitialState__ = ${JSON.stringify(initialState)};
 `;
 
-export const SAFE_NATIVE_EMITTER_EMIT = (eventName: string, data: unknown) => {
+export const SAFE_NATIVE_EMITTER_EMIT = (bridgeId: string, eventName: string, data: unknown) => {
   const dataString = JSON.stringify(data);
   return `
-if (window.nativeEmitter) {
-  window.nativeEmitter.emit('${eventName}', ${dataString});
+if (window.nativeEmitter['${bridgeId}']) {
+  window.nativeEmitter['${bridgeId}'].emit('${eventName}', ${dataString});
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
   window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
@@ -127,9 +129,9 @@ true;
 `;
 };
 
-export const SAFE_NATIVE_EMITTER_THROW = (eventName: string) => `
-if (window.nativeEmitter) {
-  window.nativeEmitter.emit('${eventName}', {}, true);
+export const SAFE_NATIVE_EMITTER_THROW = (bridgeId: string, eventName: string) => `
+if (window.nativeEmitter['${bridgeId}']) {
+  window.nativeEmitter['${bridgeId}'].emit('${eventName}', {}, true);
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
   window.nativeBatchedEvents.push(['${eventName}', {}, true]);

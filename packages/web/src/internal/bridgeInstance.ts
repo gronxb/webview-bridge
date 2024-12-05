@@ -26,6 +26,7 @@ export class BridgeInstance<
   V extends ParserSchema<any> = ParserSchema<any>,
 > {
   constructor(
+    private _bridgeId: string,
     private _options: LinkBridgeOptions<T, V>,
 
     private _emitter: DefaultEmitter,
@@ -154,6 +155,10 @@ export class BridgeInstance<
     bridgeMethods: string[],
     nativeInitialState: PrimitiveObject = {},
   ) {
+    this._postMessage("registerBridgeId", {
+      bridgeId: this._bridgeId,
+    });
+
     const {
       timeout: timeoutMs = this._defaultTimeoutMs,
       onFallback,
