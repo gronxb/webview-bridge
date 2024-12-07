@@ -6,12 +6,12 @@ import type {
   ParserSchema,
   PrimitiveObject,
 } from "@webview-bridge/types";
-import { createEvents } from "@webview-bridge/utils";
+import { createEvents, createRandomId } from "@webview-bridge/utils";
 
 import { MethodNotFoundError } from "./error";
 import { BridgeInstance } from "./internal/bridgeInstance";
 import { mockStore } from "./internal/mockStore";
-import { LinkBridge } from "./types";
+import type { LinkBridge } from "./types";
 
 export interface LinkBridgeOptions<
   T extends BridgeStore<T extends Bridge ? T : any>,
@@ -92,15 +92,19 @@ export const linkBridge = <
     console.warn("[WebViewBridge] Not in a WebView environment");
   }
 
+  const bridgeId = createRandomId();
   const emitter = createEvents();
-  if (!window.nativeEmitter) {
-    window.nativeEmitter = emitter;
-  }
+
+  window.nativeEmitter = {
+    ...(window.nativeEmitter || {}),
+    [bridgeId]: emitter,
+  };
 
   const bridgeMethods = window.__bridgeMethods__ ?? [];
   const nativeInitialState = window.__bridgeInitialState__ ?? {};
 
   const instance = new BridgeInstance(
+    bridgeId,
     options,
     emitter,
     bridgeMethods,
@@ -134,11 +138,11 @@ export const linkBridge = <
           onFallback?.(methodName, args);
           return Promise.reject(new MethodNotFoundError(methodName));
         };
-      } else {
-        console.warn(
-          `[WebViewBridge] ${methodName} is not defined, using fallback.`,
-        );
       }
+
+      console.warn(
+        `[WebViewBridge] ${methodName} is not defined, using fallback.`,
+      );
       return () => Promise.resolve();
     },
   }) as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;

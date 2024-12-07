@@ -7,7 +7,8 @@ import type {
   Primitive,
 } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/utils";
-import React, {
+import type React from "react";
+import {
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -19,12 +20,12 @@ import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
 
 import {
-  handleBridge,
   INJECT_BRIDGE_METHODS,
   INJECT_BRIDGE_STATE,
   SAFE_NATIVE_EMITTER_EMIT,
+  handleBridge,
 } from "./integrations/bridge";
-import { handleLog, INJECT_DEBUG, LogType } from "./integrations/console";
+import { INJECT_DEBUG, type LogType, handleLog } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
 
@@ -190,6 +191,7 @@ export const createWebView = <
         };
       }, []);
 
+      // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
       const initData = useMemo(() => {
         const bridgeMethods = Object.entries(bridge.getState() ?? {})
           .filter(([_, bridge]) => typeof bridge === "function")
@@ -203,6 +205,7 @@ export const createWebView = <
       }, []);
 
       useEffect(() => {
+        // lazy initialize the bridgeId
         webviewRef.current?.injectJavaScript(
           SAFE_NATIVE_EMITTER_EMIT("hydrate", initData),
         );
@@ -216,7 +219,7 @@ export const createWebView = <
         if (!webviewRef.current) {
           return;
         }
-        const { type, body } = JSON.parse(event.nativeEvent.data);
+        const { type, body, bridgeId } = JSON.parse(event.nativeEvent.data);
 
         switch (type) {
           case "log": {
@@ -235,6 +238,7 @@ export const createWebView = <
             };
 
             handleBridge({
+              bridgeId,
               bridge,
               method,
               args,

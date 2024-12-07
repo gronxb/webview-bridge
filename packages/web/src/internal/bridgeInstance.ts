@@ -8,15 +8,15 @@ import type {
   PrimitiveObject,
 } from "@webview-bridge/types";
 import {
+  type DefaultEmitter,
   createRandomId,
   createResolver,
-  DefaultEmitter,
   timeout,
 } from "@webview-bridge/utils";
 
 import { NativeMethodError } from "../error";
-import { LinkBridgeOptions } from "../linkBridge";
-import { LinkBridge } from "../types";
+import type { LinkBridgeOptions } from "../linkBridge";
+import type { LinkBridge } from "../types";
 import { createPromiseProxy } from "./createPromiseProxy";
 import { linkBridgeStore } from "./linkBridgeStore";
 import { mockStore } from "./mockStore";
@@ -26,10 +26,11 @@ export class BridgeInstance<
   V extends ParserSchema<any> = ParserSchema<any>,
 > {
   constructor(
+    private _bridgeId: string,
     private _options: LinkBridgeOptions<T, V>,
 
     private _emitter: DefaultEmitter,
-    private _bridgeMethods: string[] = [],
+    private _bridgeMethods: string[],
     public _nativeInitialState: PrimitiveObject,
   ) {
     this._hydrate(_bridgeMethods, _nativeInitialState);
@@ -75,9 +76,11 @@ export class BridgeInstance<
           ? {
               type,
               body,
+              bridgeId: this._bridgeId,
             }
           : {
               type,
+              bridgeId: this._bridgeId,
             },
       ),
     );
@@ -203,10 +206,9 @@ export class BridgeInstance<
           writable: false,
         });
 
-        return {
-          ...acc,
+        return Object.assign(acc, {
           [methodName]: nativeMethod,
-        };
+        });
       },
       initialBridge as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
     );
