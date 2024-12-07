@@ -46,7 +46,7 @@ export type Parser<
 > = Input extends undefined
   ? Record<string, Primitive> | Primitive
   : EventName extends keyof Input
-  ? Input[EventName]["validate"] extends (data: unknown) => unknown
-    ? ReturnType<Input[EventName]["validate"]>
-    : Record<string, Primitive> | Primitive
-  : never;
+    ? Input[EventName]["validate"] extends (data: unknown) => unknown
+      ? ReturnType<Input[EventName]["validate"]>
+      : Record<string, Primitive> | Primitive
+    : never;

@@ -10,8 +10,8 @@ import type {
 import type { LinkBridgeOptions } from "@webview-bridge/web";
 import { linkBridge } from "@webview-bridge/web";
 import {
-  createContext,
   type ReactNode,
+  createContext,
   useContext,
   useEffect,
   useRef,
@@ -52,7 +52,7 @@ export const createLinkBridgeProvider = <
     const bridgeStoreContext = useContext(BridgeContext);
 
     if (!bridgeStoreContext) {
-      throw new Error(`useBridgeStore must be used within a BridgeProvider`);
+      throw new Error("useBridgeStore must be used within a BridgeProvider");
     }
 
     return useBridge(bridgeStoreContext.store, selector as (state: T) => U);
@@ -62,7 +62,7 @@ export const createLinkBridgeProvider = <
     const bridgeStoreContext = useContext(BridgeContext);
 
     if (!bridgeStoreContext) {
-      throw new Error(`useBridgeStatus must be used within a BridgeProvider`);
+      throw new Error("useBridgeStatus must be used within a BridgeProvider");
     }
 
     return {
@@ -77,7 +77,7 @@ export const createLinkBridgeProvider = <
     const bridgeStoreContext = useContext(BridgeContext);
 
     if (!bridgeStoreContext) {
-      throw new Error(`useBridgeLoose must be used within a BridgeProvider`);
+      throw new Error("useBridgeLoose must be used within a BridgeProvider");
     }
 
     return { loose: bridgeStoreContext.loose };
@@ -91,9 +91,10 @@ export const createLinkBridgeProvider = <
 
     if (!bridgeStoreContext) {
       throw new Error(
-        `useBridgeEventListener must be used within a BridgeProvider`,
+        "useBridgeEventListener must be used within a BridgeProvider",
       );
     }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
       return bridgeStoreContext.addEventListener(eventName, listener);
     }, []);

@@ -6,9 +6,9 @@ export const equals = (a: any, b: any) => {
   if (a && b && typeof a === "object" && typeof b === "object") {
     const arrA = Array.isArray(a);
     const arrB = Array.isArray(b);
-    let i;
-    let length;
-    let key;
+    let i: number;
+    let length: number;
+    let key: string;
 
     if (arrA && arrB) {
       length = a.length;
@@ -49,5 +49,6 @@ export const equals = (a: any, b: any) => {
     return true;
   }
 
+  // biome-ignore lint/suspicious/noSelfCompare: <explanation>
   return a !== a && b !== b;
 };
