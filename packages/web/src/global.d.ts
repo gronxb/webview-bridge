@@ -1,7 +1,8 @@
 import type { DefaultEmitter } from "@webview-bridge/utils";
 
-import { Primitive } from ".";
+import type { Primitive } from "./types";
 
+// biome-ignore lint/complexity/noUselessEmptyExport: <explanation>
 export {};
 
 declare global {
