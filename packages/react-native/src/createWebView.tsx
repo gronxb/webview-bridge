@@ -1,39 +1,39 @@
 import type {
-	Bridge,
-	BridgeStore,
-	KeyOfOrString,
-	Parser,
-	ParserSchema,
-	Primitive,
+  Bridge,
+  BridgeStore,
+  KeyOfOrString,
+  Parser,
+  ParserSchema,
+  Primitive,
 } from "@webview-bridge/types";
 import { createEvents } from "@webview-bridge/utils";
 import type React from "react";
 import {
-	forwardRef,
-	useEffect,
-	useImperativeHandle,
-	useLayoutEffect,
-	useMemo,
-	useRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
 } from "react";
 import type { WebViewMessageEvent, WebViewProps } from "react-native-webview";
 import WebView from "react-native-webview";
 
 import {
-	INJECT_BRIDGE_METHODS,
-	INJECT_BRIDGE_STATE,
-	SAFE_NATIVE_EMITTER_EMIT,
-	handleBridge,
+  INJECT_BRIDGE_METHODS,
+  INJECT_BRIDGE_STATE,
+  SAFE_NATIVE_EMITTER_EMIT,
+  handleBridge,
 } from "./integrations/bridge";
 import { INJECT_DEBUG, type LogType, handleLog } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
 import type { BridgeWebView } from "./types/webview";
 
 export type CreateWebViewArgs<
-	BridgeObject extends Bridge,
-	PostMessageSchema extends ParserSchema<any>,
+  BridgeObject extends Bridge,
+  PostMessageSchema extends ParserSchema<any>,
 > = {
-	/**
+  /**
    * The bridge object to be used in the WebView.
   * @example
     import { createWebView, bridge } from "@webview-bridge/react-native";
@@ -60,31 +60,31 @@ export type CreateWebViewArgs<
       debug: true, // Enable console.log visibility in the native WebView
     });
     */
-	bridge: BridgeStore<BridgeObject>;
-	/**
-	 * If `true`, the console.log visibility in the WebView is enabled.
-	 * @default false
-	 */
-	debug?: boolean;
-	/**
-	 * Set the timeout in milliseconds for the response from the web method.
-	 * @default 2000
-	 */
-	responseTimeout?: number;
-	/**
-	 * The schema for the postMessage method.
-	 * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
-	 */
-	postMessageSchema?: PostMessageSchema;
-	/**
-	 * Callback function when a method that is not defined in the bridge is called.
-	 * @link https://gronxb.github.io/webview-bridge/backward-compatibility/new-method.html#react-native-part
-	 */
-	fallback?: (method: keyof BridgeObject) => void;
+  bridge: BridgeStore<BridgeObject>;
+  /**
+   * If `true`, the console.log visibility in the WebView is enabled.
+   * @default false
+   */
+  debug?: boolean;
+  /**
+   * Set the timeout in milliseconds for the response from the web method.
+   * @default 2000
+   */
+  responseTimeout?: number;
+  /**
+   * The schema for the postMessage method.
+   * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
+   */
+  postMessageSchema?: PostMessageSchema;
+  /**
+   * Callback function when a method that is not defined in the bridge is called.
+   * @link https://gronxb.github.io/webview-bridge/backward-compatibility/new-method.html#react-native-part
+   */
+  fallback?: (method: keyof BridgeObject) => void;
 };
 
 export type WebMethod<T> = T & {
-	isReady: boolean;
+  isReady: boolean;
 };
 
 /**
@@ -116,218 +116,218 @@ export type WebMethod<T> = T & {
     });
  */
 export const createWebView = <
-	BridgeObject extends Bridge,
-	PostMessageSchema extends ParserSchema<any>,
+  BridgeObject extends Bridge,
+  PostMessageSchema extends ParserSchema<any>,
 >({
-	bridge,
-	debug,
-	responseTimeout = 2000,
-	postMessageSchema,
-	fallback,
+  bridge,
+  debug,
+  responseTimeout = 2000,
+  postMessageSchema,
+  fallback,
 }: CreateWebViewArgs<BridgeObject, PostMessageSchema>) => {
-	const WebMethod = {
-		current: {
-			isReady: false,
-		},
-	};
+  const WebMethod = {
+    current: {
+      isReady: false,
+    },
+  };
 
-	const webviewRefList: React.RefObject<BridgeWebView>[] = [];
-	const emitter = createEvents();
+  const webviewRefList: React.RefObject<BridgeWebView>[] = [];
+  const emitter = createEvents();
 
-	bridge.subscribe((state) => {
-		for (const ref of webviewRefList) {
-			ref?.current?.injectJavaScript(
-				SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
-			);
-		}
-	});
+  bridge.subscribe((state) => {
+    for (const ref of webviewRefList) {
+      ref?.current?.injectJavaScript(
+        SAFE_NATIVE_EMITTER_EMIT("bridgeStateChange", state),
+      );
+    }
+  });
 
-	return {
-		/**
-		 * Sends an event from React Native to the Web.
-		 * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
-		 */
-		postMessage: <
-			EventName extends KeyOfOrString<PostMessageSchema>,
-			Args extends Parser<PostMessageSchema, EventName>,
-		>(
-			eventName: EventName,
-			args: Args,
-			options: {
-				/**
-				 * If `true`, the message will be broadcasted to all webviews.
-				 * @default false
-				 */
-				broadcast: boolean;
-			} = {
-				broadcast: false,
-			},
-		) => {
-			let _args: any = args;
-			if (postMessageSchema) {
-				_args = postMessageSchema[eventName].validate(args);
-			}
-			if (options.broadcast) {
-				for (const ref of webviewRefList) {
-					ref?.current?.injectJavaScript(
-						SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
-					);
-				}
-				return;
-			}
+  return {
+    /**
+     * Sends an event from React Native to the Web.
+     * @link https://gronxb.github.io/webview-bridge/using-a-post-message.html
+     */
+    postMessage: <
+      EventName extends KeyOfOrString<PostMessageSchema>,
+      Args extends Parser<PostMessageSchema, EventName>,
+    >(
+      eventName: EventName,
+      args: Args,
+      options: {
+        /**
+         * If `true`, the message will be broadcasted to all webviews.
+         * @default false
+         */
+        broadcast: boolean;
+      } = {
+        broadcast: false,
+      },
+    ) => {
+      let _args: any = args;
+      if (postMessageSchema) {
+        _args = postMessageSchema[eventName].validate(args);
+      }
+      if (options.broadcast) {
+        for (const ref of webviewRefList) {
+          ref?.current?.injectJavaScript(
+            SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+          );
+        }
+        return;
+      }
 
-			const lastRef = webviewRefList[webviewRefList.length - 1];
-			lastRef?.current?.injectJavaScript(
-				SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
-			);
-		},
-		WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
-			const webviewRef = useRef<WebView>(null);
+      const lastRef = webviewRefList[webviewRefList.length - 1];
+      lastRef?.current?.injectJavaScript(
+        SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
+      );
+    },
+    WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
+      const webviewRef = useRef<WebView>(null);
 
-			useLayoutEffect(() => {
-				webviewRefList.push(webviewRef);
-				return () => {
-					webviewRefList.pop();
-				};
-			}, []);
+      useLayoutEffect(() => {
+        webviewRefList.push(webviewRef);
+        return () => {
+          webviewRefList.pop();
+        };
+      }, []);
 
-			// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-			const initData = useMemo(() => {
-				const bridgeMethods = Object.entries(bridge.getState() ?? {})
-					.filter(([_, bridge]) => typeof bridge === "function")
-					.map(([name]) => name);
-				const initialState = Object.fromEntries(
-					Object.entries(bridge.getState() ?? {}).filter(
-						([_, value]) => typeof value !== "function",
-					),
-				) as Record<string, Primitive>;
-				return { bridgeMethods, initialState };
-			}, []);
+      // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+      const initData = useMemo(() => {
+        const bridgeMethods = Object.entries(bridge.getState() ?? {})
+          .filter(([_, bridge]) => typeof bridge === "function")
+          .map(([name]) => name);
+        const initialState = Object.fromEntries(
+          Object.entries(bridge.getState() ?? {}).filter(
+            ([_, value]) => typeof value !== "function",
+          ),
+        ) as Record<string, Primitive>;
+        return { bridgeMethods, initialState };
+      }, []);
 
-			useEffect(() => {
-				// lazy initialize the bridgeId
-				webviewRef.current?.injectJavaScript(
-					SAFE_NATIVE_EMITTER_EMIT("hydrate", initData),
-				);
-			}, [initData]);
+      useEffect(() => {
+        // lazy initialize the bridgeId
+        webviewRef.current?.injectJavaScript(
+          SAFE_NATIVE_EMITTER_EMIT("hydrate", initData),
+        );
+      }, [initData]);
 
-			useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
+      useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
 
-			const handleMessage = async (event: WebViewMessageEvent) => {
-				props.onMessage?.(event);
+      const handleMessage = async (event: WebViewMessageEvent) => {
+        props.onMessage?.(event);
 
-				if (!webviewRef.current) {
-					return;
-				}
-				const { type, body, bridgeId } = JSON.parse(event.nativeEvent.data);
+        if (!webviewRef.current) {
+          return;
+        }
+        const { type, body, bridgeId } = JSON.parse(event.nativeEvent.data);
 
-				switch (type) {
-					case "log": {
-						const { method, args } = body as {
-							method: LogType;
-							args: string;
-						};
-						debug && handleLog(method, args);
-						return;
-					}
-					case "bridge": {
-						const { method, args, eventId } = body as {
-							method: string;
-							args: unknown[];
-							eventId: string;
-						};
+        switch (type) {
+          case "log": {
+            const { method, args } = body as {
+              method: LogType;
+              args: string;
+            };
+            debug && handleLog(method, args);
+            return;
+          }
+          case "bridge": {
+            const { method, args, eventId } = body as {
+              method: string;
+              args: unknown[];
+              eventId: string;
+            };
 
-						handleBridge({
-							bridgeId,
-							bridge,
-							method,
-							args,
-							eventId,
-							webview: webviewRef.current,
-						});
-						return;
-					}
-					case "getBridgeState": {
-						for (const ref of webviewRefList) {
-							ref?.current?.injectJavaScript(
-								SAFE_NATIVE_EMITTER_EMIT(
-									"bridgeStateChange",
-									bridge.getState(),
-								),
-							);
-						}
-						return;
-					}
-					case "registerWebMethod": {
-						const { bridgeNames } = body as {
-							bridgeNames: string[];
-						};
-						Object.assign(
-							WebMethod.current,
-							handleRegisterWebMethod(
-								emitter,
-								webviewRef.current,
-								bridgeNames,
-								responseTimeout,
-							),
-						);
-						WebMethod.current.isReady = true;
-						return;
-					}
-					case "webMethodResponse": {
-						const { eventId, funcName, value } = body as {
-							eventId: string;
-							funcName: string;
-							value: unknown;
-						};
+            handleBridge({
+              bridgeId,
+              bridge,
+              method,
+              args,
+              eventId,
+              webview: webviewRef.current,
+            });
+            return;
+          }
+          case "getBridgeState": {
+            for (const ref of webviewRefList) {
+              ref?.current?.injectJavaScript(
+                SAFE_NATIVE_EMITTER_EMIT(
+                  "bridgeStateChange",
+                  bridge.getState(),
+                ),
+              );
+            }
+            return;
+          }
+          case "registerWebMethod": {
+            const { bridgeNames } = body as {
+              bridgeNames: string[];
+            };
+            Object.assign(
+              WebMethod.current,
+              handleRegisterWebMethod(
+                emitter,
+                webviewRef.current,
+                bridgeNames,
+                responseTimeout,
+              ),
+            );
+            WebMethod.current.isReady = true;
+            return;
+          }
+          case "webMethodResponse": {
+            const { eventId, funcName, value } = body as {
+              eventId: string;
+              funcName: string;
+              value: unknown;
+            };
 
-						emitter.emit(`${funcName}-${eventId}`, value);
-						return;
-					}
-					case "webMethodError": {
-						const { eventId, funcName } = body as {
-							eventId: string;
-							funcName: string;
-							value: unknown;
-						};
+            emitter.emit(`${funcName}-${eventId}`, value);
+            return;
+          }
+          case "webMethodError": {
+            const { eventId, funcName } = body as {
+              eventId: string;
+              funcName: string;
+              value: unknown;
+            };
 
-						emitter.emit(`${funcName}-${eventId}`, {}, true);
-						return;
-					}
-					case "fallback": {
-						const { method } = body as {
-							method: keyof BridgeObject;
-						};
-						fallback?.(method);
-						return;
-					}
-				}
-			};
+            emitter.emit(`${funcName}-${eventId}`, {}, true);
+            return;
+          }
+          case "fallback": {
+            const { method } = body as {
+              method: keyof BridgeObject;
+            };
+            fallback?.(method);
+            return;
+          }
+        }
+      };
 
-			return (
-				<WebView
-					{...props}
-					ref={webviewRef}
-					onMessage={handleMessage}
-					injectedJavaScriptBeforeContentLoaded={[
-						INJECT_BRIDGE_METHODS(initData.bridgeMethods),
-						INJECT_BRIDGE_STATE(initData.initialState),
-						props.injectedJavaScriptBeforeContentLoaded,
-						"true;",
-					]
-						.filter(Boolean)
-						.join("\n")}
-					injectedJavaScript={[
-						debug && INJECT_DEBUG,
-						props.injectedJavaScript,
-						"true;",
-					]
-						.filter(Boolean)
-						.join("\n")}
-				/>
-			);
-		}),
-		/**
+      return (
+        <WebView
+          {...props}
+          ref={webviewRef}
+          onMessage={handleMessage}
+          injectedJavaScriptBeforeContentLoaded={[
+            INJECT_BRIDGE_METHODS(initData.bridgeMethods),
+            INJECT_BRIDGE_STATE(initData.initialState),
+            props.injectedJavaScriptBeforeContentLoaded,
+            "true;",
+          ]
+            .filter(Boolean)
+            .join("\n")}
+          injectedJavaScript={[
+            debug && INJECT_DEBUG,
+            props.injectedJavaScript,
+            "true;",
+          ]
+            .filter(Boolean)
+            .join("\n")}
+        />
+      );
+    }),
+    /**
      * @deprecated Use `postMessage` instead.  And complete the type through the `postMessageSchema` option.
      * @see https://gronxb.github.io/webview-bridge/using-a-post-message.html
      * @example 
@@ -357,10 +357,10 @@ export const createWebView = <
       });
       postMessage("eventName2", "test");
     */
-		linkWebMethod<T>() {
-			return WebMethod as {
-				current: WebMethod<T>;
-			};
-		},
-	};
+    linkWebMethod<T>() {
+      return WebMethod as {
+        current: WebMethod<T>;
+      };
+    },
+  };
 };
