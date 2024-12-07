@@ -26,3 +26,5 @@ jobs:
           run: pnpm build
         - name: TypeScript type check
           run: pnpm test:type
+        - name: Lint
+          run: pnpm lint
