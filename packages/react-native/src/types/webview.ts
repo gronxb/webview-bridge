@@ -1,5 +1,6 @@
-import { Component } from "react";
-import WebView, { WebViewProps } from "react-native-webview";
+import type { Component } from "react";
+import type WebView from "react-native-webview";
+import type { WebViewProps } from "react-native-webview";
 
 export type BridgeWebView = Pick<
   WebView,

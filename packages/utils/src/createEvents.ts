@@ -30,7 +30,11 @@ export const createEvents = <
     }
   },
   on(event, cb) {
-    this.events[event]?.push(cb) || (this.events[event] = [cb]);
+    if (!this.events[event]) {
+      this.events[event] = [cb];
+    } else {
+      this.events[event]?.push(cb);
+    }
     return () => {
       this.events[event] = this.events[event]?.filter((i) => cb !== i);
     };

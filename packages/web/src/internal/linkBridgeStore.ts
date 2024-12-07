@@ -1,6 +1,6 @@
 import type { Bridge, BridgeStore, OnlyJSON } from "@webview-bridge/types";
 import {
-  DefaultEmitter,
+  type DefaultEmitter,
   equals,
   removeUndefinedKeys,
 } from "@webview-bridge/utils";

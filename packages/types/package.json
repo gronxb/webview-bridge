@@ -2,10 +2,7 @@
   "name": "@webview-bridge/types",
   "type": "module",
   "version": "1.7.2",
-  "files": [
-    "src",
-    "package.json"
-  ],
+  "files": ["src", "package.json"],
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",
@@ -26,7 +23,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsup src/index.ts --dts",
-    "test:type": "tsc --noEmit"
+    "test:type": "tsc --noEmit",
+    "lint": "biome check"
   },
   "devDependencies": {
     "@types/node": "^22.7.9"

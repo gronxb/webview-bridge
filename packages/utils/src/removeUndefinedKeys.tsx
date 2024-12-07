@@ -1,8 +1,8 @@
 export const removeUndefinedKeys = (obj: Record<string, any>) => {
-  Object.keys(obj).forEach((key) => {
+  for (const key of Object.keys(obj)) {
     if (obj[key] === undefined) {
       delete obj[key];
     }
-  });
+  }
   return obj;
 };

@@ -1,4 +1,4 @@
-import { PrimitiveObject } from "@webview-bridge/types";
+import type { PrimitiveObject } from "@webview-bridge/types";
 
 export const mockStore = (initialState: PrimitiveObject = {}) => {
   const state = initialState;

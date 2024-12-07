@@ -22,14 +22,11 @@
     "url": "https://github.com/gronxb/webview-bridge.git"
   },
   "license": "MIT",
-  "files": [
-    "dist",
-    "src",
-    "package.json"
-  ],
+  "files": ["dist", "src", "package.json"],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
-    "test:type": "tsc --noEmit"
+    "test:type": "tsc --noEmit",
+    "lint": "biome check"
   },
   "devDependencies": {
     "@types/react": "^18.2.25",
