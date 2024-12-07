@@ -1,8 +1,12 @@
 {
   "name": "@webview-bridge/utils",
   "type": "module",
-  "version": "1.7.2",
-  "files": ["dist", "src", "package.json"],
+  "version": "1.7.3",
+  "files": [
+    "dist",
+    "src",
+    "package.json"
+  ],
   "react-native": "src/index.ts",
   "main": "dist/index.cjs",
   "module": "dist/index.js",

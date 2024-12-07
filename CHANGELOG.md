@@ -1,3 +1,13 @@
+## 1.7.3 (2024-12-07)
+
+### 🩹 Fixes
+
+- multiple linkBridge ([#86](https://github.com/gronxb/webview-bridge/pull/86))
+
+### ❤️  Thank You
+
+- Sungyu Kang
+
 ## 1.7.2 (2024-11-04)
 
 ### 🩹 Fixes

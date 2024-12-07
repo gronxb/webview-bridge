@@ -1,8 +1,11 @@
 {
   "name": "@webview-bridge/types",
   "type": "module",
-  "version": "1.7.2",
-  "files": ["src", "package.json"],
+  "version": "1.7.3",
+  "files": [
+    "src",
+    "package.json"
+  ],
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",

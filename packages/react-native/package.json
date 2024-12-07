@@ -1,6 +1,6 @@
 {
   "name": "@webview-bridge/react-native",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "type": "module",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "main": "dist/index.cjs",
@@ -22,7 +22,11 @@
     "url": "https://github.com/gronxb/webview-bridge.git"
   },
   "license": "MIT",
-  "files": ["dist", "src", "package.json"],
+  "files": [
+    "dist",
+    "src",
+    "package.json"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
     "test:type": "tsc --noEmit",
@@ -40,8 +44,8 @@
     "react-native-webview": "*"
   },
   "dependencies": {
-    "@webview-bridge/utils": "1.7.2",
-    "@webview-bridge/types": "1.7.2",
+    "@webview-bridge/utils": "1.7.3",
+    "@webview-bridge/types": "1.7.3",
     "use-sync-external-store": "^1.2.0"
   }
 }
