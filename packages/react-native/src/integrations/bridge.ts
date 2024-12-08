@@ -147,7 +147,7 @@ export const SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID = (
 ) => {
   const dataString = JSON.stringify(data);
   return `
-if (window.nativeEmitter && window.nativeEmitter['${bridgeId}']) {
+if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
   window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', ${dataString});
 } else if (window.nativeEmitter) {
   // @deprecated This version is not used after 1.7.2
