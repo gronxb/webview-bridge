@@ -125,10 +125,13 @@ export const INJECT_BRIDGE_STATE = (
 export const SAFE_NATIVE_EMITTER_EMIT = (eventName: string, data: unknown) => {
   const dataString = JSON.stringify(data);
   return `
-if (window.nativeEmitter && Object.keys(window.nativeEmitter).length > 0) {
-  for (const [_, emitter] of Object.entries(window.nativeEmitter)) {
+if (window.nativeEmitterMap && Object.keys(window.nativeEmitterMap).length > 0) {
+  for (const [_, emitter] of Object.entries(window.nativeEmitterMap)) {
     emitter.emit('${eventName}', ${dataString});
   }
+} else if (window.nativeEmitter) {
+  // @deprecated This version is not used after 1.7.2
+  window.nativeEmitter.emit('${eventName}', ${dataString});
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
   window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
@@ -145,7 +148,10 @@ export const SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID = (
   const dataString = JSON.stringify(data);
   return `
 if (window.nativeEmitter && window.nativeEmitter['${bridgeId}']) {
-  window.nativeEmitter['${bridgeId}'].emit('${eventName}', ${dataString});
+  window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', ${dataString});
+} else if (window.nativeEmitter) {
+  // @deprecated This version is not used after 1.7.2
+  window.nativeEmitter.emit('${eventName}', ${dataString});
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
   window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
@@ -158,8 +164,11 @@ export const SAFE_NATIVE_EMITTER_THROW_BY_BRIDGE_ID = (
   bridgeId: string,
   eventName: string,
 ) => `
-if (window.nativeEmitter['${bridgeId}']) {
-  window.nativeEmitter['${bridgeId}'].emit('${eventName}', {}, true);
+if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
+  window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, true);
+} else if (window.nativeEmitter) {
+  // @deprecated This version is not used after 1.7.2
+  window.nativeEmitter.emit('${eventName}', {}, true);
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
   window.nativeBatchedEvents.push(['${eventName}', {}, true]);
