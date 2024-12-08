@@ -1,3 +1,13 @@
+## 1.7.4 (2024-12-08)
+
+### 🚀 Features
+
+- version compat layer 1.7.2 ([#88](https://github.com/gronxb/webview-bridge/pull/88))
+
+### ❤️  Thank You
+
+- Sungyu Kang
+
 ## 1.7.3 (2024-12-07)
 
 ### 🩹 Fixes
