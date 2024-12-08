@@ -95,10 +95,17 @@ export const linkBridge = <
   const bridgeId = createRandomId();
   const emitter = createEvents();
 
-  window.nativeEmitter = {
-    ...(window.nativeEmitter || {}),
+  window.nativeEmitterMap = {
+    ...(window.nativeEmitterMap || {}),
     [bridgeId]: emitter,
   };
+
+  /**
+   * @deprecated This version is not used after 1.7.2
+   */
+  if (!window.nativeEmitter) {
+    window.nativeEmitter = emitter;
+  }
 
   const bridgeMethods = window.__bridgeMethods__ ?? [];
   const nativeInitialState = window.__bridgeInitialState__ ?? {};

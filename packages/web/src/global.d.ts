@@ -9,7 +9,11 @@ declare global {
   interface Window {
     __bridgeMethods__?: string[];
     __bridgeInitialState__?: Record<string, Primitive>;
-    nativeEmitter?: Record<string, DefaultEmitter>;
+    /**
+     * @deprecated Use `nativeEmitterMap` instead.
+     */
+    nativeEmitter?: DefaultEmitter;
+    nativeEmitterMap?: Record<string, DefaultEmitter>;
     nativeBatchedEvents?: [string, ...any][];
     webEmitter?: DefaultEmitter;
     ReactNativeWebView: {
