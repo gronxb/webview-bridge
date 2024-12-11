@@ -18,6 +18,11 @@ export interface LinkBridgeOptions<
   V extends ParserSchema<any>,
 > {
   /**
+   * If `true`, console warnings will be displayed.
+   * @default false
+   */
+  debug?: boolean;
+  /**
    * It is possible to configure `initialBridge` to operate in a non-React Native environment.
    * Prioritize applying the bridge of the React Native WebView, and if it is unavailable, apply the `initialBridge`.
    * Therefore, if `initialBridge` is configured, `bridge.isWebViewBridgeAvailable` should be true even in environments that are not React Native.
@@ -65,6 +70,7 @@ export const linkBridge = <
   options: LinkBridgeOptions<T, V> = {
     timeout: 2000,
     throwOnError: false,
+    debug: false,
   },
 ): LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V> => {
   if (typeof window === "undefined") {
@@ -88,7 +94,7 @@ export const linkBridge = <
     } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
   }
 
-  if (!window.ReactNativeWebView) {
+  if (options.debug && !window.ReactNativeWebView) {
     console.warn("[WebViewBridge] Not in a WebView environment");
   }
 
@@ -147,9 +153,11 @@ export const linkBridge = <
         };
       }
 
-      console.warn(
-        `[WebViewBridge] ${methodName} is not defined, using fallback.`,
-      );
+      if (options.debug) {
+        console.warn(
+          `[WebViewBridge] ${methodName} is not defined, using fallback.`,
+        );
+      }
       return () => Promise.resolve();
     },
   }) as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
