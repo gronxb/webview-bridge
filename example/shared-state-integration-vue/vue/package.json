@@ -10,7 +10,7 @@
     "test:type": "tsc --noEmit"
   },
   "dependencies": {
-    "@webview-bridge/web": "1.7.3",
+    "@webview-bridge/web": "1.7.5",
     "vue": "^3.5.12"
   },
   "devDependencies": {
