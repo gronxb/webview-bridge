@@ -6,6 +6,7 @@ import type { AppBridge } from "@webview-bridge-example-shared-state-integration
 
 const bridge = linkBridge<AppBridge>({
   throwOnError: true,
+  debug: true,
   initialBridge: {
     count: 10,
     data: {
