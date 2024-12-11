@@ -1,3 +1,13 @@
+## 1.7.5 (2024-12-11)
+
+### 🚀 Features
+
+- linkBridge debug mode ([#90](https://github.com/gronxb/webview-bridge/pull/90))
+
+### ❤️  Thank You
+
+- Sungyu Kang
+
 ## 1.7.4 (2024-12-08)
 
 ### 🚀 Features
