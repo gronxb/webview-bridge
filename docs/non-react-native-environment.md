@@ -7,7 +7,7 @@ This guide helps you to mock the bridge, allowing it to function correctly even 
 In the case of an SSR (Server-Side Rendering) environment, it also assists in the hydration process.
 :::
 
-### initialBride
+### initialBridge
 
 It is possible to configure `initialBridge` to operate in a non-React Native environment.
 Prioritize applying the bridge of the React Native WebView, and if it is unavailable, apply the `initialBridge`.
