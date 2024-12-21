@@ -55,7 +55,7 @@ const appPostMessageSchema = postMessageSchema({
     validate: (data) => data as string, // This is not recommended; please use validation libraries like zod or valibot.
   },
   eventName2: {
-    validate: (value) => value as { message: string },  // This is not recommended; please use validation libraries like zod or valibot.
+    validate: (data) => data as { message: string },  // This is not recommended; please use validation libraries like zod or valibot.
   },
 });
 
