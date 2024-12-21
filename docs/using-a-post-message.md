@@ -53,10 +53,9 @@ import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
 const appPostMessageSchema = postMessageSchema({
   eventName1: {
     validate: (data) => data as string, // This is not recommended; please use validation libraries like zod or valibot.
-
   },
   eventName2: {
-    validate: (value) => data as { message: string },  // This is not recommended; please use validation libraries like zod or valibot.
+    validate: (value) => value as { message: string },  // This is not recommended; please use validation libraries like zod or valibot.
   },
 });
 
@@ -116,7 +115,7 @@ import * as v from "valibot";
 const appPostMessageSchema = postMessageSchema({
   eventName1: {
     validate: (data) => {
-      return v.parse(v.string(), value);
+      return v.parse(v.string(), data);
     }
   },
   eventName2: {
@@ -137,10 +136,11 @@ export const { postMessage } = createWebView({
 });
 
 // usage
-postMessage("eventName1", {
+
+postMessage("eventName1", "test");
+postMessage("eventName2", {
   message: "test",
 });
-postMessage("eventName2", "test");
 ```
 
 :::
@@ -160,14 +160,14 @@ const bridge = linkBridge<AppBridge, AppPostMessageSchema>({
   // ..
 });
 
-const unsubscribe = bridge.addEventListener("eventName1", (data) => {
-  window.alert(data.message);
+const unsubscribe = bridge.addEventListener("eventName1", (message) => {
+  window.alert(message);
 });
 unsubscribe(); // Unsubscribe from the event
 
 
-const unsubscribe2 = bridge.addEventListener("eventName2", (message) => {
-  window.alert(message);
+const unsubscribe2 = bridge.addEventListener("eventName2", (data) => {
+  window.alert(data.message);
 });
 unsubscribe2(); // Unsubscribe from the event
 ```
