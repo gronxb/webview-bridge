@@ -1,3 +1,7 @@
+## 1.7.6 (2025-05-05)
+
+This was a version bump only, there were no code changes.
+
 ## 1.7.5 (2024-12-11)
 
 ### 🚀 Features

@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/web",
   "type": "module",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "Fully Type-Safe Integration for React Native WebView and Web",
   "publishConfig": {
     "access": "public"
@@ -31,7 +31,7 @@
     "lint": "biome check"
   },
   "dependencies": {
-    "@webview-bridge/utils": "1.7.5",
-    "@webview-bridge/types": "1.7.5"
+    "@webview-bridge/utils": "1.7.6",
+    "@webview-bridge/types": "1.7.6"
   }
 }
