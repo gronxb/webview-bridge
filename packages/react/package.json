@@ -26,7 +26,7 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --target es5",
+    "build": "tsup --config ./tsup.config.ts",
     "test:type": "tsc --noEmit",
     "lint": "biome check"
   },
