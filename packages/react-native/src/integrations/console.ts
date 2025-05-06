@@ -1,32 +1,35 @@
 export const INJECT_DEBUG = `
 {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-  const originalConsoleWarn = console.warn;
+  if (!window["webview_bridge_debug_injected"]) {
+    window["webview_bridge_debug_injected"] = true;
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+    const originalConsoleWarn = console.warn;
 
-  console.log = function() {
-    var message = JSON.stringify(Array.from(arguments));
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({ type: "log", body: { method: "log", args: message } }),
-    );
-    originalConsoleLog.apply(console, arguments);
-  };
+    console.log = function() {
+      var message = JSON.stringify(Array.from(arguments));
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "log", body: { method: "log", args: message } }),
+      );
+      originalConsoleLog.apply(console, arguments);
+    };
 
-  console.error = function() {
-    var message = JSON.stringify(Array.from(arguments));
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({ type: "log", body: { method: "error", args: message } }),
-    );
-    originalConsoleError.apply(console, arguments);
-  };
+    console.error = function() {
+      var message = JSON.stringify(Array.from(arguments));
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "log", body: { method: "error", args: message } }),
+      );
+      originalConsoleError.apply(console, arguments);
+    };
 
-  console.warn = function() {
-    var message = JSON.stringify(Array.from(arguments));
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({ type: "log", body: { method: "warn", args: message } }),
-    );
-    originalConsoleWarn.apply(console, arguments);
-  };
+    console.warn = function() {
+      var message = JSON.stringify(Array.from(arguments));
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "log", body: { method: "warn", args: message } }),
+      );
+      originalConsoleWarn.apply(console, arguments);
+    };
+  }
 };
 `;
 
