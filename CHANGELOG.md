@@ -1,3 +1,13 @@
+## 1.7.7 (2025-05-07)
+
+### 🩹 Fixes
+
+- prevent INJECT_DEBUG js script multiple execution ([#100](https://github.com/gronxb/webview-bridge/pull/100))
+
+### ❤️  Thank You
+
+- Jaehun Kim @wogns3623
+
 ## 1.7.6 (2025-05-05)
 
 This was a version bump only, there were no code changes.
