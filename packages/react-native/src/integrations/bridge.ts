@@ -6,6 +6,7 @@ import type {
 } from "@webview-bridge/types";
 import { equals, removeUndefinedKeys } from "@webview-bridge/utils";
 import type WebView from "react-native-webview";
+import { serializeError } from "../error";
 
 export type StoreCallback<T> = ({
   get,
@@ -83,11 +84,18 @@ export const handleBridge = async ({
   const _bridge = bridge.getState();
 
   const _method = _bridge[method];
-  const handleThrow = () => {
+  const handleThrow = (error?: Error) => {
+    const serializedError = error ? serializeError(error) : true;
+
     webview.injectJavaScript(
-      SAFE_NATIVE_EMITTER_THROW_BY_BRIDGE_ID(bridgeId, `${method}-${eventId}`),
+      SAFE_NATIVE_EMITTER_THROW_BY_BRIDGE_ID(
+        bridgeId,
+        `${method}-${eventId}`,
+        serializedError,
+      ),
     );
   };
+
   if (!(method in _bridge)) {
     handleThrow();
     return;
@@ -107,7 +115,9 @@ export const handleBridge = async ({
       ),
     );
   } catch (error) {
-    handleThrow();
+    if (error instanceof Error) {
+      handleThrow(error);
+    }
     console.error(error);
   }
 };
@@ -163,15 +173,16 @@ true;
 export const SAFE_NATIVE_EMITTER_THROW_BY_BRIDGE_ID = (
   bridgeId: string,
   eventName: string,
+  serializedError: string | true,
 ) => `
 if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
-  window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, true);
+  window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, ${JSON.stringify(serializedError)});
 } else if (window.nativeEmitter) {
   // @deprecated This version is not used after 1.7.2
-  window.nativeEmitter.emit('${eventName}', {}, true);
+  window.nativeEmitter.emit('${eventName}', {}, ${JSON.stringify(serializedError)});
 } else {
   window.nativeBatchedEvents = window.nativeBatchedEvents || [];
-  window.nativeBatchedEvents.push(['${eventName}', {}, true]);
+  window.nativeBatchedEvents.push(['${eventName}', {}, ${JSON.stringify(serializedError)}]);
 }
 true;
 `;

@@ -9,12 +9,12 @@ import type {
 } from "@webview-bridge/types";
 import {
   type DefaultEmitter,
+  NativeMethodError,
   createRandomId,
   createResolver,
   timeout,
 } from "@webview-bridge/utils";
 
-import { NativeMethodError } from "../error";
 import type { LinkBridgeOptions } from "../linkBridge";
 import type { LinkBridge } from "../types";
 import { createPromiseProxy } from "./createPromiseProxy";
@@ -111,7 +111,7 @@ export class BridgeInstance<
             onFallback: () => {
               onFallback?.(methodName, args);
             },
-            failHandler: throwOnError && new NativeMethodError(methodName),
+            failHandler: throwOnError && NativeMethodError,
           }),
           timeoutMs > 0 && timeout(timeoutMs, throwOnError),
         ].filter(Boolean),
