@@ -1,5 +1,15 @@
+import { createRandomId } from "@webview-bridge/utils";
+
+// prevent name collision with other libraries
+const injectionDetectKey = `__bridge_debug_injected_${createRandomId()}`;
+
 export const INJECT_DEBUG = `
 {
+  if (window["${injectionDetectKey}"]) {
+    return;
+  }
+
+  window["${injectionDetectKey}"] = true;
   const originalConsoleLog = console.log;
   const originalConsoleError = console.error;
   const originalConsoleWarn = console.warn;
