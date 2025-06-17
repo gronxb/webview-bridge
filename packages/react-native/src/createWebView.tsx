@@ -6,7 +6,7 @@ import type {
   ParserSchema,
   Primitive,
 } from "@webview-bridge/types";
-import { createEvents } from "@webview-bridge/utils";
+import { createEvents, createRandomId } from "@webview-bridge/utils";
 import type React from "react";
 import {
   forwardRef,
@@ -133,6 +133,7 @@ export const createWebView = <
 
   const webviewRefList: React.RefObject<BridgeWebView>[] = [];
   const emitter = createEvents();
+  const uniqueId = createRandomId();
 
   bridge.subscribe((state) => {
     for (const ref of webviewRefList) {
@@ -318,7 +319,7 @@ export const createWebView = <
             .filter(Boolean)
             .join("\n")}
           injectedJavaScript={[
-            debug && INJECT_DEBUG,
+            debug && INJECT_DEBUG(uniqueId),
             props.injectedJavaScript,
             "true;",
           ]

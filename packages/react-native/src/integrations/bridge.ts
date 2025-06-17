@@ -113,30 +113,36 @@ export const handleBridge = async ({
 };
 
 export const INJECT_BRIDGE_METHODS = (bridgeNames: string[]) => `
-    window.__bridgeMethods__ = ${JSON.stringify(bridgeNames)};
+    (function() {
+        window.__bridgeMethods__ = ${JSON.stringify(bridgeNames)};
+    })();
 `;
 
 export const INJECT_BRIDGE_STATE = (
   initialState: Record<string, Primitive>,
 ) => `
-    window.__bridgeInitialState__ = ${JSON.stringify(initialState)};
+    (function() {
+        window.__bridgeInitialState__ = ${JSON.stringify(initialState)};
+    })();
 `;
 
 export const SAFE_NATIVE_EMITTER_EMIT = (eventName: string, data: unknown) => {
   const dataString = JSON.stringify(data);
   return `
-if (window.nativeEmitterMap && Object.keys(window.nativeEmitterMap).length > 0) {
-  for (const [_, emitter] of Object.entries(window.nativeEmitterMap)) {
-    emitter.emit('${eventName}', ${dataString});
-  }
-} else if (window.nativeEmitter) {
-  // @deprecated This version is not used after 1.7.2
-  window.nativeEmitter.emit('${eventName}', ${dataString});
-} else {
-  window.nativeBatchedEvents = window.nativeBatchedEvents || [];
-  window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
-}
-true;
+    (function() {
+        if (window.nativeEmitterMap && Object.keys(window.nativeEmitterMap).length > 0) {
+            for (const [_, emitter] of Object.entries(window.nativeEmitterMap)) {
+                emitter.emit('${eventName}', ${dataString});
+            }
+        } else if (window.nativeEmitter) {
+            // @deprecated This version is not used after 1.7.2
+            window.nativeEmitter.emit('${eventName}', ${dataString});
+        } else {
+            window.nativeBatchedEvents = window.nativeBatchedEvents || [];
+            window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
+        }
+        return true;
+    })();
 `;
 };
 
@@ -147,16 +153,18 @@ export const SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID = (
 ) => {
   const dataString = JSON.stringify(data);
   return `
-if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
-  window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', ${dataString});
-} else if (window.nativeEmitter) {
-  // @deprecated This version is not used after 1.7.2
-  window.nativeEmitter.emit('${eventName}', ${dataString});
-} else {
-  window.nativeBatchedEvents = window.nativeBatchedEvents || [];
-  window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
-}
-true;
+    (function() {
+        if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
+            window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', ${dataString});
+        } else if (window.nativeEmitter) {
+            // @deprecated This version is not used after 1.7.2
+            window.nativeEmitter.emit('${eventName}', ${dataString});
+        } else {
+            window.nativeBatchedEvents = window.nativeBatchedEvents || [];
+            window.nativeBatchedEvents.push(['${eventName}', ${dataString}]);
+        }
+        return true;
+    })();
 `;
 };
 
@@ -164,14 +172,16 @@ export const SAFE_NATIVE_EMITTER_THROW_BY_BRIDGE_ID = (
   bridgeId: string,
   eventName: string,
 ) => `
-if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
-  window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, true);
-} else if (window.nativeEmitter) {
-  // @deprecated This version is not used after 1.7.2
-  window.nativeEmitter.emit('${eventName}', {}, true);
-} else {
-  window.nativeBatchedEvents = window.nativeBatchedEvents || [];
-  window.nativeBatchedEvents.push(['${eventName}', {}, true]);
-}
-true;
+    (function() {
+        if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
+            window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, true);
+        } else if (window.nativeEmitter) {
+            // @deprecated This version is not used after 1.7.2
+            window.nativeEmitter.emit('${eventName}', {}, true);
+        } else {
+            window.nativeBatchedEvents = window.nativeBatchedEvents || [];
+            window.nativeBatchedEvents.push(['${eventName}', {}, true]);
+        }
+        return true;
+    })();
 `;

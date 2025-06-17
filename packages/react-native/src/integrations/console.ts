@@ -1,15 +1,10 @@
-import { createRandomId } from "@webview-bridge/utils";
-
-// prevent name collision with other libraries
-const injectionDetectKey = `__bridge_debug_injected_${createRandomId()}`;
-
-export const INJECT_DEBUG = `
-{
-  if (window["${injectionDetectKey}"]) {
+export const INJECT_DEBUG = (uniqueId: string) => `
+(function() {
+  if (window["__bridge_debug_injected_${uniqueId}"]) {
     return;
   }
 
-  window["${injectionDetectKey}"] = true;
+  window["__bridge_debug_injected_${uniqueId}"] = true;
   const originalConsoleLog = console.log;
   const originalConsoleError = console.error;
   const originalConsoleWarn = console.warn;
@@ -37,7 +32,7 @@ export const INJECT_DEBUG = `
     );
     originalConsoleWarn.apply(console, arguments);
   };
-};
+})();
 `;
 
 export type LogType = "log" | "error" | "warn";
