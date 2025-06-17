@@ -1,3 +1,13 @@
+## 1.7.8 (2025-06-17)
+
+### 🩹 Fixes
+
+- injectedJavascript isolated by IIFE ([#105](https://github.com/gronxb/webview-bridge/pull/105))
+
+### ❤️  Thank You
+
+- Sungyu Kang
+
 ## 1.7.7 (2025-05-07)
 
 ### 🩹 Fixes
