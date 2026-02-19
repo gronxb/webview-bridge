@@ -1,3 +1,7 @@
+import { deserializeError } from "./errors";
+
+import { NativeMethodError } from "./errors";
+
 interface EventsMap {
   [event: string]: any;
 }
@@ -45,7 +49,7 @@ export interface CreateResolverOptions {
   emitter: DefaultEmitter;
   evaluate: () => void;
   eventId: string;
-  failHandler?: Error | false;
+  failHandler?: Error | ErrorConstructor | false;
   methodName: string;
   onFallback?: () => void;
 }
@@ -61,12 +65,14 @@ export const createResolver = ({
   return new Promise((resolve, reject) => {
     const unbind = emitter.on(
       `${methodName}-${eventId}`,
-      (data, throwOccurred: boolean) => {
+      (data, throwOccurred: object) => {
         unbind();
 
         if (throwOccurred) {
-          if (failHandler instanceof Error) {
+          if (failHandler instanceof NativeMethodError) {
             onFallback?.();
+            reject(deserializeError(throwOccurred));
+          } else if (failHandler instanceof Error) {
             reject(failHandler);
           } else {
             resolve(void 0);
