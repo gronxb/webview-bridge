@@ -49,7 +49,7 @@ export interface CreateResolverOptions {
   emitter: DefaultEmitter;
   evaluate: () => void;
   eventId: string;
-  failHandler?: Error | ErrorConstructor | false;
+  failHandler?: Error | false;
   methodName: string;
   onFallback?: () => void;
 }
