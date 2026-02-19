@@ -15,6 +15,7 @@ const bridge = linkBridge<AppBridge>({
 
 function App() {
   const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     async function init() {
@@ -38,6 +39,27 @@ function App() {
       >
         open InAppBrowser
       </button>
+
+      <button
+        style={{ marginTop: 8 }}
+        onClick={async () => {
+          try {
+            await bridge.throwError();
+          } catch (err) {
+            if (err instanceof Error) {
+              setErrorMessage(err.message);
+            }
+          }
+        }}
+      >
+        Test Error from Native
+      </button>
+
+      {errorMessage && (
+        <div style={{ marginTop: 16, padding: 12, background: "#fee", border: "1px solid red" }}>
+          <strong>Error caught: </strong>{errorMessage}
+        </div>
+      )}
 
       <div>
         {`isWebViewBridgeAvailable: ${String(bridge.isWebViewBridgeAvailable)}`}
