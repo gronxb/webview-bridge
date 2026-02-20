@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "ignore": [
+    "@webview-bridge/docs",
+    "@webview-bridge-example-*/react",
+    "@webview-bridge-example-*/react-native",
+    "@webview-bridge-example-*/web",
+    "@webview-bridge-example-*/vue"
+  ],
+  "fixed": [
+    [
+      "@webview-bridge/react-native",
+      "@webview-bridge/react",
+      "@webview-bridge/web",
+      "@webview-bridge/utils",
+      "@webview-bridge/types"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main"
+}
