@@ -82,8 +82,7 @@ export const linkBridge = <
       ([methodName]) => methodName,
     );
     return {
-      addEventListener:
-        (_eventName: string, _listener: (...args: any[]) => void) => () => {},
+      addEventListener: (_eventName, _listener) => () => {},
       loose: {},
       isWebViewBridgeAvailable: initialBridgeMethodNames.length > 0,
       isNativeMethodAvailable: (method: string) =>
