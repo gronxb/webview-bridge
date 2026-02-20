@@ -31,7 +31,7 @@
     "lint": "biome check"
   },
   "dependencies": {
-    "@webview-bridge/utils": "1.7.8",
-    "@webview-bridge/types": "1.7.8"
+    "@webview-bridge/utils": "workspace:*",
+    "@webview-bridge/types": "workspace:*"
   }
 }
