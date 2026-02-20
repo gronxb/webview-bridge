@@ -822,15 +822,15 @@ importers:
         specifier: workspace:*
         version: link:../types
       use-sync-external-store:
-        specifier: ^1.2.2
-        version: 1.2.2(react@18.3.1)
+        specifier: 1.6.0
+        version: 1.6.0(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.2.69
         version: 18.2.69
       '@types/use-sync-external-store':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^1.5.0
+        version: 1.5.0
       '@webview-bridge/web':
         specifier: workspace:*
         version: link:../web
@@ -854,8 +854,8 @@ importers:
         specifier: ^18.2.25
         version: 18.2.25
       '@types/use-sync-external-store':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^1.5.0
+        version: 1.5.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -3295,8 +3295,8 @@ packages:
   '@types/stack-utils@2.0.1':
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
 
-  '@types/use-sync-external-store@0.0.6':
-    resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
+  '@types/use-sync-external-store@1.5.0':
+    resolution: {integrity: sha512-5dyB8nLC/qogMrlCizZnYWQTA4lnb/v+It+sqNl5YnSRAPMlIqY/X0Xn+gZw8vOL+TgTTr28VEbn3uf8fUtAkw==}
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
@@ -6771,11 +6771,6 @@ packages:
     peerDependencies:
       react: '>=16.8'
 
-  use-sync-external-store@1.2.2:
-    resolution: {integrity: sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-
   use-sync-external-store@1.6.0:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
@@ -9859,7 +9854,7 @@ snapshots:
 
   '@types/stack-utils@2.0.1': {}
 
-  '@types/use-sync-external-store@0.0.6': {}
+  '@types/use-sync-external-store@1.5.0': {}
 
   '@types/web-bluetooth@0.0.20': {}
 
@@ -14246,10 +14241,6 @@ snapshots:
       punycode: 2.3.0
 
   use-latest-callback@0.2.1(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-
-  use-sync-external-store@1.2.2(react@18.3.1):
     dependencies:
       react: 18.3.1
 
