@@ -13,7 +13,8 @@
     "release:test": "nx release --dry-run",
     "release": "pnpm clear && pnpm build && nx release --skip-publish",
     "publish:all": "nx release publish",
-    "publish:rc": "nx release publish --tag rc"
+    "publish:rc": "nx release publish --tag rc",
+    "changeset": "changeset"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.25.0",
     "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.29.8",
     "@nx/js": "^20.0.6",
     "@swc-node/register": "^1.10.9",
     "@swc/core": "^1.7.40",

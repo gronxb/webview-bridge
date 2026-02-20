@@ -38,3 +38,28 @@ Change the code and enter the command below to apply the code.
 ```sh
 $ pnpm -w build
 ```
+
+## Changeset Guide
+
+If you changed anything under `packages/*`, create a changeset before opening a PR.
+
+```sh
+$ pnpm changeset
+```
+
+Select changed package(s), then choose:
+
+- `patch`: bug fixes, backward-compatible improvements
+- `minor`: new backward-compatible features
+- `major`: breaking changes
+
+Commit the generated markdown file under `.changeset`.
+
+## Release Process
+
+Release automation runs on pushes to `main` through `.github/workflows/release.yml`.
+
+1. If changeset files exist, Changesets Action opens a version PR with updated package versions/changelog.
+2. After that version PR is merged into `main`, the same workflow publishes packages via `pnpm publish:all` (`nx release publish`).
+
+PR builds also publish preview packages to `pkg.pr.new` through `.github/workflows/pkg-pr-new.yml`.
