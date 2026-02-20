@@ -178,17 +178,20 @@ export const SAFE_NATIVE_EMITTER_THROW_BY_BRIDGE_ID = (
   bridgeId: string,
   eventName: string,
   serializedError: string | true,
-) => `
+) => {
+  const serializedErrorString = JSON.stringify(serializedError);
+  return `
     (function() {
         if (window.nativeEmitterMap && window.nativeEmitterMap['${bridgeId}']) {
-            window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, ${JSON.stringify(serializedError)});
+            window.nativeEmitterMap['${bridgeId}'].emit('${eventName}', {}, ${serializedErrorString});
         } else if (window.nativeEmitter) {
             // @deprecated This version is not used after 1.7.2
-            window.nativeEmitter.emit('${eventName}', {}, ${JSON.stringify(serializedError)});
+            window.nativeEmitter.emit('${eventName}', {}, ${serializedErrorString});
         } else {
             window.nativeBatchedEvents = window.nativeBatchedEvents || [];
-            window.nativeBatchedEvents.push(['${eventName}', {}, ${JSON.stringify(serializedError)}]);
+            window.nativeBatchedEvents.push(['${eventName}', {}, ${serializedErrorString}]);
         }
         return true;
     })();
 `;
+};
