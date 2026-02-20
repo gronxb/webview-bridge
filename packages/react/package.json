@@ -33,11 +33,11 @@
   "devDependencies": {
     "@types/react": "^18.2.69",
     "@types/use-sync-external-store": "^0.0.6",
-    "@webview-bridge/web": "1.7.8",
+    "@webview-bridge/web": "workspace:*",
     "react": "^18.3.1"
   },
   "dependencies": {
-    "@webview-bridge/types": "1.7.8",
+    "@webview-bridge/types": "workspace:*",
     "use-sync-external-store": "^1.2.2"
   },
   "peerDependencies": {

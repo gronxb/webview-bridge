@@ -31,14 +31,5 @@
     "tsup": "^8.4.0",
     "typescript": "^5.6.2"
   },
-  "packageManager": "pnpm@9.15.0",
-  "pnpm": {
-    "overrides": {
-      "@webview-bridge/types": "workspace:*",
-      "@webview-bridge/utils": "workspace:*",
-      "@webview-bridge/web": "workspace:*",
-      "@webview-bridge/react": "workspace:*",
-      "@webview-bridge/react-native": "workspace:*"
-    }
-  }
+  "packageManager": "pnpm@10.30.1"
 }
