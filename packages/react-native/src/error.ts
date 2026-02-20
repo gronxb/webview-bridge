@@ -4,3 +4,17 @@ export class WebMethodError extends Error {
     this.name = "WebMethodError";
   }
 }
+
+export function serializeError(error: Error) {
+  return JSON.stringify(error, (_, value) => {
+    if (value instanceof Error) {
+      return {
+        name: value.name,
+        message: value.message,
+        stack: value.stack,
+        __isError: true,
+      };
+    }
+    return value;
+  });
+}

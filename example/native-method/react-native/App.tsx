@@ -16,6 +16,9 @@ export const appBridge = bridge({
       await InAppBrowser.open(url);
     }
   },
+  async throwError() {
+    throw new Error('🚧 This error is from native side!!');
+  },
 });
 
 
