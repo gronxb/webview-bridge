@@ -111,7 +111,7 @@ export class BridgeInstance<
             onFallback: () => {
               onFallback?.(methodName, args);
             },
-             failHandler: throwOnError && new NativeMethodError(methodName),
+            failHandler: throwOnError && new NativeMethodError(methodName),
           }),
           timeoutMs > 0 && timeout(timeoutMs, throwOnError),
         ].filter(Boolean),
