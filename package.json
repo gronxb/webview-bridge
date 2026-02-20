@@ -17,7 +17,8 @@
     "changeset": "changeset"
   },
   "keywords": [],
-  "author": "",
+  "author": "gronxb",
+  "repository": "https://github.com/gronxb/webview-bridge",
   "license": "MIT",
   "devDependencies": {
     "@babel/runtime": "^7.25.0",

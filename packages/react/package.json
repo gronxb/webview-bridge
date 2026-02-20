@@ -6,10 +6,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gronxb/webview-bridge.git"
-  },
+  "repository": "https://github.com/gronxb/webview-bridge",
   "license": "MIT",
   "files": [
     "dist",
