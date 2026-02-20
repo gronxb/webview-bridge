@@ -12,7 +12,7 @@
     "clear": "rimraf --glob **/dist",
     "release:test": "nx release --dry-run",
     "release": "pnpm clear && pnpm build && nx release --skip-publish",
-    "publish:all": "nx release publish",
+    "publish:all": "nx release publish --tag latest",
     "publish:rc": "nx release publish --tag rc",
     "changeset": "changeset"
   },
