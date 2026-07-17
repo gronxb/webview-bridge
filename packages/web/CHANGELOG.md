@@ -1,5 +1,12 @@
 # @webview-bridge/web
 
+## 1.7.10
+
+### Patch Changes
+
+- @webview-bridge/utils@1.7.10
+- @webview-bridge/types@1.7.10
+
 ## 1.7.9
 
 ### Patch Changes
