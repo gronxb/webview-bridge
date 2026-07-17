@@ -1,5 +1,7 @@
 # @webview-bridge/utils
 
+## 1.7.10
+
 ## 1.7.9
 
 ### Patch Changes
