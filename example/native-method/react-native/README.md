@@ -1,5 +1,20 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
+## Bridge middleware example
+
+`App.tsx` chains request logging, WebView URL authorization, and external URL
+normalization with `bridge(...).use(...)`. The paired `../react` app exercises
+the chain before opening a real native InAppBrowser.
+
+From the repository root, run the middleware integration tests with:
+
+```bash
+pnpm --filter @webview-bridge-example-native-method/react-native test --runInBand
+```
+
+In the running example, a scheme-less URL is normalized to HTTPS, while the
+**Try blocked scheme** action is rejected before native browser code runs.
+
 # Getting Started
 
 >**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.

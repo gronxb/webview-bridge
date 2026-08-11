@@ -215,12 +215,13 @@ export const createWebView = <
       useImperativeHandle(ref, () => webviewRef.current as BridgeWebView, []);
 
       const handleMessage = async (event: WebViewMessageEvent) => {
+        const { data, url } = event.nativeEvent;
         props.onMessage?.(event);
 
         if (!webviewRef.current) {
           return;
         }
-        const { type, body, bridgeId } = JSON.parse(event.nativeEvent.data);
+        const { type, body, bridgeId } = JSON.parse(data);
 
         switch (type) {
           case "log": {
@@ -245,6 +246,7 @@ export const createWebView = <
               args,
               eventId,
               webview: webviewRef.current,
+              url,
             });
             return;
           }

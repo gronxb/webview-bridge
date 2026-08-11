@@ -8,6 +8,45 @@ import { equals, removeUndefinedKeys } from "@webview-bridge/utils";
 import type WebView from "react-native-webview";
 import { serializeError } from "../error";
 
+/**
+ * A Web-to-Native bridge method request passed through bridge middleware.
+ *
+ * `url` is the current top-level WebView URL reported by
+ * `react-native-webview`. It is not a verified origin for the frame that sent
+ * the request. Context fields added by middleware are shared with downstream
+ * middleware in the same request.
+ */
+type BridgeRequestBase = {
+  readonly url?: string;
+  readonly method: string;
+  args: unknown[];
+};
+
+export type BridgeRequest<Context extends object = object> = BridgeRequestBase &
+  Context;
+
+/** Continue to the next middleware or native method. Await or return it. */
+export type BridgeMiddlewareNext = () => Promise<unknown>;
+
+export type BridgeMiddleware<Context extends object = object> = (
+  request: BridgeRequest<Context>,
+  next: BridgeMiddlewareNext,
+) => unknown | Promise<unknown>;
+
+export type BridgeMiddlewareBuilder<
+  T extends Bridge,
+  Context extends object = object,
+> = {
+  /**
+   * Add middleware to this bridge instance's Web-to-Native request pipeline.
+   */
+  use<AddedContext extends object = object>(
+    middleware: BridgeMiddleware<Context & AddedContext>,
+  ): BridgeStore<T> & BridgeMiddlewareBuilder<T, Context & AddedContext>;
+};
+
+const bridgeMiddlewareMap = new WeakMap<object, BridgeMiddleware<object>[]>();
+
 export type StoreCallback<T> = ({
   get,
   set,
@@ -18,7 +57,7 @@ export type StoreCallback<T> = ({
 
 export const bridge = <T extends Bridge>(
   procedures: T | StoreCallback<T>,
-): BridgeStore<T> => {
+): BridgeStore<T> & BridgeMiddlewareBuilder<T, object> => {
   const getState = () => state;
 
   const setState = (newState: Partial<OnlyJSON<T>>) => {
@@ -57,11 +96,28 @@ export const bridge = <T extends Bridge>(
     return () => listeners.delete(listener);
   };
 
-  return {
+  const middlewares: BridgeMiddleware<object>[] = [];
+  const store: BridgeStore<T> = {
     getState,
     setState,
     subscribe,
-  } as BridgeStore<T>;
+  };
+  const middlewareStore = store as BridgeStore<T> &
+    BridgeMiddlewareBuilder<T, object>;
+
+  Object.defineProperty(store, "use", {
+    enumerable: false,
+    value(middleware: BridgeMiddleware<object>) {
+      if (typeof middleware !== "function") {
+        throw new TypeError("Bridge middleware must be a function");
+      }
+      middlewares.push(middleware);
+      return middlewareStore;
+    },
+  });
+
+  bridgeMiddlewareMap.set(store, middlewares);
+  return middlewareStore;
 };
 
 type HandleBridgeArgs<ArgType = unknown> = {
@@ -71,6 +127,70 @@ type HandleBridgeArgs<ArgType = unknown> = {
   webview: WebView;
   eventId: string;
   bridgeId: string;
+  url?: string;
+};
+
+const runBridgeMiddleware = async (
+  bridgeStore: BridgeStore<Bridge>,
+  request: BridgeRequest,
+  invokeMethod: () => Promise<unknown>,
+) => {
+  const middlewares = [...(bridgeMiddlewareMap.get(bridgeStore) ?? [])];
+
+  const dispatch = async (index: number): Promise<unknown> => {
+    const middleware = middlewares[index];
+    if (!middleware) {
+      return invokeMethod();
+    }
+
+    const nextState: {
+      status: "not-called" | "pending" | "fulfilled" | "rejected";
+      value?: unknown;
+    } = { status: "not-called" };
+    let nextCalled = false;
+    let active = true;
+    const next = () => {
+      if (!active) {
+        const rejection = Promise.reject(
+          new Error("next() called after middleware completed"),
+        );
+        void rejection.catch(() => {});
+        return rejection;
+      }
+      if (nextCalled) {
+        throw new Error("next() called multiple times");
+      }
+      nextCalled = true;
+      nextState.status = "pending";
+      const nextPromise = dispatch(index + 1).then(
+        (value) => {
+          nextState.status = "fulfilled";
+          nextState.value = value;
+          return value;
+        },
+        (error) => {
+          nextState.status = "rejected";
+          throw error;
+        },
+      );
+      void nextPromise.catch(() => {});
+      return nextPromise;
+    };
+
+    let result: unknown;
+    try {
+      result = await middleware(request, next);
+    } finally {
+      active = false;
+    }
+
+    if (result === undefined && nextState.status === "fulfilled") {
+      return nextState.value;
+    }
+    return result;
+  };
+
+  return dispatch(0);
 };
 
 export const handleBridge = async ({
@@ -80,6 +200,7 @@ export const handleBridge = async ({
   webview,
   eventId,
   bridgeId,
+  url,
 }: HandleBridgeArgs) => {
   const _bridge = bridge.getState();
 
@@ -103,7 +224,14 @@ export const handleBridge = async ({
   }
 
   try {
-    const response = await _method?.(...(args ?? []));
+    const request: BridgeRequest = {
+      url,
+      method,
+      args: args ?? [],
+    };
+    const response = await runBridgeMiddleware(bridge, request, () =>
+      _method(...request.args),
+    );
 
     webview.injectJavaScript(
       SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID(
