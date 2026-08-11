@@ -1,5 +1,17 @@
 # @webview-bridge/react-native
 
+## 1.8.0
+
+### Minor Changes
+
+- 2abbde9: Add chainable `bridge(...).use(middleware)` support for composing Web-to-Native
+  request authentication, preprocessing, short-circuiting, and response logic.
+
+### Patch Changes
+
+- @webview-bridge/utils@1.8.0
+- @webview-bridge/types@1.8.0
+
 ## 1.7.10
 
 ### Patch Changes

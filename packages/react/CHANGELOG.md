@@ -1,5 +1,11 @@
 # @webview-bridge/react
 
+## 1.8.0
+
+### Patch Changes
+
+- @webview-bridge/types@1.8.0
+
 ## 1.7.10
 
 ### Patch Changes

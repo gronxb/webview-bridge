@@ -1,7 +1,7 @@
 {
   "name": "@webview-bridge/types",
   "type": "module",
-  "version": "1.7.10",
+  "version": "1.8.0",
   "files": [
     "src",
     "package.json"
