@@ -26,5 +26,10 @@ jobs:
           run: pnpm build
         - name: TypeScript type check
           run: pnpm test:type
+        - name: Unit tests
+          run: |
+            pnpm exec tsc -p tests
+            pnpm exec biome check tests vitest.config.ts
+            pnpm test
         - name: Lint
           run: pnpm lint

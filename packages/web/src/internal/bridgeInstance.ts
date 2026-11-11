@@ -45,9 +45,23 @@ export class BridgeInstance<
     "setState"
   >;
 
+  /** Merges hydrated methods and state into `store` (set on first hydrate). */
+  private _mergeIntoStore?: (newState: Partial<T>) => void;
+
   get isReactNativeWebView() {
     return Boolean(window.ReactNativeWebView);
   }
+
+  /**
+   * `true` once native has told this bridge which methods it provides, either
+   * through the injected `__bridgeMethods__` or a later "hydrate" event.
+   */
+  /** @internal */
+  get _hasNativeBridgeMethods() {
+    return this._nativeBridgeMethodCount > 0;
+  }
+
+  private _nativeBridgeMethodCount = 0;
 
   get isWebViewBridgeAvailable() {
     return this._bridgeMethods.length > 0;
@@ -69,7 +83,8 @@ export class BridgeInstance<
   public loose: LinkBridge<ExtractStore<T>, Omit<T, "setState">, V> =
     createPromiseProxy() as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>;
 
-  private _postMessage(type: string, body?: unknown) {
+  /** @internal */
+  public _postMessage(type: string, body?: unknown) {
     window.ReactNativeWebView?.postMessage(
       JSON.stringify(
         body
@@ -119,7 +134,24 @@ export class BridgeInstance<
     };
   }
 
-  private _willMethodThrowOnError(methodName: string) {
+  /**
+   * A function that sends `methodName` to native, regardless of whether native
+   * has announced it or `initialBridge` defines it.
+   */
+  /** @internal */
+  public _nativeMethod(methodName: string) {
+    const { timeout: timeoutMs = this._defaultTimeoutMs, onFallback } =
+      this._options;
+    return this._createNativeMethod(
+      methodName,
+      this._willMethodThrowOnError(methodName),
+      timeoutMs,
+      onFallback,
+    );
+  }
+
+  /** @internal */
+  public _willMethodThrowOnError(methodName: string) {
     const { throwOnError } = this._options;
     return (
       throwOnError === true ||
@@ -186,6 +218,7 @@ export class BridgeInstance<
     );
 
     this._bridgeMethods = [...bridgeMethods, ...initialBridgeMethodNames];
+    this._nativeBridgeMethodCount = bridgeMethods.length;
     this._nativeInitialState = nativeInitialState;
 
     const nativeMethods = bridgeMethods.reduce(
@@ -210,14 +243,26 @@ export class BridgeInstance<
           [methodName]: nativeMethod,
         });
       },
-      initialBridge as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>,
+      { ...initialBridge } as LinkBridge<
+        ExtractStore<T>,
+        Omit<T, "setState">,
+        V
+      >,
     );
 
     this.loose = this._createLoose(nativeMethods);
-    this.store = linkBridgeStore<T>(this._emitter, {
+    const hydratedState = {
       ...nativeMethods,
       ...nativeInitialState,
-    });
+    } as Partial<T>;
+    if (this._mergeIntoStore) {
+      // Keep the same store object so existing subscribers see late methods.
+      this._mergeIntoStore(hydratedState);
+    } else {
+      const { store, merge } = linkBridgeStore<T>(this._emitter, hydratedState);
+      this.store = store;
+      this._mergeIntoStore = merge;
+    }
 
     if (!this._isListenerRegistered) {
       const handleVisibilityChange = () => {
@@ -230,11 +275,29 @@ export class BridgeInstance<
     }
 
     this._postMessage("getBridgeState");
+    return true;
+  }
 
-    for (const [eventName, ...args] of window.nativeBatchedEvents ?? []) {
+  /**
+   * Replay events native injected before any bridge emitter existed (e.g. a
+   * "hydrate" that reached the page before `linkBridge()` ran).
+   */
+  /** @internal */
+  public _flushBatchedEvents() {
+    const events = window.nativeBatchedEvents ?? [];
+    window.nativeBatchedEvents = [];
+    for (const [eventName, ...args] of events) {
       this._emitter.emit(eventName, ...args);
     }
-    window.nativeBatchedEvents = [];
-    return true;
+  }
+
+  /**
+   * Ask native to send the "hydrate" event to this bridge. Used when the
+   * injected `__bridgeMethods__` were not there yet (Android injects them
+   * asynchronously). Native versions without support ignore the message.
+   */
+  /** @internal */
+  public _requestHydrate() {
+    this._postMessage("requestHydrate");
   }
 }

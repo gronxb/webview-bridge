@@ -13,12 +13,19 @@ export type Store<BridgeObject extends Bridge> = ({
   set: (newState: Partial<OnlyJSON<BridgeObject>>) => void;
 }) => BridgeObject;
 
+/**
+ * The web-side store that mirrors the native bridge state.
+ *
+ * `merge` adds late-arriving native methods and state (hydration) to the same
+ * store object, so subscribers that already hold `store` (e.g.
+ * `useBridgeStore`) see them.
+ */
 export const linkBridgeStore = <
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   emitter: DefaultEmitter,
   initialState: Partial<T> = {},
-): Omit<T, "setState"> => {
+) => {
   const getState = () => state;
 
   const setState = (newState: Partial<OnlyJSON<T>>) => {
@@ -55,8 +62,17 @@ export const linkBridgeStore = <
     return () => listeners.delete(listener);
   };
 
+  const merge = (newState: Partial<T>) => {
+    const prevState = state;
+    state = { ...state, ...newState };
+    emitChange(state, prevState);
+  };
+
   return {
-    getState,
-    subscribe,
-  } as unknown as Omit<T, "setState">;
+    store: {
+      getState,
+      subscribe,
+    } as unknown as Omit<T, "setState">,
+    merge,
+  };
 };

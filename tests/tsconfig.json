@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "paths": {
+      "@webview-bridge/types": ["../packages/types/src/index.ts"],
+      "@webview-bridge/utils": ["../packages/utils/src/index.ts"],
+      "@webview-bridge/web": ["../packages/web/src/index.ts"],
+      "@webview-bridge/react": ["../packages/react/src/index.ts"],
+      "@webview-bridge/react-native": ["../packages/react-native/src/index.ts"]
+    }
+  },
+  "include": [".", "../packages/web/src/global.d.ts"]
+}
