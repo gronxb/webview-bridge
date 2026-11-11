@@ -5,6 +5,8 @@ import type {
   Delegated,
   OnlyJSON,
   Primitive,
+  SchemaDelegated,
+  StandardSchemaV1,
 } from "@webview-bridge/types";
 import {
   equals,
@@ -12,7 +14,7 @@ import {
   removeUndefinedKeys,
 } from "@webview-bridge/utils";
 import type WebView from "react-native-webview";
-import { serializeError } from "../error";
+import { BridgeValidationError, serializeError } from "../error";
 
 /**
  * A Web-to-Native bridge method request passed through bridge middleware.
@@ -53,36 +55,87 @@ export type BridgeMiddlewareBuilder<
 
 const DELEGATED_METHOD = Symbol.for("@webview-bridge/delegated-method");
 
+type DelegatedSchemas = {
+  input?: StandardSchemaV1;
+  output?: StandardSchemaV1;
+};
+
 /**
  * Declare a bridge method whose implementation is provided per WebView through
  * the `delegate` prop, so it can use values that only exist inside React
  * components (hooks, context, navigation of the current screen, ...).
  *
- * The method name is still part of the bridge, so the Web side gets its type
- * from `typeof appBridge` as usual. A WebView that does not provide the handler
- * does not expose the method to its page.
+ * Pass a [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType,
+ * ...) and the types are inferred from it:
+ * - `input` validates the argument the page sends. The page passes the
+ *   schema's input type, and the implementation receives its output type.
+ * - `output` (optional) validates what the implementation returns. The page
+ *   receives the schema's output type. Without it, the page gets `unknown`.
+ *
+ * `delegate<Signature>()` declares the signature with a type argument instead,
+ * without runtime validation.
+ *
+ * A WebView that does not implement a delegated method does not expose it to
+ * its page.
  *
  * @example
  * export const appBridge = bridge({
- *   goBack: delegate<() => Promise<void>>(),
+ *   goBack: delegate(),
+ *   getUser: delegate(z.object({ id: z.number() }), userSchema),
+ *   confirm: delegate<(message: string) => Promise<boolean>>(),
  * });
  *
- * const navigation = useNavigation();
- * <WebView delegate={{ goBack: async () => navigation.goBack() }} />
+ * <WebView
+ *   delegate={{
+ *     goBack: async () => navigation.goBack(),
+ *     getUser: async ({ id }) => fetchUser(id),
+ *     confirm: (message) => showConfirm(message),
+ *   }}
+ * />
  */
-export const delegate = <F extends AsyncFunction>(): Delegated<F> => {
+export function delegate<
+  F extends AsyncFunction = () => Promise<void>,
+>(): Delegated<F, (...args: Parameters<F>) => ReturnType<F>>;
+export function delegate<
+  In extends StandardSchemaV1,
+  Out extends StandardSchemaV1 | undefined = undefined,
+>(input: In, output?: Out): SchemaDelegated<In, Out>;
+export function delegate(
+  input?: StandardSchemaV1,
+  output?: StandardSchemaV1,
+): unknown {
   const method = async () => {
     throw new Error(
       "[WebViewBridge] This method is declared with delegate(). Provide its implementation through the WebView `delegate` prop.",
     );
   };
-  Object.defineProperty(method, DELEGATED_METHOD, { value: true });
-  return method as unknown as Delegated<F>;
-};
+  const schemas: DelegatedSchemas = { input, output };
+  Object.defineProperty(method, DELEGATED_METHOD, { value: schemas });
+  return method;
+}
+
+const getDelegatedSchemas = (value: unknown): DelegatedSchemas | undefined =>
+  typeof value === "function"
+    ? ((value as unknown as Record<symbol, DelegatedSchemas | undefined>)[
+        DELEGATED_METHOD
+      ] ?? undefined)
+    : undefined;
 
 export const isDelegatedMethod = (value: unknown): boolean =>
-  typeof value === "function" &&
-  (value as unknown as Record<symbol, unknown>)[DELEGATED_METHOD] === true;
+  getDelegatedSchemas(value) !== undefined;
+
+const validateWithSchema = async (
+  schema: StandardSchemaV1,
+  value: unknown,
+  method: string,
+  kind: "input" | "output",
+) => {
+  const result = await schema["~standard"].validate(value);
+  if (result.issues) {
+    throw new BridgeValidationError(method, kind, result.issues);
+  }
+  return result.value;
+};
 
 const bridgeMiddlewareMap = new WeakMap<object, BridgeMiddleware<object>[]>();
 
@@ -306,7 +359,14 @@ export const handleBridge = async ({
           `[WebViewBridge] '${method}' is declared with delegate(), but this WebView has no \`delegate.${method}\`.`,
         );
       }
-      return handler(...request.args);
+      const { input, output } = getDelegatedSchemas(_method) ?? {};
+      const handlerArgs = input
+        ? [await validateWithSchema(input, request.args[0], method, "input")]
+        : request.args;
+      const result = await handler(...handlerArgs);
+      return output
+        ? validateWithSchema(output, result, method, "output")
+        : result;
     });
 
     webview.injectJavaScript(
@@ -318,7 +378,12 @@ export const handleBridge = async ({
     );
   } catch (error) {
     handleThrow(error instanceof Error ? error : new Error(String(error)));
-    console.error(error);
+    // Invalid input comes from the page, so it is not a native error.
+    if (error instanceof BridgeValidationError && error.kind === "input") {
+      console.warn(error.message);
+    } else {
+      console.error(error);
+    }
   }
 };
 
