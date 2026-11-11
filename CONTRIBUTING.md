@@ -10,10 +10,12 @@ If the files in `packages/*` have changed, you will need to do `pnpm -w build`.
 
 ## Setup
 
+Node.js 22.18 or later is required (the packages are built with [tsdown](https://tsdown.dev)).
+
 ```sh
 $ corepack enable
 $ pnpm install
-$ pnpm build:dev
+$ pnpm build:dev # builds packages/* and rebuilds on change
 ```
 
 ## React Native (iOS) Start
@@ -38,6 +40,21 @@ Change the code and enter the command below to apply the code.
 ```sh
 $ pnpm -w build
 ```
+
+## Testing
+
+Run these before opening a PR. CI runs the same checks.
+
+```sh
+$ pnpm build          # build packages/* (the examples type-check against dist)
+$ pnpm test           # vitest: tests/*.test.tsx
+$ pnpm exec tsc -p tests
+$ pnpm test:type      # type-check every package, type-tests/ and the examples
+$ pnpm lint
+```
+
+- `tests/harness.tsx` wires the real `createWebView` (React Native side) to the real `linkBridge` (Web side) in one jsdom window. `react-native-webview` is replaced by a fake WebView that evaluates injected scripts in the page and delivers `postMessage` asynchronously. Use it for behaviour that crosses the bridge.
+- Type-level behaviour (inference, required props, `@ts-expect-error` cases) goes in `packages/*/type-tests`, which `pnpm test:type` checks.
 
 ## Changeset Guide
 

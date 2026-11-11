@@ -5,7 +5,7 @@ import type {
   BridgeStore,
   DelegatedMethodKeys,
   KeyOfOrString,
-  Parser,
+  ParserInput,
   ParserSchema,
 } from "@webview-bridge/types";
 import { createEvents, createRandomId } from "@webview-bridge/utils";
@@ -32,6 +32,7 @@ import {
 } from "./integrations/bridge";
 import { INJECT_DEBUG, type LogType, handleLog } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
+import { parsePostMessage } from "./integrations/postMessageSchema";
 import type { BridgeWebView } from "./types/webview";
 
 export type CreateWebViewArgs<
@@ -177,7 +178,7 @@ export const createWebView = <
      */
     postMessage: <
       EventName extends KeyOfOrString<PostMessageSchema>,
-      Args extends Parser<PostMessageSchema, EventName>,
+      Args extends ParserInput<PostMessageSchema, EventName>,
     >(
       eventName: EventName,
       args: Args,
@@ -191,9 +192,13 @@ export const createWebView = <
         broadcast: false,
       },
     ) => {
-      let _args: any = args;
+      let _args: unknown = args;
       if (postMessageSchema) {
-        _args = postMessageSchema[eventName].validate(args);
+        _args = parsePostMessage(
+          postMessageSchema[eventName],
+          String(eventName),
+          args,
+        );
       }
       if (options.broadcast) {
         for (const ref of webviewRefList) {

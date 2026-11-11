@@ -10,11 +10,12 @@ In the case of an SSR (Server-Side Rendering) environment, it also assists in th
 ### initialBridge
 
 It is possible to configure `initialBridge` to operate in a non-React Native environment.
-Prioritize applying the bridge of the React Native WebView, and if it is unavailable, apply the `initialBridge`.
-Therefore, if `initialBridge` is configured, `bridge.isWebViewBridgeAvailable` should be true even in environments that are not React Native.
+
+- Inside a React Native WebView, native always takes priority. A call made before native has announced its methods (which can happen on Android) is still sent to native, not to `initialBridge`.
+- Outside a React Native WebView, `initialBridge` is used. `bridge.isWebViewBridgeAvailable` is then `true` as well.
 
 ```ts
-import { linkBridge } from "@webview-bridge/web";
+import { type Bridge, type BridgeStore, linkBridge } from "@webview-bridge/web";
 
 // Here Custom Type
 export interface BridgeState extends Bridge {
@@ -44,3 +45,7 @@ export const bridge = linkBridge<AppBridge>({
   },
 });
 ```
+
+::: tip `delegate()` methods
+Methods declared with [`delegate()`](/using-react-hooks-in-native-methods) are plain methods on the Web side, so `initialBridge` takes ordinary implementations for them, typed with the page-side signature.
+:::

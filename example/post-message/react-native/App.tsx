@@ -29,17 +29,10 @@ export const appBridge = bridge({
   },
 });
 
+// Pass Standard Schemas (Zod, Valibot, ...) directly; types are inferred.
 export const appSchema = postMessageSchema({
-  setWebMessage_zod: {
-    validate: (value) => {
-      return z.object({ message: z.string() }).parse(value);
-    },
-  },
-  setWebMessage_valibot: {
-    validate: (value) => {
-      return v.parse(v.object({ message: v.string() }), value);
-    },
-  },
+  setWebMessage_zod: z.object({ message: z.string() }),
+  setWebMessage_valibot: v.object({ message: v.string() }),
 });
 
 

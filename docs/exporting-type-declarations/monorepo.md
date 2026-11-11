@@ -72,3 +72,7 @@ That's all there is to it! To export types from the Web Project to the React Nat
 ::: tip NOTE
 You can explore a practical example and further understand the implementation by visiting the [example](https://github.com/gronxb/webview-bridge/tree/main/example) GitHub repository. This repository provides a hands-on demonstration of the concepts and steps outlined in this guide.
 :::
+
+::: tip Schema libraries
+If the bridge uses [Standard Schemas](https://standardschema.dev) (for example in `delegate()` or `postMessageSchema`), the web project type-checks against the schema library's types, such as `zod`. In a monorepo they usually resolve through the React Native package; if they don't, add the library to the web project as a dev dependency.
+:::

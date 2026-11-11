@@ -4,3 +4,4 @@ export * from "./integrations/postMessageSchema";
 export * from "./types/webview";
 export * from "./useBridge";
 export type * from "@webview-bridge/types";
+export { BridgeValidationError } from "./error";

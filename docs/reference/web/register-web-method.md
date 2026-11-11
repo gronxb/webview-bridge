@@ -1,9 +1,15 @@
-# registerNativeMethod
+# registerWebMethod
 
-The `registerNativeMethod` is register a web method to react native.
+::: danger DEPRECATED
+`registerWebMethod` is deprecated. Send events from React Native to the Web with `postMessage` instead. See [Using a PostMessage](/using-a-post-message).
+:::
 
-## Options 
+`registerWebMethod` registers methods declared in the Web so React Native can call them through `linkWebMethod`. See [Using a Web Method](/using-a-web-method).
 
-| Prop             | Type                           | Required | Default | Description                                                                 |
-|------------------|--------------------------------|----------|---------|---------------------------------------------------------------------------|
-| `bridge`         | Object                         | true     | X       | Represents the bridge between React Native and the WebView.                  |
+## Arguments
+
+| Argument | Type                                   | Required | Description                         |
+|----------|----------------------------------------|----------|-------------------------------------|
+| `bridge` | `Record<string, (...args) => Promise>` | true     | The methods to expose to React Native. |
+
+Returns the same object, so its type can be exported to React Native.

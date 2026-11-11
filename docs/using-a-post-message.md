@@ -6,21 +6,17 @@ This guide will teach you how to send events from React Native to web and subscr
 
 
 ## Installation
-If you want, additional libraries are needed to define schemas.
 
-Suggested schema libraries:
+Event schemas use [Standard Schema](https://standardschema.dev), so you can pass a schema from any library that implements it, such as:
 
-* [zod](https://github.com/colinhacks/zod)
-* [valibot](https://github.com/fabian-hiller/valibot)
-
-Please choose and use the library you prefer.
-
-Follow the guidelines of each library for schema definition.
+* [zod](https://github.com/colinhacks/zod) (3.24 or later)
+* [valibot](https://github.com/fabian-hiller/valibot) (1.0 or later)
+* [arktype](https://github.com/arktypeio/arktype)
 
 ::: code-group
 
 ```sh [npm]
-$ npm add @webview-bridge/web
+$ npm add @webview-bridge/web zod
 ```
 
 ```sh [pnpm]
@@ -33,62 +29,23 @@ $ yarn add @webview-bridge/web zod
 
 :::
 
-
-
 ## React Native Part
 
-In React Native, you need to define events in advance and export the types.
+In React Native, define the events in advance and export their types. Pass a schema for each event directly; the types are inferred from it.
 
 ::: tip NOTE
 Even if you don't define the event schema, you can use postMessage loosely. If the types are not important, you can skip them and just use postMessage.
 :::
 
-
 ::: code-group
-
-```tsx [only type]
-
-import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
-
-const appPostMessageSchema = postMessageSchema({
-  eventName1: {
-    validate: (data) => data as string, // This is not recommended; please use validation libraries like zod or valibot.
-  },
-  eventName2: {
-    validate: (data) => data as { message: string },  // This is not recommended; please use validation libraries like zod or valibot.
-  },
-});
-
-// Export the event schema to be used in the web application
-export type AppPostMessageSchema = typeof appPostMessageSchema;
-
-// When you bridge a webview, a postMessage is extracted.
-export const { postMessage } = createWebView({
-  postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
-  // ..
-});
-
-
-// usage
-postMessage("eventName1", "test");
-postMessage("eventName2", {
-  message: "test",
-});
-```
 
 ```tsx [zod]
 import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
 import { z } from "zod";
 
 const appPostMessageSchema = postMessageSchema({
-  eventName1: {
-    validate: (data) => z.string().parse(data),
-  },
-  eventName2: {
-    validate: (value) => {
-      return z.object({ message: z.string() }).parse(value);
-    },
-  },
+  eventName1: z.string(),
+  eventName2: z.object({ message: z.string() }),
 });
 
 // Export the event schema to be used in the web application
@@ -96,10 +53,9 @@ export type AppPostMessageSchema = typeof appPostMessageSchema;
 
 // When you bridge a webview, a postMessage is extracted.
 export const { postMessage } = createWebView({
-  postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
+  postMessageSchema: appPostMessageSchema, // Optional. Skip it if the types don't matter to you.
   // ..
 });
-
 
 // usage
 postMessage("eventName1", "test");
@@ -113,36 +69,60 @@ import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
 import * as v from "valibot";
 
 const appPostMessageSchema = postMessageSchema({
-  eventName1: {
-    validate: (data) => {
-      return v.parse(v.string(), data);
-    }
-  },
-  eventName2: {
-    validate: (value) => {
-      return v.parse(v.object({ message: v.string() }), value);
-    },
-  }
+  eventName1: v.string(),
+  eventName2: v.object({ message: v.string() }),
 });
-
 
 // Export the event schema to be used in the web application
 export type AppPostMessageSchema = typeof appPostMessageSchema;
 
 // When you bridge a webview, a postMessage is extracted.
 export const { postMessage } = createWebView({
+  postMessageSchema: appPostMessageSchema, // Optional. Skip it if the types don't matter to you.
   // ..
-  postMessageSchema: appPostMessageSchema, // Pass in the your schema. This is optional, so if the type doesn't matter to you, you don't need to include it.
 });
 
 // usage
-
 postMessage("eventName1", "test");
 postMessage("eventName2", {
   message: "test",
 });
 ```
 
+```tsx [only type]
+import { createWebView, postMessageSchema } from "@webview-bridge/react-native";
+
+// Without a schema library, give each event a `validate` function.
+// This only declares types; it does not validate anything.
+const appPostMessageSchema = postMessageSchema({
+  eventName1: {
+    validate: (data) => data as string,
+  },
+  eventName2: {
+    validate: (data) => data as { message: string },
+  },
+});
+
+export type AppPostMessageSchema = typeof appPostMessageSchema;
+
+export const { postMessage } = createWebView({
+  postMessageSchema: appPostMessageSchema,
+  // ..
+});
+```
+
+:::
+
+### Validation and transforms
+
+`postMessage` validates the payload with the event's schema before sending it:
+
+- `postMessage` takes the schema's **input** type, and the page receives its **output** type. A schema with transforms (for example `z.date().transform((d) => d.toISOString())`) converts the value on native.
+- An invalid payload throws a `BridgeValidationError` from `postMessage`, and nothing is sent.
+- `postMessage` is synchronous, so schemas that validate asynchronously (for example Zod's async `refine`) are rejected with an error.
+
+::: details Migrating from `validate` functions
+Earlier versions only accepted `{ validate }` objects, so schemas were wrapped like `{ validate: (data) => z.string().parse(data) }`. That still works. You can now pass the schema itself instead: `eventName1: z.string()`.
 :::
 
 ## Web Part

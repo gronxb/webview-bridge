@@ -22,18 +22,20 @@ Declare the navigation methods with `delegate()`, and implement them with the `n
 ```tsx
 // This file is src/bridge.ts
 import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
+import { z } from "zod";
 import type { RootStackParamList } from "./navigation";
 
 export const appBridge = bridge({
-  canGoBack: delegate<() => Promise<boolean>>(),
-  goBack: delegate<() => Promise<void>>(),
+  canGoBack: delegate(z.void(), z.boolean()),
+  goBack: delegate(),
+  // A generic signature can't be written as a schema, so it uses a type argument.
   push: delegate<
     <RouteName extends keyof RootStackParamList>(
       name: RouteName,
       params: RootStackParamList[RouteName],
     ) => Promise<void>
   >(),
-  setTitle: delegate<(title: string) => Promise<void>>(),
+  setTitle: delegate(z.string()),
 });
 
 export type AppBridge = typeof appBridge;

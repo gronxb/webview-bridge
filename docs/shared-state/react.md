@@ -102,6 +102,40 @@ function CountAndIncrease() {
 ```
 
 
+## With a Provider
+
+`createLinkBridgeProvider` creates the bridge together with a `BridgeProvider` and hooks bound to it. It takes the same options as `linkBridge`, and it is the recommended setup for SSR frameworks.
+
+```tsx
+import { createLinkBridgeProvider } from "@webview-bridge/react";
+import type { AppBridge, AppPostMessageSchema } from ""; // types exported from React Native
+
+export const {
+  BridgeProvider,
+  useBridgeStore, // shared state and native methods, with a selector
+  useBridgeStatus, // { isWebViewBridgeAvailable, isNativeMethodAvailable }
+  useBridgeLoose, // { loose }
+  useBridgeEventListener, // listen to postMessage events
+} = createLinkBridgeProvider<AppBridge, AppPostMessageSchema>({
+  throwOnError: true,
+});
+
+function Count() {
+  const count = useBridgeStore((state) => state.count);
+  const { isWebViewBridgeAvailable } = useBridgeStatus();
+
+  useBridgeEventListener("eventName1", (message) => {
+    console.log(message);
+  });
+
+  return <p>Native Count: {isWebViewBridgeAvailable ? count : "-"}</p>;
+}
+```
+
+Render the components inside `<BridgeProvider>`. If native announces its methods after the first render (which can happen on Android), `useBridgeStore` and `useBridgeStatus` re-render with them.
+
+See [Next.js (App Router)](/ssr/next-js-app-router) and [Remix](/ssr/remix) for complete setups.
+
 ::: tip NOTE
 You can explore a practical example and further understand the implementation by visiting bellow.
 

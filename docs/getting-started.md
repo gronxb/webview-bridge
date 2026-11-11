@@ -145,7 +145,7 @@ export const appBridge = bridge({
   async openInAppBrowser(url: string) {
     /* ... */
   },
-  goBack: delegate<() => Promise<void>>(), // implemented by each WebView
+  goBack: delegate(), // implemented by each WebView
 });
 
 export const { WebView } = createWebView({ bridge: appBridge });
@@ -162,7 +162,7 @@ function WebViewScreen() {
 }
 ```
 
-The Web side calls `bridge.goBack()` like any other method. TypeScript requires every `delegate()` method to be implemented in the `delegate` prop.
+The Web side calls `bridge.goBack()` like any other method. TypeScript requires every `delegate()` method to be implemented in the `delegate` prop. To give a delegated method arguments or a return value, pass a [Standard Schema](https://standardschema.dev), for example `delegate(z.string(), z.boolean())`, and the types are inferred from it.
 
 See [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods) for more use cases.
 

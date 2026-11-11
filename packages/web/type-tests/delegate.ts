@@ -35,3 +35,49 @@ linkBridge<AppBridge>({
     getUser: async () => 1,
   },
 });
+
+// ---- Standard Schema forms -------------------------------------------------
+import type {
+  InferSchemaInput,
+  SchemaDelegated,
+  StandardSchemaV1,
+  ExtractStore as _ExtractStore,
+} from "@webview-bridge/types";
+
+type Schema<I, O> = StandardSchemaV1<I, O>;
+type SchemaBridge = BridgeStore<{
+  getUser: SchemaDelegated<
+    Schema<{ id: string }, { id: number }>,
+    Schema<{ name: string }, { name: string; upper: string }>
+  >;
+  track: SchemaDelegated<Schema<{ event: string }, { event: string }>>;
+}>;
+
+const schemaBridge = linkBridge<SchemaBridge>({
+  initialBridge: {
+    getUser: async () => ({ name: "web", upper: "WEB" }),
+  },
+});
+expectType<Promise<{ name: string; upper: string }>>(
+  schemaBridge.getUser({ id: "1" }),
+);
+expectType<Promise<unknown>>(schemaBridge.track({ event: "x" }));
+// @ts-expect-error the page passes the input schema's input type
+schemaBridge.getUser({ id: 1 });
+expectType<{ id: string }>(
+  null as unknown as InferSchemaInput<Schema<{ id: string }, { id: number }>>,
+);
+
+// postMessage listeners receive the Standard Schema output type.
+type PostMessages = {
+  converted: Schema<{ count: number }, { count: string }>;
+  legacy: { validate: (data: unknown) => { legacy: true } };
+};
+const withEvents = linkBridge<SchemaBridge, PostMessages>();
+withEvents.addEventListener("converted", (data) => {
+  expectType<{ count: string }>(data);
+});
+withEvents.addEventListener("legacy", (data) => {
+  expectType<{ legacy: true }>(data);
+});
+export type _Unused = _ExtractStore<SchemaBridge>;

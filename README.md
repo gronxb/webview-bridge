@@ -23,6 +23,7 @@ Inspired by the functionality of `tRPC`, `webview-bridge` simplifies the communi
 - No App Review Needed
 - Shared State
 - React Hooks in native methods with `delegate()`
+- Runtime validation with [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType, ...)
 
 ![webview-bridge](https://raw.githubusercontent.com/gronxb/webview-bridge/main/demo.gif)
 
