@@ -149,3 +149,30 @@ describe("native call timeout", () => {
     expect(resultIndex).toBeGreaterThan(ackIndex);
   });
 });
+
+describe("event bookkeeping", () => {
+  beforeEach(() => {
+    resetEnvironment();
+  });
+
+  it("does not keep per-call event keys after calls settle", async () => {
+    mount();
+    loadPage({ beforeContentLoaded: "on-time" });
+    const web = linkBridge<AppBridge>({ timeout: TIMEOUT });
+
+    for (let i = 0; i < 5; i++) {
+      await web.fast();
+    }
+
+    const emitters = Object.values(
+      (window as any).nativeEmitterMap as Record<
+        string,
+        { events: Record<string, unknown> }
+      >,
+    );
+    const perCallKeys = emitters.flatMap((emitter) =>
+      Object.keys(emitter.events).filter((key) => key.startsWith("fast-")),
+    );
+    expect(perCallKeys).toEqual([]);
+  });
+});

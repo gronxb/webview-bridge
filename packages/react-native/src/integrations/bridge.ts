@@ -277,9 +277,11 @@ export const handleBridge = async ({
     return;
   }
 
-  // From here on the call always gets a response, so tell the page it arrived.
-  // The page's `timeout` then stops applying, and long-running methods (dialogs,
-  // pickers, in-app browsers) are not cut off. Pages that predate the ack ignore it.
+  // The call is about to run, so tell the page it arrived. The page's `timeout`
+  // then stops applying, and long-running methods (dialogs, pickers, in-app
+  // browsers) are not cut off. The page waits for the result like any other
+  // promise, so a method that never settles keeps the call pending.
+  // Pages that predate the ack ignore it.
   webview.injectJavaScript(
     SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID(
       bridgeId,

@@ -40,7 +40,14 @@ export const createEvents = <
       this.events[event]?.push(cb);
     }
     return () => {
-      this.events[event] = this.events[event]?.filter((i) => cb !== i);
+      const rest = this.events[event]?.filter((i) => cb !== i);
+      // Drop empty keys: per-call events (results, acks) would otherwise
+      // accumulate for the lifetime of the page.
+      if (rest && rest.length > 0) {
+        this.events[event] = rest;
+      } else {
+        delete this.events[event];
+      }
     };
   },
 });
