@@ -118,7 +118,9 @@ export const loadPage = ({
         return;
       }
       setTimeout(() => {
-        if (generation !== native.generation) {
+        // Drop messages from an earlier test, and messages that arrive after
+        // the test environment (the jsdom window) has been torn down.
+        if (generation !== native.generation || typeof window === "undefined") {
           return;
         }
         native.props.get(id)?.onMessage?.({

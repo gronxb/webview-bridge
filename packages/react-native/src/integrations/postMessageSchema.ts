@@ -1,4 +1,5 @@
 import type {
+  CheckSerializableEvents,
   PostMessageEventSchema,
   PostMessageSchemaObject,
 } from "@webview-bridge/types";
@@ -11,8 +12,8 @@ import { BridgeValidationError } from "../error";
  * with a `validate` function.
  */
 export const postMessageSchema = <T extends PostMessageSchemaObject>(
-  schema: T,
-) => {
+  schema: T & CheckSerializableEvents<T>,
+): T => {
   // Returning immediately to infer the correct type.
   return schema;
 };

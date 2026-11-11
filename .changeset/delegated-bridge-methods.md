@@ -11,7 +11,7 @@ Declare the method on the bridge with `delegate()`, and implement it per WebView
 ```tsx
 export const appBridge = bridge({
   goBack: delegate(),
-  getUser: delegate(z.object({ id: z.string() }), userSchema),
+  getUser: delegate({ input: z.object({ id: z.string() }), output: userSchema }),
 });
 
 <WebView
@@ -22,8 +22,10 @@ export const appBridge = bridge({
 />
 ```
 
-- Types are inferred from [Standard Schemas](https://standardschema.dev) (Zod, Valibot, ArkType, ...): `delegate(input, output?)`. The page passes the input schema's input type and receives the output schema's output type. The native implementation receives the validated, transformed input and its return value is validated against the output schema. A value that fails a schema makes the call fail with a `BridgeValidationError`.
-- `delegate()` declares a method without arguments or a return value, and `delegate<Signature>()` declares the signature with a type argument instead (no runtime validation).
+- Types are inferred from [Standard Schemas](https://standardschema.dev) (Zod, Valibot, ArkType, ...): `delegate({ input, output })`, both optional. The page passes the input schema's input type and receives the output schema's output type. The native implementation receives the validated, transformed input and its return value is validated against the output schema. A value that fails a schema makes the call fail with a `BridgeValidationError`.
+- `delegate()` declares a method without arguments or a return value, `delegate({ output })` one that only returns a value, and `delegate<Signature>()` declares the signature with a type argument instead (no runtime validation).
+- A method declared with schemas takes exactly the arguments they describe (one with `input`, none without); extra arguments fail with a `BridgeValidationError`. Input is validated after middleware, right before the implementation, and output is validated on the final result after middleware.
+- Values cross the bridge as JSON, so schemas whose page-facing types contain a `Date`, `BigInt`, `Map`, `Set`, an object with methods, a function or `undefined` array items are rejected at compile time.
 - The `delegate` prop is type-checked: it is required when the bridge has delegated methods, every delegated method must be implemented with a matching signature, and regular methods cannot be listed.
 - Each WebView runs its own implementations, so WebViews that share one bridge do not call each other's.
 - A delegated method that is missing from the `delegate` prop when the WebView mounts is not exposed to that page (`isNativeMethodAvailable` returns `false`, and calls go through the fallback flow).

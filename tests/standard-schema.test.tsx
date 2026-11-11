@@ -38,15 +38,20 @@ describe("delegate() with Standard Schemas", () => {
 
   const createSchemaBridge = () =>
     bridge({
-      getUser: delegate(
-        z.object({ id: z.string().transform((value) => Number(value)) }),
-        z.object({ id: z.number(), name: z.string().toUpperCase() }),
-      ),
-      track: delegate(v.object({ event: v.string() })),
-      slowCheck: delegate(
-        z.string().refine(async (value) => value.length > 2, "too short"),
-        z.boolean(),
-      ),
+      getUser: delegate({
+        input: z.object({ id: z.string().transform((value) => Number(value)) }),
+        output: z.object({ id: z.number(), name: z.string().toUpperCase() }),
+      }),
+      track: delegate({ input: v.object({ event: v.string() }) }),
+      slowCheck: delegate({
+        input: z
+          .string()
+          .refine(async (value) => value.length > 2, "too short"),
+        output: z.boolean(),
+      }),
+      getSession: delegate({
+        output: z.object({ token: z.string().transform((t) => `Bearer ${t}`) }),
+      }),
       legacy: delegate<(a: number, b: number) => Promise<number>>(),
     });
   type SchemaBridge = ReturnType<typeof createSchemaBridge>;
@@ -67,6 +72,10 @@ describe("delegate() with Standard Schemas", () => {
               calls.push(input);
             },
             slowCheck: async () => true,
+            getSession: async (...args: unknown[]) => {
+              calls.push(args);
+              return { token: "abc" };
+            },
             legacy: async (a, b) => a + b,
             ...(overrides as object),
           }}
@@ -150,10 +159,89 @@ describe("delegate() with Standard Schemas", () => {
     });
   });
 
+  it("validates only the output of an output-only method", async () => {
+    const { calls, web } = mount();
+
+    await expect(web.getSession()).resolves.toEqual({ token: "Bearer abc" });
+    // No input schema: the implementation is called without arguments.
+    expect(calls).toEqual([[]]);
+  });
+
+  it("rejects arguments a schema-declared method does not take", async () => {
+    const { calls, web } = mount();
+    const loose = web.loose as Record<
+      string,
+      (...args: unknown[]) => Promise<unknown>
+    >;
+
+    await expect(outcome(loose.getUser({ id: "7" }, "extra"))).resolves.toEqual(
+      {
+        error: expect.stringContaining(
+          "Invalid input for 'getUser': Expected at most 1 argument(s), received 2",
+        ),
+      },
+    );
+    await expect(outcome(loose.getSession("unexpected"))).resolves.toEqual({
+      error: expect.stringContaining(
+        "Invalid input for 'getSession': Expected at most 0 argument(s), received 1",
+      ),
+    });
+    expect(calls).toEqual([]);
+  });
+
   it("keeps passing all arguments through for the generic form", async () => {
     const { web } = mount();
 
     await expect(web.legacy(2, 3)).resolves.toBe(5);
+  });
+});
+
+describe("delegate() output validation and middleware", () => {
+  beforeEach(() => {
+    resetEnvironment();
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const setup = (
+    middleware: Parameters<ReturnType<typeof bridge>["use"]>[0],
+  ) => {
+    const appBridge = bridge({
+      count: delegate({ output: z.number().transform((n) => n * 10) }),
+    }).use(middleware);
+    const { WebView } = createWebView({ bridge: appBridge });
+    act(() => {
+      create(<WebView testID="default" delegate={{ count: async () => 1 }} />);
+    });
+    loadPage({ beforeContentLoaded: "on-time" });
+    return linkBridge<typeof appBridge>({ throwOnError: true });
+  };
+
+  it("validates the value middleware returns, not only the implementation's", async () => {
+    const web = setup(async (_request, next) => {
+      await next();
+      return "wrong";
+    });
+
+    await expect(outcome(web.count())).resolves.toEqual({
+      error: expect.stringContaining("Invalid output for 'count'"),
+    });
+  });
+
+  it("validates a middleware short circuit", async () => {
+    const web = setup(async () => 5);
+
+    await expect(web.count()).resolves.toBe(50);
+  });
+
+  it("applies the output transform exactly once", async () => {
+    const web = setup(async (_request, next) => next());
+
+    await expect(web.count()).resolves.toBe(10);
   });
 });
 

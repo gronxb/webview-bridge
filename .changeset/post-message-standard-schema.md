@@ -14,6 +14,6 @@ const appPostMessageSchema = postMessageSchema({
 ```
 
 - `postMessage` takes the schema's input type, validates the payload, and sends the schema's output to the page. The Web listener receives the output type.
-- An invalid payload throws a `BridgeValidationError` from `postMessage` and is not sent. Schemas that validate asynchronously are rejected, because `postMessage` is synchronous.
+- An invalid payload throws a `BridgeValidationError` from `postMessage` and is not sent. Event schemas whose output type contains a `Date`, `BigInt`, `Map`, `Set`, an object with methods, a function or `undefined` array items are rejected at compile time, because payloads cross the bridge as JSON. Schemas that validate asynchronously are rejected, because `postMessage` is synchronous.
 - `{ validate }` objects keep working as before. When an event schema is a Standard Schema, it is used even if the object also has a `validate` method: Zod 4 schemas have an unrelated `validate` method that returns a boolean, which used to be sent to the page instead of the data.
 - New type: `ParserInput` (the payload type `postMessage` accepts).

@@ -62,7 +62,7 @@ const bridge = linkBridge<AppBridge>();
 ```
 
 ::: tip `delegate()` methods
-On the Web side, a method declared with [`delegate()`](/using-react-hooks-in-native-methods) is a plain method. Declare it with the signature the page calls, for example `getUser: (input: { id: string }) => Promise<User>` for `delegate(z.object({ id: z.string() }), userSchema)`.
+On the Web side, a method declared with [`delegate()`](/using-react-hooks-in-native-methods) is a plain method. Declare it with the signature the page calls, for example `getUser: (input: { id: string }) => Promise<User>` for `delegate({ input: z.object({ id: z.string() }), output: userSchema })`.
 :::
 
 By following these steps, you ensure that type consistency and interoperability are maintained across your React Native and web projects, even when they are housed in multi repositories.

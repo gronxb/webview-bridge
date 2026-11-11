@@ -26,7 +26,7 @@ import { z } from "zod";
 import type { RootStackParamList } from "./navigation";
 
 export const appBridge = bridge({
-  canGoBack: delegate(z.void(), z.boolean()),
+  canGoBack: delegate({ output: z.boolean() }),
   goBack: delegate(),
   // A generic signature can't be written as a schema, so it uses a type argument.
   push: delegate<
@@ -35,7 +35,7 @@ export const appBridge = bridge({
       params: RootStackParamList[RouteName],
     ) => Promise<void>
   >(),
-  setTitle: delegate(z.string()),
+  setTitle: delegate({ input: z.string() }),
 });
 
 export type AppBridge = typeof appBridge;

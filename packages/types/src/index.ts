@@ -151,19 +151,141 @@ type DelegatedArgs<Input> = undefined extends Input
   ? [input?: Input]
   : [input: Input];
 
-/** The method type created by `delegate(input, output?)`. */
+/** The schemas `delegate({ input, output })` takes. Both are optional. */
+export type DelegateSchemas = {
+  /** Validates the argument the page sends (Web → native). */
+  input?: StandardSchemaV1;
+  /** Validates the value the implementation returns (native → Web). */
+  output?: StandardSchemaV1;
+};
+
+/** Values that do not survive the JSON trip across the bridge. */
+type NonSerializable =
+  | Date
+  | bigint
+  | symbol
+  | ((...args: never[]) => unknown)
+  | ReadonlyMap<unknown, unknown>
+  | ReadonlySet<unknown>
+  | RegExp
+  | Promise<unknown>
+  | Error;
+
+/**
+ * `true` when `T` contains a value JSON cannot carry faithfully. `unknown` and
+ * `any` are allowed, because they do not promise a specific type.
+ */
+type HasNonSerializable<
+  T,
+  Depth extends unknown[] = [],
+> = Depth["length"] extends 10
+  ? false
+  : IsAny<T> extends true
+    ? false
+    : unknown extends T
+      ? false
+      : // Primitives, including branded ones (`string & { __brand }`).
+        T extends string | number | boolean | null | undefined
+        ? false
+        : T extends NonSerializable
+          ? true
+          : T extends readonly (infer Item)[]
+            ? IsAny<Item> extends true
+              ? false
+              : unknown extends Item
+                ? false
+                : // JSON turns `undefined` array items into `null`.
+                  undefined extends Item
+                  ? true
+                  : HasNonSerializable<Item, [...Depth, 0]>
+            : T extends object
+              ? true extends {
+                  [K in keyof T]-?: HasNonSerializable<T[K], [...Depth, 0]>;
+                }[keyof T]
+                ? true
+                : false
+              : false;
+
+/**
+ * @internal Rejects an input schema whose input type (what the page sends)
+ * cannot cross the bridge as JSON.
+ */
+// Not distributive: a schema property that may be absent (`S | undefined`)
+// must still be checked, not collapse to `unknown`.
+export type CheckSerializableInput<In> = [Exclude<In, undefined>] extends [
+  infer Schema extends StandardSchemaV1,
+]
+  ? true extends HasNonSerializable<InferSchemaInput<Schema>>
+    ? {
+        input: "The input schema's input type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it on native instead.";
+      }
+    : unknown
+  : unknown;
+
+/**
+ * @internal Rejects an output schema whose output type (what the page
+ * receives) cannot cross the bridge as JSON.
+ */
+// Not distributive: a schema property that may be absent (`S | undefined`)
+// must still be checked, not collapse to `unknown`.
+export type CheckSerializableOutput<Out> = [Exclude<Out, undefined>] extends [
+  infer Schema extends StandardSchemaV1,
+]
+  ? true extends HasNonSerializable<InferSchemaOutput<Schema>>
+    ? {
+        output: "The output schema's output type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it to a string or number.";
+      }
+    : unknown
+  : unknown;
+
+/**
+ * @internal Rejects postMessage event schemas whose output type (what the page
+ * receives) cannot cross the bridge as JSON.
+ */
+export type CheckSerializableEvents<T> = {
+  // Not distributive, so an optional event (`S | undefined`) is still checked.
+  [K in keyof T]: [Exclude<T[K], undefined>] extends [
+    infer Schema extends StandardSchemaV1,
+  ]
+    ? true extends HasNonSerializable<InferSchemaOutput<Schema>>
+      ? "This event schema's output type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it to a string or number."
+      : unknown
+    : unknown;
+};
+
+/** The schema a `delegate()` property holds, or `undefined` when absent. */
+export type SchemaOf<S, Key extends "input" | "output"> = Key extends keyof S
+  ? S[Key]
+  : undefined;
+
+type SchemaPageArgs<In> = In extends StandardSchemaV1
+  ? DelegatedArgs<InferSchemaInput<In>>
+  : [];
+
+type SchemaHandlerArgs<In> = In extends StandardSchemaV1
+  ? [input: InferSchemaOutput<In>]
+  : [];
+
+// Without an output schema: `void` when there is no input either (same as
+// `delegate()`), otherwise `unknown`.
+type SchemaPageResult<In, Out> = Out extends StandardSchemaV1
+  ? InferSchemaOutput<Out>
+  : [In] extends [undefined]
+    ? // biome-ignore lint/suspicious/noConfusingVoidType: becomes Promise<void>, matching `delegate()`.
+      void
+    : unknown;
+
+type SchemaHandlerResult<Out> = Out extends StandardSchemaV1
+  ? InferSchemaInput<Out> | Promise<InferSchemaInput<Out>>
+  : unknown;
+
+/** The method type created by `delegate({ input, output })`. */
 export type SchemaDelegated<
-  In extends StandardSchemaV1,
+  In extends StandardSchemaV1 | undefined = undefined,
   Out extends StandardSchemaV1 | undefined = undefined,
 > = Delegated<
-  (
-    ...args: DelegatedArgs<InferSchemaInput<In>>
-  ) => Promise<Out extends StandardSchemaV1 ? InferSchemaOutput<Out> : unknown>,
-  (
-    input: InferSchemaOutput<In>,
-  ) => Out extends StandardSchemaV1
-    ? InferSchemaInput<Out> | Promise<InferSchemaInput<Out>>
-    : unknown
+  (...args: SchemaPageArgs<In>) => Promise<SchemaPageResult<In, Out>>,
+  (...args: SchemaHandlerArgs<In>) => SchemaHandlerResult<Out>
 >;
 
 type BridgeShape<T> = T extends { getState: () => infer S } ? S : T;
