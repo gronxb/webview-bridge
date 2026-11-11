@@ -92,3 +92,7 @@ const bridge = linkBridge<AppBridge>();
 ```
 
 By following these steps, you ensure that type consistency and interoperability are maintained across your React Native and web projects, even when they are housed in multi repositories.
+
+::: tip Schema libraries
+If the bridge uses [Standard Schemas](https://standardschema.dev) (for example in `delegate()` or `postMessageSchema`), the generated declaration file refers to the schema library's types, such as `zod`. Install that library in the web project as well (a dev dependency is enough), or inline its types with dts-bundle-generator's `--external-inlines` option.
+:::

@@ -44,7 +44,14 @@ Handling can be done as follows:
 ```
 
 ::: tip NOTE
-Typically, to avoid halting app functionality, the default value for `throwOnError` is false. In this case, it is executed as `console.warn`.
+Typically, to avoid halting app functionality, the default value for `throwOnError` is false. In this case, a missing method resolves to `undefined`. Set `debug: true` to log a warning.
+:::
+
+::: tip What counts as a missing method
+- A method the installed app does not have yet.
+- A [`delegate()`](/using-react-hooks-in-native-methods) method that the page's WebView does not implement.
+
+A call made before native has announced its methods (which can happen on Android) is sent to native, and a missing method is reported the same way: `MethodNotFoundError` with `throwOnError`.
 :::
 
 ### throwOnError selector
@@ -69,8 +76,13 @@ const bridge = linkBridge<AppBridge>({
 
 The `onFallback` method can be used for batch processing of errors. It's suitable for displaying messages like "Please update the app," or for handling all situations where native methods cannot be used.
 
+::: warning
+`onFallback` is called only for methods that `throwOnError` applies to. The call itself still rejects with `MethodNotFoundError`.
+:::
+
 ```tsx
 const bridge = linkBridge<AppBridge>({
+  throwOnError: ["sum"],
   onFallback: (methodName, args) => {
     alert("The app is outdated. Please update.");
 

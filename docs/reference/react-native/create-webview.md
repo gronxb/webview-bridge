@@ -9,6 +9,15 @@ The `createWebView` is used to create a WebView with an interface that enables c
 | `debug`          | boolean                        | false    | false   | Outputs console.log from the web in React Native.                                          |
 | `responseTimeout`| number                         | false    | 2000    | Timeout duration when executing web methods.                   |
 | `fallback`       | (method: keyof T) => void      | false    | X       |Callback function called when a method from the bridge is not found.         |
+| `postMessageSchema` | Object                      | false    | X       | Schemas of the events sent with `postMessage`: [Standard Schemas](https://standardschema.dev) (Zod, Valibot, ...) or `{ validate }` objects. See [Using a PostMessage](/using-a-post-message). |
+
+## Return value
+
+| Member | Description |
+|--------|-------------|
+| `WebView` | The WebView component connected to the bridge. |
+| `postMessage(eventName, payload, { broadcast })` | Sends an event to the Web, to the last mounted WebView or to all of them with `broadcast: true`. Validates the payload with `postMessageSchema`. |
+| `linkWebMethod` | Deprecated. Calls methods registered with `registerWebMethod`; use `postMessage` instead. |
 
 ## WebView props
 
