@@ -94,6 +94,21 @@ const bridge = linkBridge<AppBridge>({
 });
 ```
 
+### When `onFallback` and `fallback` run
+
+| Situation | `throwOnError` applies | Web `onFallback` | Native `fallback` | Call result |
+|---|---|---|---|---|
+| The page calls a method native does not have | yes | called | reported when the page reads the method | rejects with `MethodNotFoundError` |
+| The page calls a method native does not have | no | not called | reported when the page reads the method | resolves to `undefined` |
+| A native method throws | yes | called | not called | rejects with the native error |
+| Native has not announced its methods yet (Android) and does not have the method | yes | called | not called | rejects with `MethodNotFoundError` |
+| Same, without `throwOnError` | no | not called | not called | resolves to `undefined` |
+
+- Native `fallback` is reported when the page **reads** a missing method from the bridge (for example `const fn = bridge.missing`), once per read, not once per call.
+- A function you keep a reference to keeps its routing: a missing-method function read from the bridge stays a fallback even after native announces the method later, and a function read before native announced its methods keeps sending calls to native.
+- Calling a state value as a method (for example `bridge.loose.count()`) gets no answer from native, so it ends with the `timeout` (or never settles with `timeout: 0`).
+- An exception thrown by `onFallback` or `fallback` is logged with `console.error` and does not change the call result.
+
 ## React Native Part
 
 For example, it's configured as follows. You can handle this through the `createWebView` fallback field.

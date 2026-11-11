@@ -7,7 +7,11 @@ import type {
   PrimitiveObject,
   UndelegatedBridge,
 } from "@webview-bridge/types";
-import { createEvents, createRandomId } from "@webview-bridge/utils";
+import {
+  createEvents,
+  createRandomId,
+  invokeCallback,
+} from "@webview-bridge/utils";
 
 import { MethodNotFoundError } from "./error";
 import { BridgeInstance } from "./internal/bridgeInstance";
@@ -194,7 +198,7 @@ export const linkBridge = <
 
     if (instance._willMethodThrowOnError(methodName)) {
       return (...args: unknown[]) => {
-        onFallback?.(methodName, args);
+        invokeCallback("onFallback", onFallback, methodName, args);
         return Promise.reject(new MethodNotFoundError(methodName));
       };
     }
