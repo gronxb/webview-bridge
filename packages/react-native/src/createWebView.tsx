@@ -188,7 +188,10 @@ export const createWebView = <
       useLayoutEffect(() => {
         webviewRefList.push(webviewRef);
         return () => {
-          webviewRefList.pop();
+          const index = webviewRefList.indexOf(webviewRef);
+          if (index !== -1) {
+            webviewRefList.splice(index, 1);
+          }
         };
       }, []);
 
