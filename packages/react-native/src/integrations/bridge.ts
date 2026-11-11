@@ -96,10 +96,8 @@ type DelegatedSchemas = {
 // No type parameter here: a defaulted one would be inferred from the
 // surrounding `bridge({...})` object (AsyncFunction) instead of the default.
 export function delegate(): Delegated<() => Promise<void>>;
-export function delegate<F extends AsyncFunction>(): Delegated<
-  F,
-  (...args: Parameters<F>) => ReturnType<F>
->;
+// The implementation keeps `F` itself, so generic signatures stay generic.
+export function delegate<F extends AsyncFunction>(): Delegated<F>;
 export function delegate<
   In extends StandardSchemaV1,
   Out extends StandardSchemaV1 | undefined = undefined,

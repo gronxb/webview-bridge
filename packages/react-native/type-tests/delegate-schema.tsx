@@ -4,7 +4,7 @@
  */
 import * as v from "valibot";
 import { z } from "zod";
-import type { BridgeDelegate, ParserInput } from "../src";
+import type { BridgeDelegate, Parser, ParserInput, ParserSchema } from "../src";
 import { bridge, createWebView, delegate, postMessageSchema } from "../src";
 
 const expectType = <T,>(_value: T) => {};
@@ -101,3 +101,23 @@ postMessage("legacyEvent", { legacy: true });
 postMessage("zodEvent", { count: "1" });
 // @ts-expect-error unknown event
 postMessage("nope", {});
+
+// Generic signatures in the type-argument form stay generic for the
+// implementation.
+const genericBridge = bridge({
+  echo: delegate<<T>(value: T) => Promise<T>>(),
+});
+export const genericOk: BridgeDelegate<typeof genericBridge> = {
+  echo: async (value) => value,
+};
+export const genericWrong: BridgeDelegate<typeof genericBridge> = {
+  // @ts-expect-error must return the value's type, not a string
+  echo: async () => "wrong",
+};
+
+// A `ParserSchema` annotation without concrete schemas keeps resolving to
+// `unknown`, as it did before Standard Schema support.
+type LooseSchema = ParserSchema<{ event: unknown }>;
+expectType<unknown>(null as unknown as Parser<LooseSchema, "event">);
+export const looseOutput: Parser<LooseSchema, "event"> = new Date();
+export const looseInput: ParserInput<LooseSchema, "event"> = new Date();

@@ -47,6 +47,21 @@ export type ParserSchema<T = object> = {
   [P in keyof T]: PostMessageEventSchema;
 };
 
+// Distributive over `S`, so a union such as `PostMessageEventSchema` itself
+// (e.g. from a `ParserSchema<{ event: unknown }>` annotation) resolves to
+// `unknown` like it did before Standard Schema support.
+type InferEventOutput<S> = S extends StandardSchemaV1
+  ? InferSchemaOutput<S>
+  : S extends { validate: (data: unknown) => infer R }
+    ? R
+    : Record<string, Primitive> | Primitive;
+
+type InferEventInput<S> = S extends StandardSchemaV1
+  ? InferSchemaInput<S>
+  : S extends { validate: (data: unknown) => infer R }
+    ? R
+    : Record<string, Primitive> | Primitive;
+
 /**
  * The payload type the Web side receives for `EventName`.
  * A Standard Schema takes precedence over a `validate` member, because some
@@ -58,11 +73,7 @@ export type Parser<
 > = Input extends undefined
   ? Record<string, Primitive> | Primitive
   : EventName extends keyof Input
-    ? Input[EventName] extends StandardSchemaV1
-      ? InferSchemaOutput<Input[EventName]>
-      : Input[EventName] extends { validate: (data: unknown) => infer R }
-        ? R
-        : Record<string, Primitive> | Primitive
+    ? InferEventOutput<Input[EventName]>
     : never;
 
 /** The payload type native passes to `postMessage` for `EventName`. */
@@ -72,11 +83,7 @@ export type ParserInput<
 > = Input extends undefined
   ? Record<string, Primitive> | Primitive
   : EventName extends keyof Input
-    ? Input[EventName] extends StandardSchemaV1
-      ? InferSchemaInput<Input[EventName]>
-      : Input[EventName] extends { validate: (data: unknown) => infer R }
-        ? R
-        : Record<string, Primitive> | Primitive
+    ? InferEventInput<Input[EventName]>
     : never;
 
 /**
