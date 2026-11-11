@@ -9,7 +9,10 @@
   "react-native": "src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": {
+        "import": "./dist/index.d.ts",
+        "require": "./dist/index.d.cts"
+      },
       "react-native": "./src/index.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
@@ -26,7 +29,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "tsup --config ./tsup.config.ts",
+    "build": "tsdown",
     "test:type": "tsc --noEmit",
     "lint": "biome check"
   },
