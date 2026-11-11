@@ -14,3 +14,4 @@ Recover when `linkBridge()` runs before the injected bridge methods are availabl
 - `useBridgeStatus` re-renders when the bridge becomes available.
 - Inside a React Native WebView, calls made before hydration completes go to native even when `initialBridge` defines the method.
 - Awaiting the bridge object no longer hangs: the bridge no longer behaves like a `then`-able.
+- A web call to a `delegate()` method that the WebView does not implement is now answered like a missing method (`MethodNotFoundError` with `throwOnError`), whether or not hydration has finished. Native logs a warning. The stub error from `delegate()` is unchanged.
