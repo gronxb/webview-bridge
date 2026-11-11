@@ -5,6 +5,7 @@ import type {
   ExtractStore,
   ParserSchema,
   PrimitiveObject,
+  UndelegatedBridge,
 } from "@webview-bridge/types";
 import { createEvents, createRandomId } from "@webview-bridge/utils";
 
@@ -28,7 +29,7 @@ export interface LinkBridgeOptions<
    * Therefore, if `initialBridge` is configured, `bridge.isWebViewBridgeAvailable` should be true even in environments that are not React Native.
    * @link https://gronxb.github.io/webview-bridge/non-react-native-environment.html
    */
-  initialBridge?: Partial<ExtractStore<T>>;
+  initialBridge?: Partial<UndelegatedBridge<ExtractStore<T>>>;
   /**
    * Set the timeout in milliseconds after calling the native method.
    * @default 2000
@@ -87,10 +88,9 @@ export const linkBridge = <
       isWebViewBridgeAvailable: initialBridgeMethodNames.length > 0,
       isNativeMethodAvailable: (method: string) =>
         initialBridgeMethodNames.includes(method),
-      store: mockStore(options?.initialBridge) as unknown as Omit<
-        T,
-        "setState"
-      >,
+      store: mockStore(
+        options?.initialBridge as PrimitiveObject | undefined,
+      ) as unknown as Omit<T, "setState">,
     } as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
   }
 

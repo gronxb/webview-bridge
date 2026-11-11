@@ -1,7 +1,7 @@
 import type {
   AsyncFunction,
   Bridge,
-  BridgeHandlers,
+  BridgeDelegate,
   BridgeStore,
   DelegatedMethodKeys,
   KeyOfOrString,
@@ -89,13 +89,13 @@ export type CreateWebViewArgs<
 
 /**
  * Extra props of the WebView created by `createWebView`.
- * `bridgeHandlers` is required when the bridge declares `delegate()` methods.
+ * `delegate` is required when the bridge declares `delegate()` methods.
  */
 export type BridgeWebViewProps<BridgeObject extends Bridge> = [
   DelegatedMethodKeys<BridgeObject>,
 ] extends [never]
   ? {
-      bridgeHandlers?: never;
+      delegate?: never;
     }
   : {
       /**
@@ -106,7 +106,7 @@ export type BridgeWebViewProps<BridgeObject extends Bridge> = [
        * Handlers that are missing when the WebView mounts are not exposed to
        * the page (`isNativeMethodAvailable` returns `false` for them).
        */
-      bridgeHandlers: BridgeHandlers<BridgeObject>;
+      delegate: BridgeDelegate<BridgeObject>;
     };
 
 export type WebMethod<T> = T & {
@@ -212,8 +212,8 @@ export const createWebView = <
       BridgeWebView,
       WebViewProps & BridgeWebViewProps<BridgeObject>
     >((allProps, ref) => {
-      const { bridgeHandlers, ...props } = allProps as WebViewProps & {
-        bridgeHandlers?: Partial<Record<string, AsyncFunction>>;
+      const { delegate: delegateImpl, ...props } = allProps as WebViewProps & {
+        delegate?: Partial<Record<string, AsyncFunction>>;
       };
       const webviewRef = useRef<WebView>(null);
 
@@ -236,7 +236,7 @@ export const createWebView = <
             }
             // A delegate() method is only exposed when this WebView implements it.
             if (isDelegatedMethod(method)) {
-              return typeof bridgeHandlers?.[name] === "function";
+              return typeof delegateImpl?.[name] === "function";
             }
             return true;
           })
@@ -291,7 +291,7 @@ export const createWebView = <
               eventId,
               webview: webviewRef.current,
               url,
-              handlers: bridgeHandlers,
+              delegate: delegateImpl,
             });
             return;
           }

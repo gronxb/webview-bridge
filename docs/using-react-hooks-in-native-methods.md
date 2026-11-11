@@ -2,7 +2,7 @@
 
 Native methods are declared with `bridge({...})` at module scope, outside of any React component. That makes it hard to use values that only exist inside components, such as `useNavigation()`, a `useQueryClient()` instance, or a context value.
 
-`delegate()` solves this. You declare the method's signature on the bridge, and each WebView provides the implementation through its `bridgeHandlers` prop.
+`delegate()` solves this. You declare the method's signature on the bridge, and each WebView provides the implementation through its `delegate` prop.
 
 ## React Native Part
 
@@ -48,7 +48,7 @@ export function WebViewScreen() {
   return (
     <WebView
       source={{ uri: "https://example.com" }}
-      bridgeHandlers={{
+      delegate={{
         goBack: async () => navigation.goBack(),
         getUser: async () => user,
       }}
@@ -75,19 +75,19 @@ await bridge.goBack();
 
 ## Type safety
 
-When a bridge declares `delegate()` methods, `bridgeHandlers` is required on its WebView, and TypeScript checks it:
+When a bridge declares `delegate()` methods, the WebView's `delegate` prop is required, and TypeScript checks it. Autocomplete inside `delegate={{ }}` lists exactly the delegated methods:
 
 - A missing handler is a type error.
 - Argument and return types must match the signature passed to `delegate()`.
-- Only delegated methods can be listed. Regular methods cannot be overridden through `bridgeHandlers`.
+- Only delegated methods can be listed. Regular methods cannot be overridden through the `delegate` prop.
 
-To type handlers outside of JSX, use `BridgeHandlers`:
+To type handlers outside of JSX, use `BridgeDelegate`:
 
 ```tsx
-import type { BridgeHandlers } from "@webview-bridge/react-native";
+import type { BridgeDelegate } from "@webview-bridge/react-native";
 import type { AppBridge } from "./bridge";
 
-const useAppBridgeHandlers = (): BridgeHandlers<AppBridge> => {
+const useAppBridgeDelegate = (): BridgeDelegate<AppBridge> => {
   const navigation = useNavigation();
   return {
     goBack: async () => navigation.goBack(),

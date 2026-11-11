@@ -16,12 +16,13 @@ The returned `WebView` accepts every prop of `react-native-webview`, plus:
 
 | Prop             | Type                       | Required                                       | Description                                                                                       |
 |------------------|----------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `bridgeHandlers` | `BridgeHandlers<AppBridge>` | true when the bridge has `delegate()` methods | Implementations for the methods declared with `delegate()`. Runs with this WebView's latest props. |
+| `delegate` | `BridgeDelegate<AppBridge>` | true when the bridge has `delegate()` methods | Implementations for the methods declared with `delegate()`. Runs with this WebView's latest props. |
 
 ## Delegated methods
 
 `delegate<Signature>()` declares a bridge method whose implementation is
-provided per WebView through `bridgeHandlers`, so it can use hooks and context.
+provided per WebView through the WebView's `delegate` prop, so it can use hooks
+and context.
 
 ```tsx
 import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
@@ -35,7 +36,7 @@ export const { WebView } = createWebView({ bridge: appBridge });
 function Screen() {
   const navigation = useNavigation();
   return (
-    <WebView bridgeHandlers={{ goBack: async () => navigation.goBack() }} />
+    <WebView delegate={{ goBack: async () => navigation.goBack() }} />
   );
 }
 ```

@@ -1,8 +1,8 @@
 /**
- * Type-level tests for `delegate()` and the `bridgeHandlers` prop.
+ * Type-level tests for `delegate()` and the `delegate` prop.
  * Checked by `pnpm test:type`; every `@ts-expect-error` must stay an error.
  */
-import type { BridgeHandlers, DelegatedMethodKeys } from "../src";
+import type { BridgeDelegate, DelegatedMethodKeys } from "../src";
 import { bridge, createWebView, delegate } from "../src";
 
 type User = { id: string };
@@ -28,7 +28,7 @@ expectType<DelegatedMethodKeys<typeof appBridge>>(
 
 export const ok = (
   <WebView
-    bridgeHandlers={{
+    delegate={{
       goBack: async () => {},
       getUser: async (id) => {
         expectType<string>(id);
@@ -38,17 +38,17 @@ export const ok = (
   />
 );
 
-// @ts-expect-error bridgeHandlers is required when the bridge has delegate() methods
+// @ts-expect-error delegate is required when the bridge has delegate() methods
 export const missingProp = <WebView />;
 
 export const missingHandler = (
   // @ts-expect-error getUser is missing
-  <WebView bridgeHandlers={{ goBack: async () => {} }} />
+  <WebView delegate={{ goBack: async () => {} }} />
 );
 
 export const extraHandler = (
   <WebView
-    bridgeHandlers={{
+    delegate={{
       goBack: async () => {},
       getUser: async () => null,
       // @ts-expect-error only delegate() methods can be handled per WebView
@@ -59,7 +59,7 @@ export const extraHandler = (
 
 export const wrongReturn = (
   <WebView
-    bridgeHandlers={{
+    delegate={{
       goBack: async () => {},
       // @ts-expect-error return type must match the declared signature
       getUser: async () => 1,
@@ -71,19 +71,19 @@ export const wrongReturn = (
 // which is what the Web side reads through `typeof appBridge`.
 expectType<(id: string) => Promise<User | null>>(appBridge.getState().getUser);
 
-export const handlers: BridgeHandlers<typeof appBridge> = {
+export const handlers: BridgeDelegate<typeof appBridge> = {
   goBack: async () => {},
   getUser: async () => null,
 };
 
-// Bridges without delegate() methods do not take bridgeHandlers.
+// Bridges without delegate() methods do not take delegate.
 const plainBridge = bridge({ async ping() {} });
 const { WebView: PlainWebView } = createWebView({ bridge: plainBridge });
 export const plain = <PlainWebView />;
 // @ts-expect-error nothing to delegate
-export const plainWithHandlers = <PlainWebView bridgeHandlers={{}} />;
+export const plainWithHandlers = <PlainWebView delegate={{}} />;
 
-// Existing bridges with `any`-typed members must not start requiring bridgeHandlers.
+// Existing bridges with `any`-typed members must not start requiring delegate.
 const anyMemberBridge = bridge({ data: null as any, async ping() {} });
 const { WebView: AnyMemberWebView } = createWebView({
   bridge: anyMemberBridge,
@@ -92,3 +92,13 @@ export const anyMember = <AnyMemberWebView />;
 
 const { WebView: AnyBridgeWebView } = createWebView({ bridge: null as any });
 export const anyBridge = <AnyBridgeWebView />;
+
+// Optional members must not make `delegate` required either.
+const optionalMemberBridge = bridge<{
+  label?: string;
+  ping: () => Promise<void>;
+}>({ async ping() {} });
+const { WebView: OptionalMemberWebView } = createWebView({
+  bridge: optionalMemberBridge,
+});
+export const optionalMember = <OptionalMemberWebView />;
