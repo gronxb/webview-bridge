@@ -131,6 +131,9 @@ getUser: delegate({
 - `delegate({ input })` without an output schema resolves to `unknown` on the page.
 - The input schema describes **one** argument. Use an object schema for several values. If the input schema accepts `undefined` (for example `z.string().optional()`), the page may omit it.
 - `postMessageSchema` follows the same rule: each event's schema describes the value crossing the bridge, the sender passes its input type, and the receiver gets its output type.
+- A method declared with schemas takes exactly the arguments they describe: one argument with `input`, none without it. Extra arguments fail with a `BridgeValidationError`.
+- Values cross the bridge as JSON. The page-facing types (the input schema's input and the output schema's output) cannot contain a `Date`, `BigInt`, `Map`, `Set` or function; TypeScript rejects such schemas. Transform them on native instead, for example `output: z.date().transform((d) => d.toISOString())`.
+- Input is validated right before the implementation runs, after [middleware](/reference/react-native/create-webview#bridge-middleware), so it checks the arguments middleware may have rewritten. Output is validated on the final result, after middleware, so middleware cannot return a value that skips the output schema.
 - Invalid input never reaches the implementation, and native logs a warning. An invalid return value is logged as an error. In both cases the call fails with a `BridgeValidationError`: it rejects when `throwOnError` applies to the method, and resolves to `undefined` otherwise, like any other native error.
 
 ### With a type argument
