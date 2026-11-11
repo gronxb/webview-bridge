@@ -17,6 +17,8 @@ import {
   useRef,
 } from "react";
 
+import { useSyncExternalStore } from "use-sync-external-store/shim";
+
 import { useBridge } from "./useBridge";
 
 export interface BridgeProviderProps {
@@ -65,11 +67,14 @@ export const createLinkBridgeProvider = <
       throw new Error("useBridgeStatus must be used within a BridgeProvider");
     }
 
-    // The store changes when native methods arrive late (hydration), so
-    // subscribing to it re-renders this hook with the new status.
-    const isWebViewBridgeAvailable = useBridge(
-      bridgeStoreContext.store,
-      () => bridgeStoreContext.isWebViewBridgeAvailable,
+    // Hydration (late native methods) changes the store, so subscribing to it
+    // re-renders this hook when the status changes.
+    const getIsWebViewBridgeAvailable = () =>
+      bridgeStoreContext.isWebViewBridgeAvailable;
+    const isWebViewBridgeAvailable = useSyncExternalStore(
+      bridgeStoreContext.store.subscribe,
+      getIsWebViewBridgeAvailable,
+      getIsWebViewBridgeAvailable,
     );
 
     return {

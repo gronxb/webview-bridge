@@ -18,7 +18,7 @@ import {
 import type { LinkBridgeOptions } from "../linkBridge";
 import type { LinkBridge } from "../types";
 import { createPromiseProxy } from "./createPromiseProxy";
-import { hydrateLinkBridgeStore, linkBridgeStore } from "./linkBridgeStore";
+import { linkBridgeStore } from "./linkBridgeStore";
 import { mockStore } from "./mockStore";
 
 export class BridgeInstance<
@@ -45,6 +45,9 @@ export class BridgeInstance<
     "setState"
   >;
 
+  /** Merges hydrated methods and state into `store` (set on first hydrate). */
+  private _mergeIntoStore?: (newState: Partial<T>) => void;
+
   get isReactNativeWebView() {
     return Boolean(window.ReactNativeWebView);
   }
@@ -53,6 +56,7 @@ export class BridgeInstance<
    * `true` once native has told this bridge which methods it provides, either
    * through the injected `__bridgeMethods__` or a later "hydrate" event.
    */
+  /** @internal */
   get _hasNativeBridgeMethods() {
     return this._nativeBridgeMethodCount > 0;
   }
@@ -79,7 +83,8 @@ export class BridgeInstance<
   public loose: LinkBridge<ExtractStore<T>, Omit<T, "setState">, V> =
     createPromiseProxy() as LinkBridge<ExtractStore<T>, Omit<T, "setState">, V>;
 
-  private _postMessage(type: string, body?: unknown) {
+  /** @internal */
+  public _postMessage(type: string, body?: unknown) {
     window.ReactNativeWebView?.postMessage(
       JSON.stringify(
         body
@@ -133,6 +138,7 @@ export class BridgeInstance<
    * A function that sends `methodName` to native, regardless of whether native
    * has announced it or `initialBridge` defines it.
    */
+  /** @internal */
   public _nativeMethod(methodName: string) {
     const { timeout: timeoutMs = this._defaultTimeoutMs, onFallback } =
       this._options;
@@ -144,7 +150,8 @@ export class BridgeInstance<
     );
   }
 
-  private _willMethodThrowOnError(methodName: string) {
+  /** @internal */
+  public _willMethodThrowOnError(methodName: string) {
     const { throwOnError } = this._options;
     return (
       throwOnError === true ||
@@ -204,7 +211,6 @@ export class BridgeInstance<
             {
               value,
               writable: true,
-              configurable: true,
             },
           ];
         }),
@@ -231,7 +237,6 @@ export class BridgeInstance<
         Object.defineProperty(this, methodName, {
           value: nativeMethod,
           writable: false,
-          configurable: true,
         });
 
         return Object.assign(acc, {
@@ -249,10 +254,14 @@ export class BridgeInstance<
     const hydratedState = {
       ...nativeMethods,
       ...nativeInitialState,
-    };
-    // Keep the same store object so existing subscribers see late methods.
-    if (!hydrateLinkBridgeStore(this.store, hydratedState)) {
-      this.store = linkBridgeStore<T>(this._emitter, hydratedState);
+    } as Partial<T>;
+    if (this._mergeIntoStore) {
+      // Keep the same store object so existing subscribers see late methods.
+      this._mergeIntoStore(hydratedState);
+    } else {
+      const { store, merge } = linkBridgeStore<T>(this._emitter, hydratedState);
+      this.store = store;
+      this._mergeIntoStore = merge;
     }
 
     if (!this._isListenerRegistered) {
@@ -273,6 +282,7 @@ export class BridgeInstance<
    * Replay events native injected before any bridge emitter existed (e.g. a
    * "hydrate" that reached the page before `linkBridge()` ran).
    */
+  /** @internal */
   public _flushBatchedEvents() {
     const events = window.nativeBatchedEvents ?? [];
     window.nativeBatchedEvents = [];
@@ -286,6 +296,7 @@ export class BridgeInstance<
    * injected `__bridgeMethods__` were not there yet (Android injects them
    * asynchronously). Native versions without support ignore the message.
    */
+  /** @internal */
   public _requestHydrate() {
     this._postMessage("requestHydrate");
   }

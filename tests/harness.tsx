@@ -132,5 +132,22 @@ export const loadPage = ({
   return { runBeforeContentLoaded };
 };
 
+/** Simulate a reload of the page: drop the page's globals, keep native. */
+export const resetPage = () => {
+  native.generation++;
+  native.loadedPageId = null;
+  const w = window as any;
+  for (const key of [
+    "__bridgeMethods__",
+    "__bridgeInitialState__",
+    "nativeEmitter",
+    "nativeEmitterMap",
+    "nativeBatchedEvents",
+    "ReactNativeWebView",
+  ]) {
+    delete w[key];
+  }
+};
+
 export const injectionsFor = (id: string) =>
   native.injections.filter((i) => i.id === id).map((i) => i.script);

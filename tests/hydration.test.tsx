@@ -15,7 +15,13 @@ import { MethodNotFoundError, linkBridge } from "@webview-bridge/web";
 import { act, create } from "react-test-renderer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { evaluateInPage, loadPage, native, resetEnvironment } from "./harness";
+import {
+  evaluateInPage,
+  loadPage,
+  native,
+  resetEnvironment,
+  resetPage,
+} from "./harness";
 
 const createAppBridge = () =>
   bridge({
@@ -122,9 +128,12 @@ describe("late bridge hydration", () => {
       const options = { initialBridge: initialBridge() };
 
       const web = linkBridge<AppBridge>(options);
-      // isNativeMethodAvailable() is already true for initialBridge methods.
+      // isNativeMethodAvailable() is already true for initialBridge methods,
+      // so wait for the store to carry the native method instead.
       await vi.waitFor(() => {
-        expect((web as any)._hasNativeBridgeMethods).toBe(true);
+        expect(web.store.getState().getMessage).not.toBe(
+          options.initialBridge.getMessage,
+        );
       });
 
       await expect(web.getMessage()).resolves.toBe("hello from native");
@@ -189,7 +198,10 @@ describe("late bridge hydration", () => {
         }),
       });
       act(() => {
-        create(<WebView testID="default" {...({} as any)} />);
+        create(
+          // @ts-expect-error: deliberately omit the required delegate prop.
+          <WebView testID="default" />,
+        );
       });
       loadPage({ beforeContentLoaded: "late" });
 
@@ -200,6 +212,88 @@ describe("late bridge hydration", () => {
       });
       expect(web.isNativeMethodAvailable("goBack")).toBe(false);
     });
+
+    it.each([
+      { throwOnError: false, expected: "resolves to undefined" },
+      { throwOnError: true, expected: "rejects with MethodNotFoundError" },
+    ])(
+      "a call before hydration to a delegate() method this WebView lacks $expected, as after hydration (throwOnError: $throwOnError)",
+      async ({ throwOnError }) => {
+        const outcome = (promise: Promise<unknown>) =>
+          promise.then(
+            (value) => ({ value }),
+            (error) => ({
+              error:
+                error instanceof MethodNotFoundError
+                  ? "MethodNotFoundError"
+                  : error,
+            }),
+          );
+        const { WebView } = createWebView({
+          bridge: bridge({
+            getMessage: async () => "hello from native",
+            goBack: delegate<() => Promise<string>>(),
+          }),
+        });
+        act(() => {
+          create(
+            // @ts-expect-error: deliberately omit the required delegate prop.
+            <WebView testID="default" />,
+          );
+        });
+
+        // Methods injected on time: the hydrated behaviour.
+        const onTime = loadPage({ beforeContentLoaded: "late" });
+        onTime.runBeforeContentLoaded();
+        const hydrated = linkBridge<DelegateBridge>({ throwOnError });
+        const afterHydration = await outcome(hydrated.goBack());
+
+        // Same WebView, page reloaded and methods injected late.
+        resetPage();
+        loadPage({ beforeContentLoaded: "late" });
+        const early = linkBridge<DelegateBridge>({ throwOnError });
+        const beforeHydration = await outcome(early.goBack());
+
+        expect(afterHydration).toEqual(
+          throwOnError
+            ? { error: "MethodNotFoundError" }
+            : { value: undefined },
+        );
+        expect(beforeHydration).toEqual(afterHydration);
+      },
+    );
+  });
+
+  it("never moves the web store back to an older native state", async () => {
+    const appBridge = bridge<{ count: number; getMessage(): Promise<string> }>(
+      () => ({
+        count: 1,
+        async getMessage() {
+          return "hello from native";
+        },
+      }),
+    );
+    const { WebView } = createWebView({ bridge: appBridge });
+    act(() => {
+      create(<WebView testID="default" />);
+    });
+    // Native state changes after the WebView mounted, before the page loads.
+    appBridge.setState({ count: 2 });
+    loadPage({ beforeContentLoaded: "late" });
+
+    const web = linkBridge<typeof appBridge>();
+    const seen: number[] = [];
+    web.store.subscribe((state) => {
+      seen.push(state.count);
+    });
+
+    await vi.waitFor(() => {
+      expect(web.isWebViewBridgeAvailable).toBe(true);
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(seen.at(-1)).toBe(2);
+    expect(seen).not.toContain(1);
   });
 
   describe("compatibility", () => {

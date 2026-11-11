@@ -260,6 +260,18 @@ export const handleBridge = async ({
   if (typeof _method !== "function") {
     return;
   }
+  // A delegate() method this WebView does not implement is not available to
+  // its page, so answer like a missing method (MethodNotFoundError on the web).
+  if (
+    isDelegatedMethod(_method) &&
+    typeof delegateImpl?.[method] !== "function"
+  ) {
+    console.warn(
+      `[WebViewBridge] '${method}' is declared with delegate(), but this WebView has no \`delegate.${method}\`.`,
+    );
+    handleThrow();
+    return;
+  }
 
   try {
     const request: BridgeRequest = {
@@ -315,11 +327,16 @@ export const createHydrateData = (
       return true;
     })
     .map(([name]) => name);
-  const nativeInitialState = Object.fromEntries(
-    Object.entries(state).filter(([_, value]) => typeof value !== "function"),
-  ) as Record<string, Primitive>;
-  return { bridgeMethods, nativeInitialState };
+  return { bridgeMethods, nativeInitialState: getPrimitiveState(bridge) };
 };
+
+/** The current non-function state of `bridge`. */
+export const getPrimitiveState = (bridge: BridgeStore<Bridge>) =>
+  Object.fromEntries(
+    Object.entries(bridge.getState() ?? {}).filter(
+      ([_, value]) => typeof value !== "function",
+    ),
+  ) as Record<string, Primitive>;
 
 export const INJECT_BRIDGE_METHODS = (bridgeNames: string[]) => `
     (function() {

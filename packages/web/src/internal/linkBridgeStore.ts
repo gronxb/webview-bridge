@@ -13,12 +13,19 @@ export type Store<BridgeObject extends Bridge> = ({
   set: (newState: Partial<OnlyJSON<BridgeObject>>) => void;
 }) => BridgeObject;
 
+/**
+ * The web-side store that mirrors the native bridge state.
+ *
+ * `merge` adds late-arriving native methods and state (hydration) to the same
+ * store object, so subscribers that already hold `store` (e.g.
+ * `useBridgeStore`) see them.
+ */
 export const linkBridgeStore = <
   T extends BridgeStore<T extends Bridge ? T : any>,
 >(
   emitter: DefaultEmitter,
   initialState: Partial<T> = {},
-): Omit<T, "setState"> => {
+) => {
   const getState = () => state;
 
   const setState = (newState: Partial<OnlyJSON<T>>) => {
@@ -55,38 +62,17 @@ export const linkBridgeStore = <
     return () => listeners.delete(listener);
   };
 
-  const store = {
-    getState,
-    subscribe,
-  } as unknown as Omit<T, "setState">;
-
-  linkBridgeStoreHydrators.set(store, (newState) => {
+  const merge = (newState: Partial<T>) => {
     const prevState = state;
-    state = { ...state, ...newState } as T;
+    state = { ...state, ...newState };
     emitChange(state, prevState);
-  });
+  };
 
-  return store;
-};
-
-const linkBridgeStoreHydrators = new WeakMap<
-  object,
-  (newState: Record<string, unknown>) => void
->();
-
-/**
- * Merge late-arriving native methods and state into an existing store, so
- * subscribers that already hold this store (e.g. `useBridgeStore`) see them.
- * Returns `false` if `store` was not created by `linkBridgeStore`.
- */
-export const hydrateLinkBridgeStore = (
-  store: object,
-  newState: Record<string, unknown>,
-) => {
-  const hydrate = linkBridgeStoreHydrators.get(store);
-  if (!hydrate) {
-    return false;
-  }
-  hydrate(newState);
-  return true;
+  return {
+    store: {
+      getState,
+      subscribe,
+    } as unknown as Omit<T, "setState">,
+    merge,
+  };
 };

@@ -55,6 +55,12 @@ export interface LinkBridgeOptions<
   ) => void;
 }
 
+/**
+ * Native answers a call to a method it does not have with a bare `true`
+ * error (`handleBridge` → `handleThrow()` without an Error).
+ */
+const isMethodNotFoundResponse = (error: unknown) => error === true;
+
 type HydrateEventPayload = {
   bridgeMethods: string[];
   nativeInitialState?: PrimitiveObject;
@@ -153,36 +159,62 @@ export const linkBridge = <
 
   const { onFallback, onReady, initialBridge } = options;
 
-  // Native has not told us its methods yet (e.g. Android injected them after
-  // this script ran), but we are inside a React Native WebView: send the call
-  // to native instead of falling back. Native answers it, or reports the
-  // method as missing.
-  const callNativeBeforeHydration = (target: any, methodName: string) => {
-    if (target._hasNativeBridgeMethods || !target.isReactNativeWebView) {
+  const isInitialBridgeMethod = (methodName: string) =>
+    typeof (initialBridge as Record<string, unknown> | undefined)?.[
+      methodName
+    ] === "function";
+
+  /**
+   * Native has not told us its methods yet (e.g. Android injected them after
+   * this script ran), but we are inside a React Native WebView: send the call
+   * to native instead of falling back. Native answers it, or reports the
+   * method as missing.
+   */
+  const callNativeBeforeHydration = (methodName: string) => {
+    if (instance._hasNativeBridgeMethods || !instance.isReactNativeWebView) {
       return undefined;
     }
-    const nativeMethod = target._nativeMethod(methodName);
+    const nativeMethod = instance._nativeMethod(methodName);
     return (...args: unknown[]) =>
       nativeMethod(...args).catch((error: unknown) => {
-        throw error === true ? new MethodNotFoundError(methodName) : error;
+        throw isMethodNotFoundResponse(error)
+          ? new MethodNotFoundError(methodName)
+          : error;
       });
   };
 
-  const proxy = new Proxy(instance, {
-    get: (target: any, methodName: string | symbol, proxy) => {
-      const isInitialBridgeMethod =
-        typeof methodName === "string" &&
-        typeof (initialBridge as Record<string, unknown> | undefined)?.[
-          methodName
-        ] === "function";
+  const fallbackMethod = (methodName: string) => {
+    instance._postMessage("fallback", { method: methodName });
 
+    if (instance._willMethodThrowOnError(methodName)) {
+      return (...args: unknown[]) => {
+        onFallback?.(methodName, args);
+        return Promise.reject(new MethodNotFoundError(methodName));
+      };
+    }
+
+    if (options.debug) {
+      console.warn(
+        `[WebViewBridge] ${methodName} is not defined, using fallback.`,
+      );
+    }
+    return () => Promise.resolve();
+  };
+
+  const proxy = new Proxy(instance, {
+    get: (target, methodName) => {
       if (methodName in target) {
         // In a React Native WebView, native takes priority over initialBridge.
-        return (
-          (isInitialBridgeMethod &&
-            callNativeBeforeHydration(target, methodName as string)) ||
-          target[methodName]
-        );
+        if (
+          typeof methodName === "string" &&
+          isInitialBridgeMethod(methodName)
+        ) {
+          return (
+            callNativeBeforeHydration(methodName) ??
+            Reflect.get(target, methodName)
+          );
+        }
+        return Reflect.get(target, methodName);
       }
 
       // Not a bridge method name. Returning a function for `then` would make
@@ -191,30 +223,15 @@ export const linkBridge = <
         return undefined;
       }
 
-      const nativeMethod = callNativeBeforeHydration(target, methodName);
-      if (nativeMethod) {
-        return nativeMethod;
-      }
-
-      proxy._postMessage("fallback", {
-        method: methodName,
-      });
-
-      if (proxy._willMethodThrowOnError(methodName)) {
-        return (...args: unknown[]) => {
-          onFallback?.(methodName, args);
-          return Promise.reject(new MethodNotFoundError(methodName));
-        };
-      }
-
-      if (options.debug) {
-        console.warn(
-          `[WebViewBridge] ${methodName} is not defined, using fallback.`,
-        );
-      }
-      return () => Promise.resolve();
+      return (
+        callNativeBeforeHydration(methodName) ?? fallbackMethod(methodName)
+      );
     },
-  }) as LinkBridge<ExcludePrimitive<ExtractStore<T>>, Omit<T, "setState">, V>;
+  }) as unknown as LinkBridge<
+    ExcludePrimitive<ExtractStore<T>>,
+    Omit<T, "setState">,
+    V
+  >;
 
   onReady?.(proxy);
   return proxy;
