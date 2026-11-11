@@ -1,6 +1,7 @@
 import { deserializeError } from "./errors";
 
 import { NativeMethodError } from "./errors";
+import { invokeCallback } from "./invokeCallback";
 
 interface EventsMap {
   [event: string]: any;
@@ -77,7 +78,7 @@ export const createResolver = ({
 
         if (throwOccurred) {
           if (failHandler instanceof NativeMethodError) {
-            onFallback?.();
+            invokeCallback("onFallback", onFallback);
             reject(deserializeError(throwOccurred));
           } else if (failHandler instanceof Error) {
             reject(failHandler);

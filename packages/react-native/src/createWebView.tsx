@@ -8,7 +8,11 @@ import type {
   ParserInput,
   ParserSchema,
 } from "@webview-bridge/types";
-import { createEvents, createRandomId } from "@webview-bridge/utils";
+import {
+  createEvents,
+  createRandomId,
+  invokeCallback,
+} from "@webview-bridge/utils";
 import type React from "react";
 import {
   forwardRef,
@@ -351,7 +355,7 @@ export const createWebView = <
             const { method } = body as {
               method: keyof BridgeObject;
             };
-            fallback?.(method);
+            invokeCallback("fallback", fallback, method);
             return;
           }
         }
