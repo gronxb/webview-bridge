@@ -22,7 +22,7 @@
   "repository": "https://github.com/gronxb/webview-bridge",
   "license": "MIT",
   "scripts": {
-    "build": "tsup --config ./tsup.config.ts",
+    "build": "tsdown",
     "test:type": "tsc --noEmit",
     "lint": "biome check"
   },
