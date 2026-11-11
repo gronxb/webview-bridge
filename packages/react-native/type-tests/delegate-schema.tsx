@@ -34,6 +34,10 @@ expectType<Promise<{ id: number; name: string }>>(state.getUser({ id: "1" }));
 expectType<Promise<unknown>>(state.track({ event: "open" }));
 expectType<Promise<boolean>>(state.refresh());
 expectType<Promise<boolean>>(state.confirm("ok?"));
+// @ts-expect-error delegate() with no arguments takes no arguments
+state.goBack(1);
+// @ts-expect-error delegate() with no arguments resolves to void, not a value
+expectType<Promise<string>>(state.goBack());
 // @ts-expect-error the page sends the input type (string), not the output type
 state.getUser({ id: 1 });
 // @ts-expect-error input is required when the schema does not accept undefined
