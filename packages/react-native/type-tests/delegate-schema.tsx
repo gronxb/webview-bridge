@@ -170,6 +170,31 @@ postMessageSchema({
 });
 postMessageSchema({ createdAt: z.date().transform((d) => d.toISOString()) });
 
+// A schema held in an optional property is still checked.
+const optionalDateOutput: { output?: z.ZodDate } = { output: z.date() };
+// @ts-expect-error the optional output schema still produces a Date
+delegate(optionalDateOutput);
+// @ts-expect-error JSON turns undefined array items into null
+delegate({ output: z.array(z.string().optional()) });
+postMessageSchema({
+  // @ts-expect-error JSON turns undefined array items into null
+  list: z.array(z.number().optional()),
+});
+// @ts-expect-error objects with methods (URL, typed arrays, class instances) lose them
+delegate({ output: z.instanceof(Uint8Array) });
+// Branded primitives, optional object properties and recursive schemas are fine.
+delegate({
+  output: z.object({
+    id: z.string().brand<"Id">(),
+    note: z.string().optional(),
+  }),
+});
+type Tree = { name: string; children: Tree[] };
+const treeSchema: z.ZodType<Tree> = z.lazy(() =>
+  z.object({ name: z.string(), children: z.array(treeSchema) }),
+);
+delegate({ output: treeSchema });
+
 // ---- A schema property that may be absent is typed as possibly absent -----
 const maybeInput: {
   input?: z.ZodPipe<z.ZodString, z.ZodTransform<number, string>>;

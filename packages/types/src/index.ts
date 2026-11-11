@@ -184,26 +184,40 @@ type HasNonSerializable<
     ? false
     : unknown extends T
       ? false
-      : T extends NonSerializable
-        ? true
-        : T extends readonly (infer Item)[]
-          ? HasNonSerializable<Item, [...Depth, 0]>
-          : T extends object
-            ? true extends {
-                [K in keyof T]-?: HasNonSerializable<T[K], [...Depth, 0]>;
-              }[keyof T]
-              ? true
-              : false
-            : false;
+      : // Primitives, including branded ones (`string & { __brand }`).
+        T extends string | number | boolean | null | undefined
+        ? false
+        : T extends NonSerializable
+          ? true
+          : T extends readonly (infer Item)[]
+            ? IsAny<Item> extends true
+              ? false
+              : unknown extends Item
+                ? false
+                : // JSON turns `undefined` array items into `null`.
+                  undefined extends Item
+                  ? true
+                  : HasNonSerializable<Item, [...Depth, 0]>
+            : T extends object
+              ? true extends {
+                  [K in keyof T]-?: HasNonSerializable<T[K], [...Depth, 0]>;
+                }[keyof T]
+                ? true
+                : false
+              : false;
 
 /**
  * @internal Rejects an input schema whose input type (what the page sends)
  * cannot cross the bridge as JSON.
  */
-export type CheckSerializableInput<In> = In extends StandardSchemaV1
-  ? true extends HasNonSerializable<InferSchemaInput<In>>
+// Not distributive: a schema property that may be absent (`S | undefined`)
+// must still be checked, not collapse to `unknown`.
+export type CheckSerializableInput<In> = [Exclude<In, undefined>] extends [
+  infer Schema extends StandardSchemaV1,
+]
+  ? true extends HasNonSerializable<InferSchemaInput<Schema>>
     ? {
-        input: "The input schema's input type must survive JSON: no Date, BigInt, Map, Set or functions. Transform it on native instead.";
+        input: "The input schema's input type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it on native instead.";
       }
     : unknown
   : unknown;
@@ -212,10 +226,14 @@ export type CheckSerializableInput<In> = In extends StandardSchemaV1
  * @internal Rejects an output schema whose output type (what the page
  * receives) cannot cross the bridge as JSON.
  */
-export type CheckSerializableOutput<Out> = Out extends StandardSchemaV1
-  ? true extends HasNonSerializable<InferSchemaOutput<Out>>
+// Not distributive: a schema property that may be absent (`S | undefined`)
+// must still be checked, not collapse to `unknown`.
+export type CheckSerializableOutput<Out> = [Exclude<Out, undefined>] extends [
+  infer Schema extends StandardSchemaV1,
+]
+  ? true extends HasNonSerializable<InferSchemaOutput<Schema>>
     ? {
-        output: "The output schema's output type must survive JSON: no Date, BigInt, Map, Set or functions. Transform it to a string or number.";
+        output: "The output schema's output type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it to a string or number.";
       }
     : unknown
   : unknown;
@@ -227,7 +245,7 @@ export type CheckSerializableOutput<Out> = Out extends StandardSchemaV1
 export type CheckSerializableEvents<T> = {
   [K in keyof T]: T[K] extends StandardSchemaV1
     ? true extends HasNonSerializable<InferSchemaOutput<T[K]>>
-      ? "This event schema's output type must survive JSON: no Date, BigInt, Map, Set or functions. Transform it to a string or number."
+      ? "This event schema's output type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it to a string or number."
       : unknown
     : unknown;
 };

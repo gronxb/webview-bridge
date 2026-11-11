@@ -120,7 +120,7 @@ export const { postMessage } = createWebView({
 - `postMessage` takes the schema's **input** type, and the page receives its **output** type. A schema with transforms (for example `z.date().transform((d) => d.toISOString())`) converts the value on native.
 - An invalid payload throws a `BridgeValidationError` from `postMessage`, and nothing is sent.
 - `postMessage` is synchronous, so schemas that validate asynchronously (for example Zod's async `refine`) are rejected with an error.
-- Payloads cross the bridge as JSON, so an event schema's output type cannot contain a `Date`, `BigInt`, `Map`, `Set` or function; TypeScript rejects such schemas. Transform the value instead, for example `z.date().transform((d) => d.toISOString())`.
+- Payloads cross the bridge as JSON, so TypeScript rejects event schemas whose output type contains a `Date`, `BigInt`, `Map`, `Set`, an object with methods, a function, or `undefined` array items. Transform the value instead, for example `z.date().transform((d) => d.toISOString())`. The check is structural: a class instance without methods arrives as a plain object, and `NaN`/`Infinity` arrive as `null`.
 
 ::: details Migrating from `validate` functions
 Earlier versions only accepted `{ validate }` objects, so schemas were wrapped like `{ validate: (data) => z.string().parse(data) }`. That still works. You can now pass the schema itself instead: `eventName1: z.string()`.
