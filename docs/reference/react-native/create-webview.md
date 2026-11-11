@@ -10,6 +10,39 @@ The `createWebView` is used to create a WebView with an interface that enables c
 | `responseTimeout`| number                         | false    | 2000    | Timeout duration when executing web methods.                   |
 | `fallback`       | (method: keyof T) => void      | false    | X       |Callback function called when a method from the bridge is not found.         |
 
+## WebView props
+
+The returned `WebView` accepts every prop of `react-native-webview`, plus:
+
+| Prop             | Type                       | Required                                       | Description                                                                                       |
+|------------------|----------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `bridgeHandlers` | `BridgeHandlers<AppBridge>` | true when the bridge has `delegate()` methods | Implementations for the methods declared with `delegate()`. Runs with this WebView's latest props. |
+
+## Delegated methods
+
+`delegate<Signature>()` declares a bridge method whose implementation is
+provided per WebView through `bridgeHandlers`, so it can use hooks and context.
+
+```tsx
+import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
+
+export const appBridge = bridge({
+  goBack: delegate<() => Promise<void>>(),
+});
+
+export const { WebView } = createWebView({ bridge: appBridge });
+
+function Screen() {
+  const navigation = useNavigation();
+  return (
+    <WebView bridgeHandlers={{ goBack: async () => navigation.goBack() }} />
+  );
+}
+```
+
+A delegated method is exposed to a page only when its WebView has the handler
+at mount time. See [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods).
+
 ## Bridge middleware
 
 `bridge(...).use(...)` registers instance-scoped middleware for Web-to-Native

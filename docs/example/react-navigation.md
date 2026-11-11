@@ -5,6 +5,10 @@ This guide is about integrating WebView, the web, and React Navigation.
 
 Example: [react-navigation](https://github.com/gronxb/webview-bridge/tree/main/example/react-navigation)
 
+::: tip
+This example reads a global `navigationRef`, so a call always acts on the root navigator. To use the `navigation` object of the screen that renders the WebView (`useNavigation()`), declare the methods with `delegate()` instead. See [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods).
+:::
+
 
 ## React Native Part
 

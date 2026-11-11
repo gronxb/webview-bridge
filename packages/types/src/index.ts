@@ -50,3 +50,35 @@ export type Parser<
       ? ReturnType<Input[EventName]["validate"]>
       : Record<string, Primitive> | Primitive
     : never;
+
+declare const DelegatedMethodBrand: unique symbol;
+
+/**
+ * A bridge method whose signature is declared on the bridge but whose
+ * implementation is provided per WebView through the `bridgeHandlers` prop.
+ * Created with `delegate()` from `@webview-bridge/react-native`.
+ */
+export type Delegated<F extends AsyncFunction> = F & {
+  readonly [DelegatedMethodBrand]: true;
+};
+
+type BridgeShape<T> = T extends { getState: () => infer S } ? S : T;
+
+/** Keys of the methods declared with `delegate()` on a bridge. */
+export type DelegatedMethodKeys<T> = {
+  [K in keyof BridgeShape<T>]: BridgeShape<T>[K] extends {
+    readonly [DelegatedMethodBrand]: true;
+  }
+    ? K
+    : never;
+}[keyof BridgeShape<T>];
+
+/**
+ * Implementations for every `delegate()` method of a bridge.
+ * Accepts either the bridge store type (`typeof appBridge`) or its state type.
+ */
+export type BridgeHandlers<T> = {
+  [K in DelegatedMethodKeys<T>]: BridgeShape<T>[K] extends AsyncFunction
+    ? (...args: Parameters<BridgeShape<T>[K]>) => ReturnType<BridgeShape<T>[K]>
+    : never;
+};
