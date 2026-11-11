@@ -55,8 +55,38 @@ export const linkBridgeStore = <
     return () => listeners.delete(listener);
   };
 
-  return {
+  const store = {
     getState,
     subscribe,
   } as unknown as Omit<T, "setState">;
+
+  linkBridgeStoreHydrators.set(store, (newState) => {
+    const prevState = state;
+    state = { ...state, ...newState } as T;
+    emitChange(state, prevState);
+  });
+
+  return store;
+};
+
+const linkBridgeStoreHydrators = new WeakMap<
+  object,
+  (newState: Record<string, unknown>) => void
+>();
+
+/**
+ * Merge late-arriving native methods and state into an existing store, so
+ * subscribers that already hold this store (e.g. `useBridgeStore`) see them.
+ * Returns `false` if `store` was not created by `linkBridgeStore`.
+ */
+export const hydrateLinkBridgeStore = (
+  store: object,
+  newState: Record<string, unknown>,
+) => {
+  const hydrate = linkBridgeStoreHydrators.get(store);
+  if (!hydrate) {
+    return false;
+  }
+  hydrate(newState);
+  return true;
 };

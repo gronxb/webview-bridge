@@ -293,6 +293,34 @@ export const handleBridge = async ({
   }
 };
 
+/**
+ * The payload of the "hydrate" event: the native method names and the
+ * primitive initial state of `bridge`. A `delegate()` method is only listed
+ * when `delegateImpl` implements it.
+ */
+export const createHydrateData = (
+  bridge: BridgeStore<Bridge>,
+  delegateImpl?: Partial<Record<string, AsyncFunction>>,
+) => {
+  const state = bridge.getState() ?? {};
+  const bridgeMethods = Object.entries(state)
+    .filter(([name, method]) => {
+      if (typeof method !== "function") {
+        return false;
+      }
+      // A delegate() method is only exposed when this WebView implements it.
+      if (isDelegatedMethod(method)) {
+        return typeof delegateImpl?.[name] === "function";
+      }
+      return true;
+    })
+    .map(([name]) => name);
+  const nativeInitialState = Object.fromEntries(
+    Object.entries(state).filter(([_, value]) => typeof value !== "function"),
+  ) as Record<string, Primitive>;
+  return { bridgeMethods, nativeInitialState };
+};
+
 export const INJECT_BRIDGE_METHODS = (bridgeNames: string[]) => `
     (function() {
         window.__bridgeMethods__ = ${JSON.stringify(bridgeNames)};

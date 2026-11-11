@@ -65,11 +65,18 @@ export const createLinkBridgeProvider = <
       throw new Error("useBridgeStatus must be used within a BridgeProvider");
     }
 
+    // The store changes when native methods arrive late (hydration), so
+    // subscribing to it re-renders this hook with the new status.
+    const isWebViewBridgeAvailable = useBridge(
+      bridgeStoreContext.store,
+      () => bridgeStoreContext.isWebViewBridgeAvailable,
+    );
+
     return {
       isNativeMethodAvailable: (
         method: keyof ExcludePrimitive<ExtractStore<T>>,
       ) => bridgeStoreContext.isNativeMethodAvailable(method),
-      isWebViewBridgeAvailable: bridgeStoreContext.isWebViewBridgeAvailable,
+      isWebViewBridgeAvailable,
     };
   };
 

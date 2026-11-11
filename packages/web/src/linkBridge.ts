@@ -57,7 +57,12 @@ export interface LinkBridgeOptions<
 
 type HydrateEventPayload = {
   bridgeMethods: string[];
-  nativeInitialState: PrimitiveObject;
+  nativeInitialState?: PrimitiveObject;
+  /**
+   * Sent by `@webview-bridge/react-native` <= 1.8.0 instead of
+   * `nativeInitialState`.
+   */
+  initialState?: PrimitiveObject;
 };
 
 /**
@@ -127,19 +132,68 @@ export const linkBridge = <
   if (bridgeMethods.length === 0) {
     const unsubscribe = emitter.on(
       "hydrate",
-      ({ bridgeMethods, nativeInitialState }: HydrateEventPayload) => {
-        instance._hydrate(bridgeMethods, nativeInitialState);
+      ({
+        bridgeMethods,
+        nativeInitialState,
+        initialState,
+      }: HydrateEventPayload) => {
         unsubscribe();
+        instance._hydrate(bridgeMethods, nativeInitialState ?? initialState);
       },
     );
   }
 
-  const { onFallback, onReady } = options;
+  // Must run after the "hydrate" listener is registered: native may have
+  // queued a "hydrate" event before this bridge existed.
+  instance._flushBatchedEvents();
+
+  if (!instance._hasNativeBridgeMethods && instance.isReactNativeWebView) {
+    instance._requestHydrate();
+  }
+
+  const { onFallback, onReady, initialBridge } = options;
+
+  // Native has not told us its methods yet (e.g. Android injected them after
+  // this script ran), but we are inside a React Native WebView: send the call
+  // to native instead of falling back. Native answers it, or reports the
+  // method as missing.
+  const callNativeBeforeHydration = (target: any, methodName: string) => {
+    if (target._hasNativeBridgeMethods || !target.isReactNativeWebView) {
+      return undefined;
+    }
+    const nativeMethod = target._nativeMethod(methodName);
+    return (...args: unknown[]) =>
+      nativeMethod(...args).catch((error: unknown) => {
+        throw error === true ? new MethodNotFoundError(methodName) : error;
+      });
+  };
 
   const proxy = new Proxy(instance, {
-    get: (target: any, methodName: string, proxy) => {
+    get: (target: any, methodName: string | symbol, proxy) => {
+      const isInitialBridgeMethod =
+        typeof methodName === "string" &&
+        typeof (initialBridge as Record<string, unknown> | undefined)?.[
+          methodName
+        ] === "function";
+
       if (methodName in target) {
-        return target[methodName];
+        // In a React Native WebView, native takes priority over initialBridge.
+        return (
+          (isInitialBridgeMethod &&
+            callNativeBeforeHydration(target, methodName as string)) ||
+          target[methodName]
+        );
+      }
+
+      // Not a bridge method name. Returning a function for `then` would make
+      // the bridge a thenable that never settles when awaited.
+      if (typeof methodName !== "string" || methodName === "then") {
+        return undefined;
+      }
+
+      const nativeMethod = callNativeBeforeHydration(target, methodName);
+      if (nativeMethod) {
+        return nativeMethod;
       }
 
       proxy._postMessage("fallback", {

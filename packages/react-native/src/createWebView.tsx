@@ -7,7 +7,6 @@ import type {
   KeyOfOrString,
   Parser,
   ParserSchema,
-  Primitive,
 } from "@webview-bridge/types";
 import { createEvents, createRandomId } from "@webview-bridge/utils";
 import type React from "react";
@@ -26,8 +25,9 @@ import {
   INJECT_BRIDGE_METHODS,
   INJECT_BRIDGE_STATE,
   SAFE_NATIVE_EMITTER_EMIT,
+  SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID,
+  createHydrateData,
   handleBridge,
-  isDelegatedMethod,
 } from "./integrations/bridge";
 import { INJECT_DEBUG, type LogType, handleLog } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
@@ -228,26 +228,10 @@ export const createWebView = <
       }, []);
 
       // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-      const initData = useMemo(() => {
-        const bridgeMethods = Object.entries(bridge.getState() ?? {})
-          .filter(([name, method]) => {
-            if (typeof method !== "function") {
-              return false;
-            }
-            // A delegate() method is only exposed when this WebView implements it.
-            if (isDelegatedMethod(method)) {
-              return typeof delegateImpl?.[name] === "function";
-            }
-            return true;
-          })
-          .map(([name]) => name);
-        const initialState = Object.fromEntries(
-          Object.entries(bridge.getState() ?? {}).filter(
-            ([_, value]) => typeof value !== "function",
-          ),
-        ) as Record<string, Primitive>;
-        return { bridgeMethods, initialState };
-      }, []);
+      const initData = useMemo(
+        () => createHydrateData(bridge, delegateImpl),
+        [],
+      );
 
       useEffect(() => {
         // lazy initialize the bridgeId
@@ -293,6 +277,20 @@ export const createWebView = <
               url,
               delegate: delegateImpl,
             });
+            return;
+          }
+          case "requestHydrate": {
+            // The page ran linkBridge() before the injected bridge methods
+            // were available (Android injects them asynchronously).
+            webviewRef.current.injectJavaScript(
+              // Same data as the injected methods: delegate() methods are
+              // decided when the WebView mounts.
+              SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID(
+                bridgeId,
+                "hydrate",
+                initData,
+              ),
+            );
             return;
           }
           case "getBridgeState": {
@@ -359,7 +357,7 @@ export const createWebView = <
           onMessage={handleMessage}
           injectedJavaScriptBeforeContentLoaded={[
             INJECT_BRIDGE_METHODS(initData.bridgeMethods),
-            INJECT_BRIDGE_STATE(initData.initialState),
+            INJECT_BRIDGE_STATE(initData.nativeInitialState),
             props.injectedJavaScriptBeforeContentLoaded,
             "true;",
           ]
