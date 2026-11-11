@@ -78,6 +78,10 @@ export default defineConfig({
             link: "/using-a-native-method",
           },
           {
+            text: "Using React Hooks in Native Methods",
+            link: "/using-react-hooks-in-native-methods",
+          },
+          {
             text: "Shared State",
             items: [
               {

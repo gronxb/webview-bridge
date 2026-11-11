@@ -1,6 +1,8 @@
 import type {
+  AsyncFunction,
   Bridge,
   BridgeStore,
+  Delegated,
   OnlyJSON,
   Primitive,
 } from "@webview-bridge/types";
@@ -44,6 +46,39 @@ export type BridgeMiddlewareBuilder<
     middleware: BridgeMiddleware<Context & AddedContext>,
   ): BridgeStore<T> & BridgeMiddlewareBuilder<T, Context & AddedContext>;
 };
+
+const DELEGATED_METHOD = Symbol.for("@webview-bridge/delegated-method");
+
+/**
+ * Declare a bridge method whose implementation is provided per WebView through
+ * the `delegate` prop, so it can use values that only exist inside React
+ * components (hooks, context, navigation of the current screen, ...).
+ *
+ * The method name is still part of the bridge, so the Web side gets its type
+ * from `typeof appBridge` as usual. A WebView that does not provide the handler
+ * does not expose the method to its page.
+ *
+ * @example
+ * export const appBridge = bridge({
+ *   goBack: delegate<() => Promise<void>>(),
+ * });
+ *
+ * const navigation = useNavigation();
+ * <WebView delegate={{ goBack: async () => navigation.goBack() }} />
+ */
+export const delegate = <F extends AsyncFunction>(): Delegated<F> => {
+  const method = async () => {
+    throw new Error(
+      "[WebViewBridge] This method is declared with delegate(). Provide its implementation through the WebView `delegate` prop.",
+    );
+  };
+  Object.defineProperty(method, DELEGATED_METHOD, { value: true });
+  return method as unknown as Delegated<F>;
+};
+
+export const isDelegatedMethod = (value: unknown): boolean =>
+  typeof value === "function" &&
+  (value as unknown as Record<symbol, unknown>)[DELEGATED_METHOD] === true;
 
 const bridgeMiddlewareMap = new WeakMap<object, BridgeMiddleware<object>[]>();
 
@@ -128,6 +163,8 @@ type HandleBridgeArgs<ArgType = unknown> = {
   eventId: string;
   bridgeId: string;
   url?: string;
+  /** Implementations for `delegate()` methods, from the WebView's `delegate` prop. */
+  delegate?: Partial<Record<string, AsyncFunction>>;
 };
 
 const runBridgeMiddleware = async (
@@ -201,6 +238,7 @@ export const handleBridge = async ({
   eventId,
   bridgeId,
   url,
+  delegate: delegateImpl,
 }: HandleBridgeArgs) => {
   const _bridge = bridge.getState();
 
@@ -229,9 +267,18 @@ export const handleBridge = async ({
       method,
       args: args ?? [],
     };
-    const response = await runBridgeMiddleware(bridge, request, () =>
-      _method(...request.args),
-    );
+    const response = await runBridgeMiddleware(bridge, request, async () => {
+      if (!isDelegatedMethod(_method)) {
+        return _method(...request.args);
+      }
+      const handler = delegateImpl?.[method];
+      if (typeof handler !== "function") {
+        throw new Error(
+          `[WebViewBridge] '${method}' is declared with delegate(), but this WebView has no \`delegate.${method}\`.`,
+        );
+      }
+      return handler(...request.args);
+    });
 
     webview.injectJavaScript(
       SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID(

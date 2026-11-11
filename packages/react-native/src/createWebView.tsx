@@ -1,6 +1,9 @@
 import type {
+  AsyncFunction,
   Bridge,
+  BridgeDelegate,
   BridgeStore,
+  DelegatedMethodKeys,
   KeyOfOrString,
   Parser,
   ParserSchema,
@@ -24,6 +27,7 @@ import {
   INJECT_BRIDGE_STATE,
   SAFE_NATIVE_EMITTER_EMIT,
   handleBridge,
+  isDelegatedMethod,
 } from "./integrations/bridge";
 import { INJECT_DEBUG, type LogType, handleLog } from "./integrations/console";
 import { handleRegisterWebMethod } from "./integrations/handleRegisterWebMethod";
@@ -82,6 +86,28 @@ export type CreateWebViewArgs<
    */
   fallback?: (method: keyof BridgeObject) => void;
 };
+
+/**
+ * Extra props of the WebView created by `createWebView`.
+ * `delegate` is required when the bridge declares `delegate()` methods.
+ */
+export type BridgeWebViewProps<BridgeObject extends Bridge> = [
+  DelegatedMethodKeys<BridgeObject>,
+] extends [never]
+  ? {
+      delegate?: never;
+    }
+  : {
+      /**
+       * Implementations for the methods declared with `delegate()`.
+       * They run with this WebView's latest props, so they can use hooks and
+       * context of the component that renders the WebView.
+       *
+       * Handlers that are missing when the WebView mounts are not exposed to
+       * the page (`isNativeMethodAvailable` returns `false` for them).
+       */
+      delegate: BridgeDelegate<BridgeObject>;
+    };
 
 export type WebMethod<T> = T & {
   isReady: boolean;
@@ -182,7 +208,13 @@ export const createWebView = <
         SAFE_NATIVE_EMITTER_EMIT(`postMessage/${String(eventName)}`, _args),
       );
     },
-    WebView: forwardRef<BridgeWebView, WebViewProps>((props, ref) => {
+    WebView: forwardRef<
+      BridgeWebView,
+      WebViewProps & BridgeWebViewProps<BridgeObject>
+    >((allProps, ref) => {
+      const { delegate: delegateImpl, ...props } = allProps as WebViewProps & {
+        delegate?: Partial<Record<string, AsyncFunction>>;
+      };
       const webviewRef = useRef<WebView>(null);
 
       useLayoutEffect(() => {
@@ -198,7 +230,16 @@ export const createWebView = <
       // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
       const initData = useMemo(() => {
         const bridgeMethods = Object.entries(bridge.getState() ?? {})
-          .filter(([_, bridge]) => typeof bridge === "function")
+          .filter(([name, method]) => {
+            if (typeof method !== "function") {
+              return false;
+            }
+            // A delegate() method is only exposed when this WebView implements it.
+            if (isDelegatedMethod(method)) {
+              return typeof delegateImpl?.[name] === "function";
+            }
+            return true;
+          })
           .map(([name]) => name);
         const initialState = Object.fromEntries(
           Object.entries(bridge.getState() ?? {}).filter(
@@ -250,6 +291,7 @@ export const createWebView = <
               eventId,
               webview: webviewRef.current,
               url,
+              delegate: delegateImpl,
             });
             return;
           }
