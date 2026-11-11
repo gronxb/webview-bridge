@@ -31,7 +31,13 @@ export interface LinkBridgeOptions<
    */
   initialBridge?: Partial<UndelegatedBridge<ExtractStore<T>>>;
   /**
-   * Set the timeout in milliseconds after calling the native method.
+   * How long, in milliseconds, to wait for native to acknowledge a native
+   * method call. Once native acknowledges it, the call waits for the method's
+   * result with no time limit, so methods that wait for the user are not cut off.
+   *
+   * Native builds older than the acknowledgement apply this limit to the whole
+   * call. When it runs out, the call resolves to `undefined`, or rejects with
+   * `Error("Timeout")` if `throwOnError` applies. `0` disables it.
    * @default 2000
    */
   timeout?: number;
