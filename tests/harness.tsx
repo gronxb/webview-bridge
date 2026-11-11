@@ -27,6 +27,11 @@ export const native = {
   messages: [] as { type: string; [key: string]: unknown }[],
   /** Message types native drops, to model older native versions. */
   ignoredMessageTypes: new Set<string>(),
+  /**
+   * Injected scripts matching any of these never reach the page, to model
+   * older native versions that do not send them (e.g. call acks).
+   */
+  droppedInjections: [] as RegExp[],
   /** Bumped per test so messages still in flight from a previous test drop. */
   generation: 0,
 };
@@ -47,6 +52,9 @@ const FakeWebView = forwardRef<unknown, FakeProps>((props, ref) => {
     () => ({
       injectJavaScript: (script: string) => {
         native.injections.push({ id, script });
+        if (native.droppedInjections.some((pattern) => pattern.test(script))) {
+          return;
+        }
         // Before the page has loaded, injections hit the previous document
         // (e.g. about:blank) and are lost.
         if (native.loadedPageId === id) {
@@ -68,6 +76,7 @@ export const resetEnvironment = () => {
   native.messages.length = 0;
   native.loadedPageId = null;
   native.ignoredMessageTypes.clear();
+  native.droppedInjections.length = 0;
   native.generation++;
 
   const w = window as any;
