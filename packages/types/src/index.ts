@@ -151,19 +151,40 @@ type DelegatedArgs<Input> = undefined extends Input
   ? [input?: Input]
   : [input: Input];
 
-/** The method type created by `delegate(input, output?)`. */
+/** The schemas `delegate({ input, output })` takes. Both are optional. */
+export type DelegateSchemas<
+  In extends StandardSchemaV1 | undefined = StandardSchemaV1 | undefined,
+  Out extends StandardSchemaV1 | undefined = StandardSchemaV1 | undefined,
+> = {
+  /** Validates the argument the page sends (Web → native). */
+  input?: In;
+  /** Validates the value the implementation returns (native → Web). */
+  output?: Out;
+};
+
+type SchemaPageArgs<In> = In extends StandardSchemaV1
+  ? DelegatedArgs<InferSchemaInput<In>>
+  : [];
+
+type SchemaHandlerArgs<In> = In extends StandardSchemaV1
+  ? [input: InferSchemaOutput<In>]
+  : [];
+
+type SchemaPageResult<Out> = Out extends StandardSchemaV1
+  ? InferSchemaOutput<Out>
+  : unknown;
+
+type SchemaHandlerResult<Out> = Out extends StandardSchemaV1
+  ? InferSchemaInput<Out> | Promise<InferSchemaInput<Out>>
+  : unknown;
+
+/** The method type created by `delegate({ input, output })`. */
 export type SchemaDelegated<
-  In extends StandardSchemaV1,
+  In extends StandardSchemaV1 | undefined = undefined,
   Out extends StandardSchemaV1 | undefined = undefined,
 > = Delegated<
-  (
-    ...args: DelegatedArgs<InferSchemaInput<In>>
-  ) => Promise<Out extends StandardSchemaV1 ? InferSchemaOutput<Out> : unknown>,
-  (
-    input: InferSchemaOutput<In>,
-  ) => Out extends StandardSchemaV1
-    ? InferSchemaInput<Out> | Promise<InferSchemaInput<Out>>
-    : unknown
+  (...args: SchemaPageArgs<In>) => Promise<SchemaPageResult<Out>>,
+  (...args: SchemaHandlerArgs<In>) => SchemaHandlerResult<Out>
 >;
 
 type BridgeShape<T> = T extends { getState: () => infer S } ? S : T;

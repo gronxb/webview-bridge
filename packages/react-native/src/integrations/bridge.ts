@@ -2,6 +2,7 @@ import type {
   AsyncFunction,
   Bridge,
   BridgeStore,
+  DelegateSchemas,
   Delegated,
   OnlyJSON,
   Primitive,
@@ -65,15 +66,16 @@ type DelegatedSchemas = {
  * the `delegate` prop, so it can use values that only exist inside React
  * components (hooks, context, navigation of the current screen, ...).
  *
- * Pass a [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType,
- * ...) and the types are inferred from it:
+ * Pass [Standard Schemas](https://standardschema.dev) (Zod, Valibot, ArkType,
+ * ...) and the types are inferred from them:
  * - `input` validates the argument the page sends. The page passes the
  *   schema's input type, and the implementation receives its output type.
- * - `output` (optional) validates what the implementation returns. The page
- *   receives the schema's output type. Without it, the page gets `unknown`.
+ * - `output` validates what the implementation returns. The page receives
+ *   the schema's output type. Without it, the page gets `unknown`.
  *
- * `delegate<Signature>()` declares the signature with a type argument instead,
- * without runtime validation.
+ * `delegate()` takes nothing and returns nothing. `delegate<Signature>()`
+ * declares the signature with a type argument instead, without runtime
+ * validation.
  *
  * A WebView that does not implement a delegated method does not expose it to
  * its page.
@@ -81,7 +83,8 @@ type DelegatedSchemas = {
  * @example
  * export const appBridge = bridge({
  *   goBack: delegate(),
- *   getUser: delegate(z.object({ id: z.number() }), userSchema),
+ *   getUser: delegate({ input: z.object({ id: z.number() }), output: userSchema }),
+ *   getSession: delegate({ output: sessionSchema }),
  *   confirm: delegate<(message: string) => Promise<boolean>>(),
  * });
  *
@@ -89,30 +92,29 @@ type DelegatedSchemas = {
  *   delegate={{
  *     goBack: async () => navigation.goBack(),
  *     getUser: async ({ id }) => fetchUser(id),
+ *     getSession: async () => session,
  *     confirm: (message) => showConfirm(message),
  *   }}
  * />
  */
-// No type parameter here: a defaulted one would be inferred from the
-// surrounding `bridge({...})` object (AsyncFunction) instead of the default.
 export function delegate(): Delegated<() => Promise<void>>;
 // The implementation keeps `F` itself, so generic signatures stay generic.
 export function delegate<F extends AsyncFunction>(): Delegated<F>;
 export function delegate<
-  In extends StandardSchemaV1,
+  In extends StandardSchemaV1 | undefined = undefined,
   Out extends StandardSchemaV1 | undefined = undefined,
->(input: In, output?: Out): SchemaDelegated<In, Out>;
-export function delegate(
-  input?: StandardSchemaV1,
-  output?: StandardSchemaV1,
-): unknown {
+>(schemas: DelegateSchemas<In, Out>): SchemaDelegated<In, Out>;
+export function delegate(schemas?: DelegateSchemas): unknown {
   const method = async () => {
     throw new Error(
       "[WebViewBridge] This method is declared with delegate(). Provide its implementation through the WebView `delegate` prop.",
     );
   };
-  const schemas: DelegatedSchemas = { input, output };
-  Object.defineProperty(method, DELEGATED_METHOD, { value: schemas });
+  const value: DelegatedSchemas = {
+    input: schemas?.input,
+    output: schemas?.output,
+  };
+  Object.defineProperty(method, DELEGATED_METHOD, { value });
   return method;
 }
 

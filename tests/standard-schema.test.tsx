@@ -38,15 +38,20 @@ describe("delegate() with Standard Schemas", () => {
 
   const createSchemaBridge = () =>
     bridge({
-      getUser: delegate(
-        z.object({ id: z.string().transform((value) => Number(value)) }),
-        z.object({ id: z.number(), name: z.string().toUpperCase() }),
-      ),
-      track: delegate(v.object({ event: v.string() })),
-      slowCheck: delegate(
-        z.string().refine(async (value) => value.length > 2, "too short"),
-        z.boolean(),
-      ),
+      getUser: delegate({
+        input: z.object({ id: z.string().transform((value) => Number(value)) }),
+        output: z.object({ id: z.number(), name: z.string().toUpperCase() }),
+      }),
+      track: delegate({ input: v.object({ event: v.string() }) }),
+      slowCheck: delegate({
+        input: z
+          .string()
+          .refine(async (value) => value.length > 2, "too short"),
+        output: z.boolean(),
+      }),
+      getSession: delegate({
+        output: z.object({ token: z.string().transform((t) => `Bearer ${t}`) }),
+      }),
       legacy: delegate<(a: number, b: number) => Promise<number>>(),
     });
   type SchemaBridge = ReturnType<typeof createSchemaBridge>;
@@ -67,6 +72,10 @@ describe("delegate() with Standard Schemas", () => {
               calls.push(input);
             },
             slowCheck: async () => true,
+            getSession: async (...args: unknown[]) => {
+              calls.push(args);
+              return { token: "abc" };
+            },
             legacy: async (a, b) => a + b,
             ...(overrides as object),
           }}
@@ -148,6 +157,14 @@ describe("delegate() with Standard Schemas", () => {
         "Invalid input for 'slowCheck': too short",
       ),
     });
+  });
+
+  it("validates only the output of an output-only method", async () => {
+    const { calls, web } = mount();
+
+    await expect(web.getSession()).resolves.toEqual({ token: "Bearer abc" });
+    // No input schema: the implementation is called without arguments.
+    expect(calls).toEqual([[]]);
   });
 
   it("keeps passing all arguments through for the generic form", async () => {
