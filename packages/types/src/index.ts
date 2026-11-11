@@ -152,15 +152,90 @@ type DelegatedArgs<Input> = undefined extends Input
   : [input: Input];
 
 /** The schemas `delegate({ input, output })` takes. Both are optional. */
-export type DelegateSchemas<
-  In extends StandardSchemaV1 | undefined = StandardSchemaV1 | undefined,
-  Out extends StandardSchemaV1 | undefined = StandardSchemaV1 | undefined,
-> = {
+export type DelegateSchemas = {
   /** Validates the argument the page sends (Web → native). */
-  input?: In;
+  input?: StandardSchemaV1;
   /** Validates the value the implementation returns (native → Web). */
-  output?: Out;
+  output?: StandardSchemaV1;
 };
+
+/** Values that do not survive the JSON trip across the bridge. */
+type NonSerializable =
+  | Date
+  | bigint
+  | symbol
+  | ((...args: never[]) => unknown)
+  | ReadonlyMap<unknown, unknown>
+  | ReadonlySet<unknown>
+  | RegExp
+  | Promise<unknown>
+  | Error;
+
+/**
+ * `true` when `T` contains a value JSON cannot carry faithfully. `unknown` and
+ * `any` are allowed, because they do not promise a specific type.
+ */
+type HasNonSerializable<
+  T,
+  Depth extends unknown[] = [],
+> = Depth["length"] extends 10
+  ? false
+  : IsAny<T> extends true
+    ? false
+    : unknown extends T
+      ? false
+      : T extends NonSerializable
+        ? true
+        : T extends readonly (infer Item)[]
+          ? HasNonSerializable<Item, [...Depth, 0]>
+          : T extends object
+            ? true extends {
+                [K in keyof T]-?: HasNonSerializable<T[K], [...Depth, 0]>;
+              }[keyof T]
+              ? true
+              : false
+            : false;
+
+/**
+ * @internal Rejects an input schema whose input type (what the page sends)
+ * cannot cross the bridge as JSON.
+ */
+export type CheckSerializableInput<In> = In extends StandardSchemaV1
+  ? true extends HasNonSerializable<InferSchemaInput<In>>
+    ? {
+        input: "The input schema's input type must survive JSON: no Date, BigInt, Map, Set or functions. Transform it on native instead.";
+      }
+    : unknown
+  : unknown;
+
+/**
+ * @internal Rejects an output schema whose output type (what the page
+ * receives) cannot cross the bridge as JSON.
+ */
+export type CheckSerializableOutput<Out> = Out extends StandardSchemaV1
+  ? true extends HasNonSerializable<InferSchemaOutput<Out>>
+    ? {
+        output: "The output schema's output type must survive JSON: no Date, BigInt, Map, Set or functions. Transform it to a string or number.";
+      }
+    : unknown
+  : unknown;
+
+/**
+ * @internal Rejects postMessage event schemas whose output type (what the page
+ * receives) cannot cross the bridge as JSON.
+ */
+export type CheckSerializableEvents<T> = {
+  [K in keyof T]: T[K] extends StandardSchemaV1
+    ? true extends HasNonSerializable<InferSchemaOutput<T[K]>>
+      ? "This event schema's output type must survive JSON: no Date, BigInt, Map, Set or functions. Transform it to a string or number."
+      : unknown
+    : unknown;
+};
+
+/** The schema a `delegate()` property holds, or `undefined` when absent. */
+export type SchemaOf<S, Key extends "input" | "output"> = Key extends keyof S
+  ? S[Key]
+  : undefined;
 
 type SchemaPageArgs<In> = In extends StandardSchemaV1
   ? DelegatedArgs<InferSchemaInput<In>>
@@ -170,9 +245,13 @@ type SchemaHandlerArgs<In> = In extends StandardSchemaV1
   ? [input: InferSchemaOutput<In>]
   : [];
 
-type SchemaPageResult<Out> = Out extends StandardSchemaV1
+// Without an output schema: `void` when there is no input either (same as
+// `delegate()`), otherwise `unknown`.
+type SchemaPageResult<In, Out> = Out extends StandardSchemaV1
   ? InferSchemaOutput<Out>
-  : unknown;
+  : [In] extends [undefined]
+    ? void
+    : unknown;
 
 type SchemaHandlerResult<Out> = Out extends StandardSchemaV1
   ? InferSchemaInput<Out> | Promise<InferSchemaInput<Out>>
@@ -183,7 +262,7 @@ export type SchemaDelegated<
   In extends StandardSchemaV1 | undefined = undefined,
   Out extends StandardSchemaV1 | undefined = undefined,
 > = Delegated<
-  (...args: SchemaPageArgs<In>) => Promise<SchemaPageResult<Out>>,
+  (...args: SchemaPageArgs<In>) => Promise<SchemaPageResult<In, Out>>,
   (...args: SchemaHandlerArgs<In>) => SchemaHandlerResult<Out>
 >;
 

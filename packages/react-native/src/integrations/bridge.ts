@@ -2,11 +2,14 @@ import type {
   AsyncFunction,
   Bridge,
   BridgeStore,
+  CheckSerializableInput,
+  CheckSerializableOutput,
   DelegateSchemas,
   Delegated,
   OnlyJSON,
   Primitive,
   SchemaDelegated,
+  SchemaOf,
   StandardSchemaV1,
 } from "@webview-bridge/types";
 import {
@@ -59,6 +62,7 @@ const DELEGATED_METHOD = Symbol.for("@webview-bridge/delegated-method");
 type DelegatedSchemas = {
   input?: StandardSchemaV1;
   output?: StandardSchemaV1;
+  checked?: boolean;
 };
 
 /**
@@ -100,10 +104,13 @@ type DelegatedSchemas = {
 export function delegate(): Delegated<() => Promise<void>>;
 // The implementation keeps `F` itself, so generic signatures stay generic.
 export function delegate<F extends AsyncFunction>(): Delegated<F>;
-export function delegate<
-  In extends StandardSchemaV1 | undefined = undefined,
-  Out extends StandardSchemaV1 | undefined = undefined,
->(schemas: DelegateSchemas<In, Out>): SchemaDelegated<In, Out>;
+// A schema property that may be absent (e.g. `{ input?: S }`) is typed as
+// possibly absent, so the signatures never promise validation that won't run.
+export function delegate<S extends DelegateSchemas>(
+  schemas: S &
+    CheckSerializableInput<SchemaOf<S, "input">> &
+    CheckSerializableOutput<SchemaOf<S, "output">>,
+): SchemaDelegated<SchemaOf<S, "input">, SchemaOf<S, "output">>;
 export function delegate(schemas?: DelegateSchemas): unknown {
   const method = async () => {
     throw new Error(
@@ -113,6 +120,8 @@ export function delegate(schemas?: DelegateSchemas): unknown {
   const value: DelegatedSchemas = {
     input: schemas?.input,
     output: schemas?.output,
+    // Arguments are checked only when a schema describes them.
+    checked: Boolean(schemas?.input || schemas?.output),
   };
   Object.defineProperty(method, DELEGATED_METHOD, { value });
   return method;
@@ -353,8 +362,9 @@ export const handleBridge = async ({
       method,
       args: args ?? [],
     };
-    const response = await runBridgeMiddleware(bridge, request, async () => {
-      if (!isDelegatedMethod(_method)) {
+    const schemas = getDelegatedSchemas(_method);
+    let response = await runBridgeMiddleware(bridge, request, async () => {
+      if (!schemas) {
         return _method(...request.args);
       }
       const handler = delegateImpl?.[method];
@@ -363,15 +373,39 @@ export const handleBridge = async ({
           `[WebViewBridge] '${method}' is declared with delegate(), but this WebView has no \`delegate.${method}\`.`,
         );
       }
-      const { input, output } = getDelegatedSchemas(_method) ?? {};
-      const handlerArgs = input
-        ? [await validateWithSchema(input, request.args[0], method, "input")]
-        : request.args;
-      const result = await handler(...handlerArgs);
-      return output
-        ? validateWithSchema(output, result, method, "output")
-        : result;
+      if (!schemas.checked) {
+        return handler(...request.args);
+      }
+      // Input runs after middleware, so it validates the arguments middleware
+      // may have rewritten, right before the implementation sees them.
+      const maxArgs = schemas.input ? 1 : 0;
+      if (request.args.length > maxArgs) {
+        throw new BridgeValidationError(method, "input", [
+          {
+            message: `Expected at most ${maxArgs} argument(s), received ${request.args.length}`,
+          },
+        ]);
+      }
+      return schemas.input
+        ? handler(
+            await validateWithSchema(
+              schemas.input,
+              request.args[0],
+              method,
+              "input",
+            ),
+          )
+        : handler();
     });
+    // Output runs on the final result, so middleware cannot bypass it.
+    if (schemas?.output) {
+      response = await validateWithSchema(
+        schemas.output,
+        response,
+        method,
+        "output",
+      );
+    }
 
     webview.injectJavaScript(
       SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID(

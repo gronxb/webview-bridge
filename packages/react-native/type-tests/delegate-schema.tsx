@@ -42,7 +42,9 @@ expectType<Promise<unknown>>(state.track({ event: "open" }));
 expectType<Promise<boolean>>(state.refresh());
 expectType<Promise<string[]>>(state.search());
 expectType<Promise<string[]>>(state.search("q"));
-expectType<Promise<unknown>>(state.ping());
+expectType<Promise<void>>(state.ping());
+// @ts-expect-error `delegate({})` resolves to void, like `delegate()`
+expectType<Promise<string>>(state.ping());
 // @ts-expect-error an output-only method takes no argument
 state.refresh(true);
 // @ts-expect-error an output-only method resolves to the output type
@@ -146,3 +148,39 @@ type LooseSchema = ParserSchema<{ event: unknown }>;
 expectType<unknown>(null as unknown as Parser<LooseSchema, "event">);
 export const looseOutput: Parser<LooseSchema, "event"> = new Date();
 export const looseInput: ParserInput<LooseSchema, "event"> = new Date();
+
+// ---- Values must survive the JSON trip ------------------------------------
+// @ts-expect-error a Date output would arrive as a string
+delegate({ output: z.date() });
+// @ts-expect-error nested Date output
+delegate({ output: z.object({ at: z.date() }) });
+// @ts-expect-error a BigInt output cannot be serialized
+delegate({ output: z.string().transform(BigInt) });
+// @ts-expect-error the page cannot send a Date
+delegate({ input: z.date() });
+// Transforms that end in JSON values, and `unknown`, are fine.
+delegate({
+  input: z.string().transform((value) => new Date(value)),
+  output: z.date().transform((date) => date.toISOString()),
+});
+delegate({ output: z.record(z.string(), z.unknown()) });
+postMessageSchema({
+  // @ts-expect-error a Date event payload would arrive as a string
+  createdAt: z.date(),
+});
+postMessageSchema({ createdAt: z.date().transform((d) => d.toISOString()) });
+
+// ---- A schema property that may be absent is typed as possibly absent -----
+const maybeInput: {
+  input?: z.ZodPipe<z.ZodString, z.ZodTransform<number, string>>;
+} = {};
+const optionalBridge = bridge({ maybe: delegate(maybeInput) });
+declare const optionalState: ReturnType<typeof optionalBridge.getState>;
+optionalState.maybe();
+optionalState.maybe("1");
+export const optionalHandlers: BridgeDelegate<typeof optionalBridge> = {
+  maybe: (...args) => {
+    // The implementation may receive nothing, because `input` may be absent.
+    expectType<[] | [input: number]>(args);
+  },
+};
