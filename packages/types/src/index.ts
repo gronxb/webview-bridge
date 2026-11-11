@@ -250,7 +250,8 @@ type SchemaHandlerArgs<In> = In extends StandardSchemaV1
 type SchemaPageResult<In, Out> = Out extends StandardSchemaV1
   ? InferSchemaOutput<Out>
   : [In] extends [undefined]
-    ? void
+    ? // biome-ignore lint/suspicious/noConfusingVoidType: becomes Promise<void>, matching `delegate()`.
+      void
     : unknown;
 
 type SchemaHandlerResult<Out> = Out extends StandardSchemaV1
