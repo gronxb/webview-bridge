@@ -217,8 +217,10 @@ if (await bridge.confirm("Delete this post?")) {
 }
 ```
 
-::: warning
-`linkBridge` stops waiting for a native method after its `timeout` (2000 ms by default). After that, the call resolves to `undefined`, or rejects if `throwOnError` is set. For methods that wait for the user, raise the timeout or disable it with `timeout: 0`. The option applies to every native method of that `linkBridge` instance.
+The page waits as long as the user takes. `linkBridge`'s `timeout` only limits how long native takes to acknowledge the call, not how long the method runs.
+
+::: warning Apps built with `@webview-bridge/react-native` before 1.9.0
+Older native builds do not acknowledge calls, so `timeout` (2000 ms by default) applies to the whole call. The call then resolves to `undefined`, or rejects if `throwOnError` is set. If your page can run inside such an app, raise the timeout or disable it with `timeout: 0`. The option applies to every native method of that `linkBridge` instance.
 
 ```tsx
 const bridge = linkBridge<AppBridge>({ timeout: 0 });

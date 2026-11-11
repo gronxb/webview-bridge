@@ -12,7 +12,7 @@ import {
   NativeMethodError,
   createRandomId,
   createResolver,
-  timeout,
+  nativeCallAckEventName,
 } from "@webview-bridge/utils";
 
 import type { LinkBridgeOptions } from "../linkBridge";
@@ -110,27 +110,74 @@ export class BridgeInstance<
     return (...args: unknown[]) => {
       const eventId = createRandomId();
 
-      return Promise.race(
-        [
-          createResolver({
-            emitter: this._emitter,
-            methodName,
-            eventId,
-            evaluate: () => {
-              this._postMessage("bridge", {
-                method: methodName,
-                eventId,
-                args,
-              });
-            },
-            onFallback: () => {
-              onFallback?.(methodName, args);
-            },
-            failHandler: throwOnError && new NativeMethodError(methodName),
-          }),
-          timeoutMs > 0 && timeout(timeoutMs, throwOnError),
-        ].filter(Boolean),
-      );
+      return new Promise((resolve, reject) => {
+        let settled = false;
+        let timer: ReturnType<typeof setTimeout> | undefined;
+
+        // `timeout` only covers the time until native acknowledges the call.
+        // Once native has started running the method, wait for its result
+        // however long it takes (dialogs, pickers, in-app browsers, ...).
+        // Native versions that do not send the ack keep the full-call timeout.
+        const unbindAck = this._emitter.on(
+          nativeCallAckEventName(methodName, eventId),
+          () => {
+            unbindAck();
+            clearTimeout(timer);
+          },
+        );
+
+        const settle = () => {
+          settled = true;
+          unbindAck();
+          clearTimeout(timer);
+        };
+
+        if (timeoutMs > 0) {
+          timer = setTimeout(() => {
+            if (settled) {
+              return;
+            }
+            settle();
+            if (throwOnError) {
+              reject(new Error("Timeout"));
+            } else {
+              resolve(void 0);
+            }
+          }, timeoutMs);
+        }
+
+        createResolver({
+          emitter: this._emitter,
+          methodName,
+          eventId,
+          evaluate: () => {
+            this._postMessage("bridge", {
+              method: methodName,
+              eventId,
+              args,
+            });
+          },
+          onFallback: () => {
+            onFallback?.(methodName, args);
+          },
+          failHandler: throwOnError && new NativeMethodError(methodName),
+        }).then(
+          (value) => {
+            if (settled) {
+              return;
+            }
+            settle();
+            resolve(value);
+          },
+          (error) => {
+            if (settled) {
+              return;
+            }
+            settle();
+            reject(error);
+          },
+        );
+      });
     };
   }
 

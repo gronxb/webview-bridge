@@ -6,7 +6,11 @@ import type {
   OnlyJSON,
   Primitive,
 } from "@webview-bridge/types";
-import { equals, removeUndefinedKeys } from "@webview-bridge/utils";
+import {
+  equals,
+  nativeCallAckEventName,
+  removeUndefinedKeys,
+} from "@webview-bridge/utils";
 import type WebView from "react-native-webview";
 import { serializeError } from "../error";
 
@@ -272,6 +276,17 @@ export const handleBridge = async ({
     handleThrow();
     return;
   }
+
+  // From here on the call always gets a response, so tell the page it arrived.
+  // The page's `timeout` then stops applying, and long-running methods (dialogs,
+  // pickers, in-app browsers) are not cut off. Pages that predate the ack ignore it.
+  webview.injectJavaScript(
+    SAFE_NATIVE_EMITTER_EMIT_BY_BRIDGE_ID(
+      bridgeId,
+      nativeCallAckEventName(method, eventId),
+      null,
+    ),
+  );
 
   try {
     const request: BridgeRequest = {
