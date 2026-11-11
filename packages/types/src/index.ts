@@ -243,8 +243,11 @@ export type CheckSerializableOutput<Out> = [Exclude<Out, undefined>] extends [
  * receives) cannot cross the bridge as JSON.
  */
 export type CheckSerializableEvents<T> = {
-  [K in keyof T]: T[K] extends StandardSchemaV1
-    ? true extends HasNonSerializable<InferSchemaOutput<T[K]>>
+  // Not distributive, so an optional event (`S | undefined`) is still checked.
+  [K in keyof T]: [Exclude<T[K], undefined>] extends [
+    infer Schema extends StandardSchemaV1,
+  ]
+    ? true extends HasNonSerializable<InferSchemaOutput<Schema>>
       ? "This event schema's output type must survive JSON: no Date, BigInt, Map, Set, class instances with methods, functions or undefined array items. Transform it to a string or number."
       : unknown
     : unknown;

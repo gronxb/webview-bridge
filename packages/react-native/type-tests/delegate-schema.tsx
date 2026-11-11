@@ -180,6 +180,20 @@ postMessageSchema({
   // @ts-expect-error JSON turns undefined array items into null
   list: z.array(z.number().optional()),
 });
+// Optional and partial event records are still checked.
+declare const optionalEvents: { bad?: z.ZodDate };
+// @ts-expect-error an optional event schema with a Date output
+postMessageSchema(optionalEvents);
+declare const partialEvents: Partial<Record<"bad", z.ZodDate>>;
+// @ts-expect-error a partial record of Date event schemas
+postMessageSchema(partialEvents);
+declare const optionalArrayEvents: {
+  bad?: z.ZodArray<z.ZodOptional<z.ZodString>>;
+};
+// @ts-expect-error an optional event schema with undefined array items
+postMessageSchema(optionalArrayEvents);
+declare const fineOptionalEvents: { ok?: z.ZodString };
+postMessageSchema(fineOptionalEvents);
 // @ts-expect-error objects with methods (URL, typed arrays, class instances) lose them
 delegate({ output: z.instanceof(Uint8Array) });
 // Branded primitives, optional object properties and recursive schemas are fine.

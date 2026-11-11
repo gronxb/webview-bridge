@@ -135,7 +135,7 @@ getUser: delegate({
 - Values cross the bridge as JSON. TypeScript rejects schemas whose page-facing types (the input schema's input and the output schema's output) contain a `Date`, `BigInt`, `Map`, `Set`, an object with methods (`URL`, typed arrays, most class instances), a function, or `undefined` array items (JSON turns them into `null`). Transform such values on native instead, for example `output: z.date().transform((d) => d.toISOString())`.
 
   ::: details What the check does not catch
-  The check is structural and stops after 10 levels of nesting. It cannot tell a plain object from a class instance without methods (the page receives a plain object), and `NaN`/`Infinity` become `null` in JSON.
+  The check is structural and stops after 10 levels of nesting. It cannot tell a plain object from a class instance without methods (the page receives a plain object), it treats any intersection with a primitive (such as a branded `string & { __brand }`) as that primitive, and `NaN`/`Infinity` become `null` in JSON.
   :::
 - Input is validated right before the implementation runs, after [middleware](/reference/react-native/create-webview#bridge-middleware), so it checks the arguments middleware may have rewritten. Output is validated on the final result, after middleware, so middleware cannot return a value that skips the output schema.
 - Invalid input never reaches the implementation, and native logs a warning. An invalid return value is logged as an error. In both cases the call fails with a `BridgeValidationError`: it rejects when `throwOnError` applies to the method, and resolves to `undefined` otherwise, like any other native error.
