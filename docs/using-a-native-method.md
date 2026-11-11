@@ -40,6 +40,10 @@ export const appBridge = bridge({
 export type AppBridge = typeof appBridge;
 ```
 
+::: tip Need React hooks in a native method?
+Methods in `bridge({...})` are declared outside React. If a method needs `useNavigation()`, a context value, or the state of the screen that renders the WebView, declare it with `delegate()` and implement it on the WebView. See [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods).
+:::
+
 Create a WebView Component by combining the previously defined `bridge` with `createWebView`.
 
 ::: tip NOTE

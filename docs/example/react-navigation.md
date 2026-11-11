@@ -5,12 +5,83 @@ This guide is about integrating WebView, the web, and React Navigation.
 
 Example: [react-navigation](https://github.com/gronxb/webview-bridge/tree/main/example/react-navigation)
 
-::: tip
-This example reads a global `navigationRef`, so a call always acts on the root navigator. To use the `navigation` object of the screen that renders the WebView (`useNavigation()`), declare the methods with `delegate()` instead. See [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods).
-:::
+There are two ways to connect bridge methods to React Navigation:
+
+| | Per-screen `navigation` with `delegate()` | Global `navigationRef` |
+|---|---|---|
+| Which navigator a call acts on | The screen that renders the WebView | The root navigator |
+| Screen APIs such as `setOptions` | Yes | No |
+| Where the code lives | The screen component | The bridge module |
+
+Use `delegate()` when a page should control its own screen, for example a stack of WebView screens. The global ref is simpler when a single WebView drives app-wide navigation. The [example project](https://github.com/gronxb/webview-bridge/tree/main/example/react-navigation) uses the global ref.
+
+## Per-screen navigation with `delegate()`
+
+Declare the navigation methods with `delegate()`, and implement them with the `navigation` prop of each WebView screen.
+
+```tsx
+// This file is src/bridge.ts
+import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
+import type { RootStackParamList } from "./navigation";
+
+export const appBridge = bridge({
+  canGoBack: delegate<() => Promise<boolean>>(),
+  goBack: delegate<() => Promise<void>>(),
+  push: delegate<
+    <RouteName extends keyof RootStackParamList>(
+      name: RouteName,
+      params: RootStackParamList[RouteName],
+    ) => Promise<void>
+  >(),
+  setTitle: delegate<(title: string) => Promise<void>>(),
+});
+
+export type AppBridge = typeof appBridge;
+
+export const { WebView } = createWebView({ bridge: appBridge });
+```
+
+```tsx
+// This file is src/screens/WebViewScreen.tsx
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { WebView } from "../bridge";
+import type { RootStackParamList } from "../navigation";
+
+export function WebViewScreen({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, "WebViewHome">) {
+  return (
+    <WebView
+      source={{ uri: "http://localhost:5173" }}
+      style={{ flex: 1 }}
+      delegate={{
+        canGoBack: async () => navigation.canGoBack(),
+        goBack: async () => navigation.goBack(),
+        push: async (name, params) => navigation.push(name as any, params as any),
+        setTitle: async (title) => navigation.setOptions({ title }),
+      }}
+    />
+  );
+}
+```
+
+Pushing another `WebViewHome` screen gives each page its own `navigation`. A `goBack()` from the top page pops only that screen, and `setTitle()` changes only that screen's header.
+
+The Web side is the same as in the global-ref version below:
+
+```tsx
+await bridge.setTitle("Profile");
+bridge.push("UserInfo", { userId });
+```
+
+For more patterns, see [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods).
+
+## Global navigationRef
+
+The rest of this page matches the example project: the bridge methods call a `navigationRef` passed to `NavigationContainer`.
 
 
-## React Native Part
+### React Native Part
 
 ```tsx
 // This file is src/navigation.ts
@@ -180,7 +251,7 @@ export default App;
 
 
 
-## Web (React) Part
+### Web (React) Part
 ```tsx
 // This file is App.tsx
 import { useState } from "react";
