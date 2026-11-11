@@ -134,6 +134,38 @@ bridge.openInAppBrowser("https://google.com"); // Open google in the native inAp
 ```
 
 
+### Using React Hooks in a Native Method
+
+Methods in `bridge({...})` live outside React, so they cannot call hooks. When a method needs `useNavigation()`, a context value, or the state of the screen that renders the WebView, declare it with `delegate()` and implement it on the WebView:
+
+```tsx
+import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
+
+export const appBridge = bridge({
+  async openInAppBrowser(url: string) {
+    /* ... */
+  },
+  goBack: delegate<() => Promise<void>>(), // implemented by each WebView
+});
+
+export const { WebView } = createWebView({ bridge: appBridge });
+
+function WebViewScreen() {
+  const navigation = useNavigation();
+
+  return (
+    <WebView
+      source={{ uri: "http://localhost:5173" }}
+      delegate={{ goBack: async () => navigation.goBack() }}
+    />
+  );
+}
+```
+
+The Web side calls `bridge.goBack()` like any other method. TypeScript requires every `delegate()` method to be implemented in the `delegate` prop.
+
+See [Using React Hooks in Native Methods](/using-react-hooks-in-native-methods) for more use cases.
+
 ### Checking WebView Bridge Availability
 
 You can also check for the availability of specific methods using `isNativeMethodAvailable`.

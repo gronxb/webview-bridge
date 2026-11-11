@@ -22,6 +22,7 @@ Inspired by the functionality of `tRPC`, `webview-bridge` simplifies the communi
 - Backward Compatibility
 - No App Review Needed
 - Shared State
+- React Hooks in native methods with `delegate()`
 
 ![webview-bridge](https://raw.githubusercontent.com/gronxb/webview-bridge/main/demo.gif)
 

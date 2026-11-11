@@ -21,6 +21,11 @@ features:
     title: Type Safety
     details: Guarantees reliable and error-free communication, enhancing development efficiency.
 
+  - icon: 🪝
+    title: Works with React Hooks
+    details: Declare a native method with `delegate()` and implement it in the screen that renders the WebView, with `useNavigation()`, context, and state.
+    link: /using-react-hooks-in-native-methods
+
   - icon: ⏳
     title: Backward Compatibility
     details: Supports seamless fallbacks, ensuring compatibility with older versions of React Native apps

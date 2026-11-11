@@ -78,7 +78,7 @@ export default defineConfig({
             link: "/using-a-native-method",
           },
           {
-            text: "Using React Hooks in Native Methods",
+            text: "Using React Hooks (delegate)",
             link: "/using-react-hooks-in-native-methods",
           },
           {
