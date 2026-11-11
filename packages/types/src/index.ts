@@ -64,13 +64,16 @@ export type Delegated<F extends AsyncFunction> = F & {
 
 type BridgeShape<T> = T extends { getState: () => infer S } ? S : T;
 
+type IsAny<T> = 0 extends 1 & T ? true : false;
+
 /** Keys of the methods declared with `delegate()` on a bridge. */
 export type DelegatedMethodKeys<T> = {
-  [K in keyof BridgeShape<T>]: BridgeShape<T>[K] extends {
-    readonly [DelegatedMethodBrand]: true;
-  }
-    ? K
-    : never;
+  // `any` matches every conditional type, so it must not count as delegated.
+  [K in keyof BridgeShape<T>]: IsAny<BridgeShape<T>[K]> extends true
+    ? never
+    : BridgeShape<T>[K] extends { readonly [DelegatedMethodBrand]: true }
+      ? K
+      : never;
 }[keyof BridgeShape<T>];
 
 /**

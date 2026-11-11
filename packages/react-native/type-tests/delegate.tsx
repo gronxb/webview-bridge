@@ -82,3 +82,13 @@ const { WebView: PlainWebView } = createWebView({ bridge: plainBridge });
 export const plain = <PlainWebView />;
 // @ts-expect-error nothing to delegate
 export const plainWithHandlers = <PlainWebView bridgeHandlers={{}} />;
+
+// Existing bridges with `any`-typed members must not start requiring bridgeHandlers.
+const anyMemberBridge = bridge({ data: null as any, async ping() {} });
+const { WebView: AnyMemberWebView } = createWebView({
+  bridge: anyMemberBridge,
+});
+export const anyMember = <AnyMemberWebView />;
+
+const { WebView: AnyBridgeWebView } = createWebView({ bridge: null as any });
+export const anyBridge = <AnyBridgeWebView />;
