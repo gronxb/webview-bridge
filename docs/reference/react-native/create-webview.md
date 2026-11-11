@@ -35,8 +35,9 @@ WebView through the WebView's `delegate` prop, so it can use hooks and context.
 | Form | Page signature | Runtime validation |
 |---|---|---|
 | `delegate()` | `() => Promise<void>` | none |
-| `delegate(input)` | `(input: InferInput<input>) => Promise<unknown>` | input |
-| `delegate(input, output)` | `(input: InferInput<input>) => Promise<InferOutput<output>>` | input and output |
+| `delegate({ input })` | `(input: InferInput<input>) => Promise<unknown>` | input |
+| `delegate({ output })` | `() => Promise<InferOutput<output>>` | output |
+| `delegate({ input, output })` | `(input: InferInput<input>) => Promise<InferOutput<output>>` | input and output |
 | `delegate<Signature>()` | `Signature` | none |
 
 `input` and `output` are [Standard Schemas](https://standardschema.dev) (Zod,
@@ -50,7 +51,7 @@ import { z } from "zod";
 
 export const appBridge = bridge({
   goBack: delegate(),
-  setTitle: delegate(z.string()),
+  setTitle: delegate({ input: z.string() }),
 });
 
 export const { WebView } = createWebView({ bridge: appBridge });

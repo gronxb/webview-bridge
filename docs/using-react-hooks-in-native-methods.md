@@ -7,7 +7,7 @@ Native methods are declared with `bridge({...})` at module scope, outside of any
 ```tsx
 // bridge.ts: declare
 goBack: delegate(),
-setTitle: delegate(z.string()),
+setTitle: delegate({ input: z.string() }),
 
 // Screen.tsx: implement, with hooks
 <WebView delegate={{ goBack: async () => navigation.goBack() }} />
@@ -30,7 +30,7 @@ Regular and delegated methods can be mixed on the same bridge.
 
 ### 1. Declare the method on the bridge
 
-`delegate(input, output?)` takes the method's schemas. Export the bridge type as usual. The Web side sees delegated methods as normal methods.
+`delegate({ input, output })` takes the method's schemas. Export the bridge type as usual. The Web side sees delegated methods as normal methods.
 
 ```tsx
 // This file is src/bridge.ts
@@ -50,8 +50,8 @@ export const appBridge = bridge({
 
   // Delegated methods: implemented by each WebView.
   goBack: delegate(), // no input, no return value
-  getUser: delegate(z.void(), userSchema), // no input, returns a user
-  setTitle: delegate(z.string()), // takes a title
+  getUser: delegate({ output: userSchema }), // no input, returns a user
+  setTitle: delegate({ input: z.string() }), // takes a title
 });
 
 export type AppBridge = typeof appBridge;
@@ -112,7 +112,7 @@ await bridge.goBack();
 
 ### With a schema
 
-`delegate(input, output?)` takes [Standard Schemas](https://standardschema.dev) and infers every type from them. Values are validated on native, because the page that calls the method is not trusted.
+`delegate({ input, output })` takes [Standard Schemas](https://standardschema.dev) and infers every type from them. Both are optional. Values are validated on native, because the page that calls the method is not trusted.
 
 | | Page (Web) | Native implementation |
 |---|---|---|
@@ -120,16 +120,17 @@ await bridge.goBack();
 | `output` (optional) | receives the schema's **output** type | returns the schema's **input** type |
 
 ```tsx
-getUser: delegate(
-  z.object({ id: z.string().transform(Number) }), // page sends { id: "7" }, native gets { id: 7 }
-  z.object({ id: z.number(), name: z.string() }),
-),
+getUser: delegate({
+  input: z.object({ id: z.string().transform(Number) }), // page sends { id: "7" }, native gets { id: 7 }
+  output: z.object({ id: z.number(), name: z.string() }),
+}),
 ```
 
 - `delegate()` takes nothing and resolves to `void`.
-- `delegate(input)` without an output schema resolves to `unknown` on the page.
-- A method that takes nothing but returns a value uses a schema that accepts `undefined`, such as `z.void()` or `v.void()`. The page then calls it without an argument.
-- The input schema describes **one** argument. Use an object schema for several values.
+- `delegate({ output })` takes nothing and resolves to the output type.
+- `delegate({ input })` without an output schema resolves to `unknown` on the page.
+- The input schema describes **one** argument. Use an object schema for several values. If the input schema accepts `undefined` (for example `z.string().optional()`), the page may omit it.
+- `postMessageSchema` follows the same rule: each event's schema describes the value crossing the bridge, the sender passes its input type, and the receiver gets its output type.
 - Invalid input never reaches the implementation, and native logs a warning. An invalid return value is logged as an error. In both cases the call fails with a `BridgeValidationError`: it rejects when `throwOnError` applies to the method, and resolves to `undefined` otherwise, like any other native error.
 
 ### With a type argument
@@ -156,8 +157,8 @@ With a global `navigationRef`, every call acts on the root navigator. With `dele
 // bridge.ts
 export const appBridge = bridge({
   goBack: delegate(),
-  push: delegate(z.string()),
-  setTitle: delegate(z.string()),
+  push: delegate({ input: z.string() }),
+  setTitle: delegate({ input: z.string() }),
 });
 ```
 
@@ -187,8 +188,8 @@ Context values and query clients are only available through hooks. Read them in 
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  getAccessToken: delegate(z.void(), z.string().nullable()),
-  invalidate: delegate(z.string()),
+  getAccessToken: delegate({ output: z.string().nullable() }),
+  invalidate: delegate({ input: z.string() }),
 });
 ```
 
@@ -218,7 +219,7 @@ A delegated method can return a promise that resolves only when the user acts. T
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  confirm: delegate(z.string(), z.boolean()),
+  confirm: delegate({ input: z.string(), output: z.boolean() }),
 });
 ```
 
@@ -279,7 +280,7 @@ Route params and other per-screen values reach the page without query strings or
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  getScreenParams: delegate(z.void(), z.object({ productId: z.string() })),
+  getScreenParams: delegate({ output: z.object({ productId: z.string() }) }),
 });
 ```
 
