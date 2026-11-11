@@ -2,11 +2,12 @@
 
 Native methods are declared with `bridge({...})` at module scope, outside of any React component. So a regular native method cannot call `useNavigation()`, read a context value, or update a component's state.
 
-`delegate()` solves this. You declare the method's **signature** on the bridge, and the screen that renders the WebView provides the **implementation** through the WebView's `delegate` prop, where hooks are available.
+`delegate()` solves this. You declare the method on the bridge, and the screen that renders the WebView provides the **implementation** through the WebView's `delegate` prop, where hooks are available. Types are inferred from a [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType, ...), so you don't write the signature yourself.
 
 ```tsx
 // bridge.ts: declare
-goBack: delegate<() => Promise<void>>(),
+goBack: delegate(),
+setTitle: delegate(z.string()),
 
 // Screen.tsx: implement, with hooks
 <WebView delegate={{ goBack: async () => navigation.goBack() }} />
@@ -29,12 +30,15 @@ Regular and delegated methods can be mixed on the same bridge.
 
 ### 1. Declare the method on the bridge
 
-Pass the method's signature as the generic. Export the bridge type as usual. The Web side sees delegated methods as normal methods.
+`delegate(input, output?)` takes the method's schemas. Export the bridge type as usual. The Web side sees delegated methods as normal methods.
 
 ```tsx
 // This file is src/bridge.ts
 import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
+import { z } from "zod";
+
+const userSchema = z.object({ id: z.string(), name: z.string() }).nullable();
 
 export const appBridge = bridge({
   // Regular method: implemented here, shared by every WebView.
@@ -44,9 +48,10 @@ export const appBridge = bridge({
     }
   },
 
-  // Delegated methods: only the signature is declared here.
-  goBack: delegate<() => Promise<void>>(),
-  getUser: delegate<() => Promise<{ id: string; name: string } | null>>(),
+  // Delegated methods: implemented by each WebView.
+  goBack: delegate(), // no input, no return value
+  getUser: delegate(z.void(), userSchema), // no input, returns a user
+  setTitle: delegate(z.string()), // takes a title
 });
 
 export type AppBridge = typeof appBridge;
@@ -74,6 +79,7 @@ export function WebViewScreen() {
       delegate={{
         goBack: async () => navigation.goBack(),
         getUser: async () => user,
+        setTitle: async (title) => navigation.setOptions({ title }),
       }}
     />
   );
@@ -82,7 +88,7 @@ export function WebViewScreen() {
 
 The `delegate` prop is type-checked against the bridge:
 
-- It is required once the bridge has a `delegate()` method, and autocomplete inside `delegate={{ }}` lists exactly the delegated methods (`goBack` and `getUser` here, not `openInAppBrowser`).
+- It is required once the bridge has a `delegate()` method, and autocomplete inside `delegate={{ }}` lists exactly the delegated methods (`goBack`, `getUser` and `setTitle` here, not `openInAppBrowser`).
 - A missing method, an extra method, or a wrong signature is a type error.
 
 The implementations always run with the WebView's latest props, so `user` above is never stale. You do not need `useCallback` or refs.
@@ -97,8 +103,47 @@ import type { AppBridge } from ""; // Import the type 'appBridge' declared in na
 
 const bridge = linkBridge<AppBridge>();
 
-const user = await bridge.getUser();
+const user = await bridge.getUser(); // { id: string; name: string } | null
+await bridge.setTitle("Profile");
 await bridge.goBack();
+```
+
+## Declaring a delegated method
+
+### With a schema
+
+`delegate(input, output?)` takes [Standard Schemas](https://standardschema.dev) and infers every type from them. Values are validated on native, because the page that calls the method is not trusted.
+
+| | Page (Web) | Native implementation |
+|---|---|---|
+| `input` | passes the schema's **input** type | receives the schema's **output** type (validated, transforms applied) |
+| `output` (optional) | receives the schema's **output** type | returns the schema's **input** type |
+
+```tsx
+getUser: delegate(
+  z.object({ id: z.string().transform(Number) }), // page sends { id: "7" }, native gets { id: 7 }
+  z.object({ id: z.number(), name: z.string() }),
+),
+```
+
+- `delegate()` takes nothing and resolves to `void`.
+- `delegate(input)` without an output schema resolves to `unknown` on the page.
+- A method that takes nothing but returns a value uses a schema that accepts `undefined`, such as `z.void()` or `v.void()`. The page then calls it without an argument.
+- The input schema describes **one** argument. Use an object schema for several values.
+- Invalid input never reaches the implementation, and native logs a warning. An invalid return value is logged as an error. In both cases the call fails with a `BridgeValidationError`: it rejects when `throwOnError` applies to the method, and resolves to `undefined` otherwise, like any other native error.
+
+### With a type argument
+
+Without a schema library, or for a signature a schema can't express (for example a generic function), pass the signature as a type argument. Nothing is validated at runtime.
+
+```tsx
+confirm: delegate<(message: string) => Promise<boolean>>(),
+push: delegate<
+  <Name extends keyof RootStackParamList>(
+    name: Name,
+    params: RootStackParamList[Name],
+  ) => Promise<void>
+>(),
 ```
 
 ## Use cases
@@ -110,9 +155,9 @@ With a global `navigationRef`, every call acts on the root navigator. With `dele
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  goBack: delegate<() => Promise<void>>(),
-  push: delegate<(path: string) => Promise<void>>(),
-  setTitle: delegate<(title: string) => Promise<void>>(),
+  goBack: delegate(),
+  push: delegate(z.string()),
+  setTitle: delegate(z.string()),
 });
 ```
 
@@ -142,8 +187,8 @@ Context values and query clients are only available through hooks. Read them in 
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  getAccessToken: delegate<() => Promise<string | null>>(),
-  invalidate: delegate<(key: string) => Promise<void>>(),
+  getAccessToken: delegate(z.void(), z.string().nullable()),
+  invalidate: delegate(z.string()),
 });
 ```
 
@@ -173,7 +218,7 @@ A delegated method can return a promise that resolves only when the user acts. T
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  confirm: delegate<(message: string) => Promise<boolean>>(),
+  confirm: delegate(z.string(), z.boolean()),
 });
 ```
 
@@ -234,7 +279,7 @@ Route params and other per-screen values reach the page without query strings or
 ```tsx
 // bridge.ts
 export const appBridge = bridge({
-  getScreenParams: delegate<() => Promise<{ productId: string }>>(),
+  getScreenParams: delegate(z.void(), z.object({ productId: z.string() })),
 });
 ```
 

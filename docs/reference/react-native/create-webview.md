@@ -20,15 +20,28 @@ The returned `WebView` accepts every prop of `react-native-webview`, plus:
 
 ## Delegated methods
 
-`delegate<Signature>()` declares a bridge method whose implementation is
-provided per WebView through the WebView's `delegate` prop, so it can use hooks
-and context.
+`delegate()` declares a bridge method whose implementation is provided per
+WebView through the WebView's `delegate` prop, so it can use hooks and context.
+
+| Form | Page signature | Runtime validation |
+|---|---|---|
+| `delegate()` | `() => Promise<void>` | none |
+| `delegate(input)` | `(input: InferInput<input>) => Promise<unknown>` | input |
+| `delegate(input, output)` | `(input: InferInput<input>) => Promise<InferOutput<output>>` | input and output |
+| `delegate<Signature>()` | `Signature` | none |
+
+`input` and `output` are [Standard Schemas](https://standardschema.dev) (Zod,
+Valibot, ArkType, ...). The native implementation receives the input schema's
+output type and returns the output schema's input type. A value that fails a
+schema makes the call fail with a `BridgeValidationError`.
 
 ```tsx
 import { bridge, createWebView, delegate } from "@webview-bridge/react-native";
+import { z } from "zod";
 
 export const appBridge = bridge({
-  goBack: delegate<() => Promise<void>>(),
+  goBack: delegate(),
+  setTitle: delegate(z.string()),
 });
 
 export const { WebView } = createWebView({ bridge: appBridge });
@@ -36,7 +49,12 @@ export const { WebView } = createWebView({ bridge: appBridge });
 function Screen() {
   const navigation = useNavigation();
   return (
-    <WebView delegate={{ goBack: async () => navigation.goBack() }} />
+    <WebView
+      delegate={{
+        goBack: async () => navigation.goBack(),
+        setTitle: async (title) => navigation.setOptions({ title }),
+      }}
+    />
   );
 }
 ```
