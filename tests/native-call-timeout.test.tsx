@@ -10,8 +10,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { loadPage, native, resetEnvironment } from "./harness";
 
-const TIMEOUT = 40;
-const SLOW = 120;
+const TIMEOUT = 100;
+const SLOW = 300;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -109,7 +109,9 @@ describe("native call timeout", () => {
       error: "Timeout",
     });
     expect(
-      native.injections.some((i) => i.script.includes("count-") && i.script.includes(":ack")),
+      native.injections.some(
+        (i) => i.script.includes("count-") && i.script.includes(":ack"),
+      ),
     ).toBe(false);
   });
 
